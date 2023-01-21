@@ -21,11 +21,16 @@ public class AutonomousTrajectories {
     private Trajectory sevenFeet;
     private final Trajectory sCurve;
 
-    private Trajectory testPart1;
-    private Trajectory testPart2;
-    private Trajectory testPart3;
-    private Trajectory testPart4;
-    private Trajectory testPart5;
+    private Trajectory ThreeObjectFarPart1;
+    private Trajectory ThreeObjectFarPart2;
+    private Trajectory ThreeObjectFarPart3;
+    private Trajectory ThreeObjectFarPart4;
+    private Trajectory ThreeObjectFarPart5;
+
+    private Trajectory threeObjectClosePart1;
+    private Trajectory threeObjectClosePart2;
+    private Trajectory threeObjectClosePart3;
+    private Trajectory threeObjectClosePart4;
 
     public AutonomousTrajectories(TrajectoryConstraint[] trajectoryConstraints) throws IOException {
         TrajectoryConstraint[] slowConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
@@ -53,33 +58,64 @@ public class AutonomousTrajectories {
                 trajectoryConstraints, SAMPLE_DISTANCE
         );
 
-        testPart1 = new Trajectory(
-                new SimplePathBuilder(new Vector2(176,278.5), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(78, 278.5), Rotation2.fromDegrees(180))
+        ThreeObjectFarPart1 = new Trajectory(
+                new SimplePathBuilder(new Vector2(170,298), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(68, 298), Rotation2.fromDegrees(0))
                         .build(),
-                trajectoryConstraints, SAMPLE_DISTANCE
+                slowConstraints, SAMPLE_DISTANCE
         );
-        testPart2 = new Trajectory(
-                new SimplePathBuilder(new Vector2(78,278.5), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(275, 284), Rotation2.ZERO)
+        ThreeObjectFarPart2 = new Trajectory(
+                new SimplePathBuilder(new Vector2(68,298), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(257, 278), Rotation2.fromDegrees(0))
                         .build(),
-                trajectoryConstraints, SAMPLE_DISTANCE
+                mediumConstraints, SAMPLE_DISTANCE
         );
-        testPart3 = new Trajectory(
-                new SimplePathBuilder(new Vector2(275, 284), Rotation2.ZERO)
-                        .lineTo(new Vector2(78, 278.5), Rotation2.fromDegrees(180))
+        ThreeObjectFarPart3 = new Trajectory(
+                new SimplePathBuilder(new Vector2(257, 278), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(75, 273), Rotation2.fromDegrees(0))
                         .build(),
-                trajectoryConstraints, SAMPLE_DISTANCE
+                mediumConstraints, SAMPLE_DISTANCE
         );
-        testPart4 = new Trajectory(
-                new SimplePathBuilder(new Vector2(78, 278.5), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(275, 236), Rotation2.ZERO)
+        ThreeObjectFarPart4 = new Trajectory(
+                new SimplePathBuilder(new Vector2(75, 273), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(204, 273), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(258, 230))
                         .build(),
-                trajectoryConstraints, SAMPLE_DISTANCE
+                mediumConstraints, SAMPLE_DISTANCE
         );
-        testPart5 = new Trajectory(
-                new SimplePathBuilder(new Vector2(275, 236), Rotation2.ZERO)
-                        .lineTo(new Vector2(78, 300), Rotation2.fromDegrees(180))
+        ThreeObjectFarPart5 = new Trajectory(
+                new SimplePathBuilder(new Vector2(258, 230), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(204, 273))
+                        .lineTo(new Vector2(92.75, 273))
+                        .lineTo(new Vector2(68, 240))
+                        .build(),
+                mediumConstraints, SAMPLE_DISTANCE
+        );
+
+        threeObjectClosePart1 = new Trajectory(
+                new SimplePathBuilder(new Vector2(67, 297.5), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(252, 278.5))
+                        .build(),
+                mediumConstraints, SAMPLE_DISTANCE
+        );
+
+        threeObjectClosePart2 = new Trajectory(
+                new SimplePathBuilder(new Vector2(252, 278.5), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(67, 297.5))
+                        .build(),
+                mediumConstraints, SAMPLE_DISTANCE
+        );
+
+        threeObjectClosePart3 = new Trajectory(
+                new SimplePathBuilder(new Vector2(67, 297.5), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(186, 286.5))
+                        .build(),
+                mediumConstraints, SAMPLE_DISTANCE
+        );
+
+        threeObjectClosePart4 = new Trajectory(
+                new SimplePathBuilder(new Vector2(186, 286.5), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(68, 273))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
@@ -105,23 +141,39 @@ public class AutonomousTrajectories {
             return sCurve;
     }
 
-    public Trajectory getTestPart1(){
-        return testPart1;
+    public Trajectory getThreeObjectFarPart1(){
+        return ThreeObjectFarPart1;
     }
 
-    public Trajectory getTestPart2(){
-        return testPart2;
+    public Trajectory getThreeObjectFarPart2(){
+        return ThreeObjectFarPart2;
     }
 
-    public Trajectory getTestPart3(){
-        return testPart3;
+    public Trajectory getThreeObjectFarPart3(){
+        return ThreeObjectFarPart3;
     }
 
-    public Trajectory getTestPart4(){
-        return testPart4;
+    public Trajectory getThreeObjectFarPart4(){
+        return ThreeObjectFarPart4;
     }
 
-    public Trajectory getTestPart5(){
-        return testPart5;
+    public Trajectory getThreeObjectFarPart5(){
+        return ThreeObjectFarPart5;
+    }
+
+    public Trajectory getThreeObjectClosePart1(){
+        return threeObjectClosePart1;
+    }
+
+    public Trajectory getThreeObjectClosePart2(){
+        return threeObjectClosePart2;
+    }
+
+    public Trajectory getThreeObjectClosePart3(){
+        return threeObjectClosePart3;
+    }
+
+    public Trajectory getThreeObjectClosePart4(){
+        return threeObjectClosePart4;
     }
 }

@@ -21,7 +21,8 @@ public class AutonomousChooser {
 
         autonomousModeChooser.addOption("7 Feet", AutonomousMode.SEVEN_FEET);
         autonomousModeChooser.addOption("sCurve", AutonomousMode.S_CURVE);
-        autonomousModeChooser.addOption("test", AutonomousMode.TEST);
+        autonomousModeChooser.addOption("Three Object Far", AutonomousMode.THREE_OBJECT_FAR);
+        autonomousModeChooser.addOption("Three Object Close", AutonomousMode.THREE_OBJECT_CLOSE);
     }
 
     public SendableChooser<AutonomousMode> getAutonomousModeChooser() {
@@ -48,24 +49,16 @@ public class AutonomousChooser {
         return command;
     }
 
-    public Command get_Part1(RobotContainer container) {
-        SequentialCommandGroup command = new SequentialCommandGroup();
-
-        resetRobotPose(command, container, trajectories.getTestPart1());
-
-        follow(command, container, trajectories.getTestPart1());
-
-        return command;
-    }
-
     public Command getCommand(RobotContainer container) {
         switch (autonomousModeChooser.getSelected()) {
             case SEVEN_FEET:
                 return getSevenFeet(container);
             case S_CURVE:
                 return get_sCurve(container);
-            case TEST:
-                return new Test(container, trajectories);          
+            case THREE_OBJECT_FAR:
+                return new ThreeObjectFar(container, trajectories);
+            case THREE_OBJECT_CLOSE:
+                return new ThreeObjectFar(container, trajectories);         
             default:
                 return getSevenFeet(container);
         }
@@ -85,7 +78,8 @@ public class AutonomousChooser {
     private enum AutonomousMode { 
         SEVEN_FEET, 
         S_CURVE,
-        TEST,
+        THREE_OBJECT_FAR,
+        THREE_OBJECT_CLOSE,
         ;
     }
 }
