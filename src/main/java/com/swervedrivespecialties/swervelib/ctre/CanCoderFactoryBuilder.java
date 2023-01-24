@@ -20,7 +20,7 @@ public class CanCoderFactoryBuilder {
         return configuration -> {
             CANCoderConfiguration config = new CANCoderConfiguration();
             config.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
-            config.magnetOffsetDegrees = configuration.getOffset()/(2*Math.PI);
+            config.magnetOffsetDegrees = Math.toDegrees(configuration.getOffset());
             config.sensorDirection = direction == Direction.CLOCKWISE;
 
             CANCoder encoder = new CANCoder(configuration.getId(), "Drivetrain");

@@ -37,6 +37,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -360,7 +361,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
               .withSize(1, 1);
 
               
-        //tab.addNumber("Average Velocity", this::getAverageAbsoluteValueVelocity);
+        tab.addNumber("Average Velocity", this::getAverageAbsoluteValueVelocity);
     }
 
 
@@ -670,13 +671,13 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         setDriveControlMode(DriveControlMode.TURN_TO_GOAL);
     }    
     
-    // public void setTurnToTarget(){
-    //     rotationController.enableContinuousInput(-Math.PI, Math.PI);
-    //     rotationController.reset(getPose().rotation.toRadians());
-    //     rotationController.setGoal(Math.toRadians(getRobotToGoalAngle()));
-    //     rotationController.setTolerance(0.017);
-    //     setDriveControlMode(DriveControlMode.TURN_TO_GOAL);
-    // }
+    public void setTurnToTarget(){
+        rotationController.enableContinuousInput(-Math.PI, Math.PI);
+        rotationController.reset(getPose().rotation.toRadians());
+        rotationController.setGoal(Math.toRadians(getRobotToGoalAngle()));
+        rotationController.setTolerance(0.017);
+        setDriveControlMode(DriveControlMode.TURN_TO_GOAL);
+    }
 
     public boolean atRotationTarget(){
         
@@ -697,27 +698,27 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     //     return Math.toDegrees(Math.atan((getVelocity().y * timeOfFlight)/distance));
     // }
 
-    // public double getRobotToGoalAngle() {
-    //     rCurrPoseX = getPose().translation.x;
-    //     rCurrPoseY = getPose().translation.y;
-    //     double fieldAngle = Math.toDegrees(Math.atan2(rCurrPoseY + 162, rCurrPoseX - 325));
+    public double getRobotToGoalAngle() {
+        rCurrPoseX = getPose().translation.x;
+        rCurrPoseY = getPose().translation.y;
+        double fieldAngle = Math.toDegrees(Math.atan2(rCurrPoseY + 162, rCurrPoseX - 325));
 
-    //     return fieldAngle;
-    // }
+        return fieldAngle;
+    }
 
-    // public double getRobotToGoalDistance() {
-    //     rCurrPoseX = getPose().translation.x - 325;
-    //     rCurrPoseY = getPose().translation.y + 162;
-    //     return Math.sqrt(rCurrPoseX*rCurrPoseX + rCurrPoseY*rCurrPoseY);
-    // }
+    public double getRobotToGoalDistance() {
+        rCurrPoseX = getPose().translation.x - 325;
+        rCurrPoseY = getPose().translation.y + 162;
+        return Math.sqrt(rCurrPoseX*rCurrPoseX + rCurrPoseY*rCurrPoseY);
+    }
 
-    // public double getAverageAbsoluteValueVelocity() {
-    //     double averageVelocity = 0;
-    //     for (var module : modules) {
-    //         averageVelocity += Math.abs(module.getDriveVelocity());
-    //     }
-    //     return averageVelocity / 4;
-    // }
+    public double getAverageAbsoluteValueVelocity() {
+        double averageVelocity = 0;
+        for (var module : modules) {
+            averageVelocity += Math.abs(module.getDriveVelocity());
+        }
+        return averageVelocity / 4;
+    }
 
     /**
      * Must be implemented for <code>UpdateManager</code> (Updatable interface method)
@@ -913,8 +914,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         odometryXEntry.setDouble(pose.translation.x);
         odometryYEntry.setDouble(pose.translation.y);
         odometryAngleEntry.setDouble(pose.rotation.toDegrees());
-        //SmartDashboard.putNumber("Angle to goal", getRobotToGoalAngle());
-       //SmartDashboard.putNumber("Distance to goal", getRobotToGoalDistance());
+        SmartDashboard.putNumber("Angle to goal", getRobotToGoalAngle());
+       SmartDashboard.putNumber("Distance to goal", getRobotToGoalDistance());
        SmartDashboard.putNumber("X", pose.translation.x);
        SmartDashboard.putNumber("Y", pose.translation.y);
 //        SmartDashboard.putNumber("Lag angle", getLagAngleDegrees());

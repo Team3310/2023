@@ -7,10 +7,14 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 
+import edu.wpi.first.net.PortForwarder;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.common.Logger;
+import org.frcteam2910.common.math.RigidTransform2;
+import org.frcteam2910.common.math.Rotation2;
 import org.frcteam2910.common.robot.UpdateManager;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -147,6 +151,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         robotContainer.getDrivetrainSubsystem().setBrake();
+        robotContainer.getDrivetrainSubsystem().setLimelightOverride(false);
 
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.TRAJECTORY);
 

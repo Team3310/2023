@@ -19,10 +19,11 @@ public class AutonomousChooser {
     public AutonomousChooser(AutonomousTrajectories trajectories) {
         this.trajectories = trajectories;
 
+        autonomousModeChooser.setDefaultOption("Three Object Far", AutonomousMode.THREE_OBJECT_FAR);
+        autonomousModeChooser.addOption("Three Object Close", AutonomousMode.THREE_OBJECT_CLOSE);
+        autonomousModeChooser.addOption("Three Object Bridge", AutonomousMode.THREE_OBJECT_BRIDGE);
         autonomousModeChooser.addOption("7 Feet", AutonomousMode.SEVEN_FEET);
         autonomousModeChooser.addOption("sCurve", AutonomousMode.S_CURVE);
-        autonomousModeChooser.addOption("Three Object Far", AutonomousMode.THREE_OBJECT_FAR);
-        autonomousModeChooser.addOption("Three Object Close", AutonomousMode.THREE_OBJECT_CLOSE);
     }
 
     public SendableChooser<AutonomousMode> getAutonomousModeChooser() {
@@ -54,11 +55,13 @@ public class AutonomousChooser {
             case SEVEN_FEET:
                 return getSevenFeet(container);
             case S_CURVE:
-                return get_sCurve(container);
+                return get_sCurve(container); 
             case THREE_OBJECT_FAR:
                 return new ThreeObjectFar(container, trajectories);
             case THREE_OBJECT_CLOSE:
-                return new ThreeObjectFar(container, trajectories);         
+                return new ThreeObjectClose(container, trajectories);
+            case THREE_OBJECT_BRIDGE:
+                return new ThreeObjectBridge(container, trajectories);                    
             default:
                 return getSevenFeet(container);
         }
@@ -80,6 +83,7 @@ public class AutonomousChooser {
         S_CURVE,
         THREE_OBJECT_FAR,
         THREE_OBJECT_CLOSE,
+        THREE_OBJECT_BRIDGE,
         ;
     }
 }
