@@ -19,7 +19,6 @@ public class RightSidecone extends AutonCommandBase {
     public RightSidecone(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive) {
         resetRobotPose(container, trajectories.getConeBridgefromPlaceToLoad());
         this.addCommands(
-            //new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart1()),
             new WaitCommand(0.5),
             new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromPlaceToLoad()),
             new FollowTrajectoryCommand(drive, trajectories.getConeBridgePickup1()),

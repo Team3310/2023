@@ -22,10 +22,9 @@ public class DriverReadout {
         tab.add("Autonomous Mode", container.getAutonomousChooser().getAutonomousModeChooser())
                 .withSize(2, 1)
                 .withPosition(2, 0);
-        tab.add("Ball Color Tracking", ballColorChooser)
+        tab.add("Side", container.getSideChooser().getSideModeChooser())
                 .withSize(2, 1)
                 .withPosition(2, 1);
-
         tab.add("Zero Gyroscope", new ZeroGyroscope(container.getDrivetrainSubsystem()))
                 .withSize(2, 1)
                 .withPosition(4, 0);

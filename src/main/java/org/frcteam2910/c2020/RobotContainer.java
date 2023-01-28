@@ -8,6 +8,7 @@ import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.util.AutonomousChooser;
 import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import org.frcteam2910.c2020.util.DriverReadout;
+import org.frcteam2910.c2020.util.SideChooser;
 import org.frcteam2910.common.robot.input.Axis;
 import org.frcteam2910.common.robot.input.DPadButton;
 import org.frcteam2910.common.robot.input.XboxController;
@@ -29,12 +30,14 @@ public class RobotContainer {
 
     private AutonomousTrajectories autonomousTrajectories;
     private final AutonomousChooser autonomousChooser;
+    private final SideChooser sideChooser;
 
     private final DriverReadout driverReadout;
 
     public RobotContainer() {
+        sideChooser = new SideChooser();
         try {
-            autonomousTrajectories = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS);
+            autonomousTrajectories = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, sideChooser.getSide()==SideChooser.sideMode.BLUE?true:false);
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Error building trajectories");
@@ -212,6 +215,10 @@ public class RobotContainer {
 
     public DrivetrainSubsystem getDrivetrainSubsystem() {
         return drivetrain;
+    }
+
+    public SideChooser getSideChooser(){
+        return sideChooser;
     }
 
 //     public ClimbElevator getClimbElevator() {

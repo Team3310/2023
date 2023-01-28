@@ -19,7 +19,7 @@ public class AutonomousChooser {
     public AutonomousChooser(AutonomousTrajectories trajectories) {
         this.trajectories = trajectories;
 
-        autonomousModeChooser.setDefaultOption("Left Three Object Far", AutonomousMode.THREE_OBJECT_FAR);
+        autonomousModeChooser.setDefaultOption("Left Three Object Far Spit", AutonomousMode.THREE_OBJECT_FAR);
         autonomousModeChooser.addOption("Left Three Object Close", AutonomousMode.THREE_OBJECT_CLOSE);
         autonomousModeChooser.addOption("Right Three Object", AutonomousMode.THREE_OBJECT_BRIDGE);
         autonomousModeChooser.addOption("Right 3 Cone", AutonomousMode.CONE_BRIDGE);
@@ -58,7 +58,7 @@ public class AutonomousChooser {
             case S_CURVE:
                 return get_sCurve(container); 
             case THREE_OBJECT_FAR:
-                return new LeftThreeObjectFar(container, trajectories);
+                return new LeftThreeObjectFarSpit(container, trajectories);
             case THREE_OBJECT_CLOSE:
                 return new LeftThreeObjectClose(container, trajectories);
             case THREE_OBJECT_BRIDGE:
