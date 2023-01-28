@@ -11,12 +11,12 @@ import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class ThreeObjectClose extends AutonCommandBase {
-    public ThreeObjectClose(RobotContainer container, AutonomousTrajectories trajectories){
+public class LeftThreeObjectClose extends AutonCommandBase {
+    public LeftThreeObjectClose(RobotContainer container, AutonomousTrajectories trajectories){
         this(container, trajectories, container.getDrivetrainSubsystem());
     }
 
-    public ThreeObjectClose(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive) {
+    public LeftThreeObjectClose(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive) {
         resetRobotPose(container, trajectories.getThreeObjectClosePart1());
         this.addCommands(
             //path with commands on old robot

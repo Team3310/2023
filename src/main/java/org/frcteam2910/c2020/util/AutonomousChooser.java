@@ -19,9 +19,10 @@ public class AutonomousChooser {
     public AutonomousChooser(AutonomousTrajectories trajectories) {
         this.trajectories = trajectories;
 
-        autonomousModeChooser.setDefaultOption("Three Object Far", AutonomousMode.THREE_OBJECT_FAR);
-        autonomousModeChooser.addOption("Three Object Close", AutonomousMode.THREE_OBJECT_CLOSE);
-        autonomousModeChooser.addOption("Three Object Bridge", AutonomousMode.THREE_OBJECT_BRIDGE);
+        autonomousModeChooser.setDefaultOption("Left Three Object Far", AutonomousMode.THREE_OBJECT_FAR);
+        autonomousModeChooser.addOption("Left Three Object Close", AutonomousMode.THREE_OBJECT_CLOSE);
+        autonomousModeChooser.addOption("Right Three Object", AutonomousMode.THREE_OBJECT_BRIDGE);
+        autonomousModeChooser.addOption("Right 3 Cone", AutonomousMode.CONE_BRIDGE);
         autonomousModeChooser.addOption("7 Feet", AutonomousMode.SEVEN_FEET);
         autonomousModeChooser.addOption("sCurve", AutonomousMode.S_CURVE);
     }
@@ -57,11 +58,13 @@ public class AutonomousChooser {
             case S_CURVE:
                 return get_sCurve(container); 
             case THREE_OBJECT_FAR:
-                return new ThreeObjectFar(container, trajectories);
+                return new LeftThreeObjectFar(container, trajectories);
             case THREE_OBJECT_CLOSE:
-                return new ThreeObjectClose(container, trajectories);
+                return new LeftThreeObjectClose(container, trajectories);
             case THREE_OBJECT_BRIDGE:
-                return new ThreeObjectBridge(container, trajectories);                    
+                return new RightThreeObject(container, trajectories); 
+            case CONE_BRIDGE:
+                return new RightSidecone(container, trajectories);                       
             default:
                 return getSevenFeet(container);
         }
@@ -84,6 +87,7 @@ public class AutonomousChooser {
         THREE_OBJECT_FAR,
         THREE_OBJECT_CLOSE,
         THREE_OBJECT_BRIDGE,
+        CONE_BRIDGE,
         ;
     }
 }

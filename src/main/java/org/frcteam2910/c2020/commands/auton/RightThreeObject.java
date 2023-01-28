@@ -11,13 +11,13 @@ import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class ThreeObjectBridge extends AutonCommandBase {
-    public ThreeObjectBridge(RobotContainer container, AutonomousTrajectories trajectories){
+public class RightThreeObject extends AutonCommandBase {
+    public RightThreeObject(RobotContainer container, AutonomousTrajectories trajectories){
         this(container, trajectories, container.getDrivetrainSubsystem());
     }
 
-    public ThreeObjectBridge(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive) {
-        resetRobotPose(container, trajectories.getThreeObjectFarPart1());
+    public RightThreeObject(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive) {
+        resetRobotPose(container, trajectories.getThreeObjectBridgePart1());
         this.addCommands(
             new FollowTrajectoryCommand(drive, trajectories.getThreeObjectBridgePart1()),
             new WaitCommand(0.5),
