@@ -1,15 +1,23 @@
 package org.frcteam2910.c2020.util;
 
-import org.frcteam2910.common.control.*;
-import org.frcteam2910.common.io.PathReader;
-import org.frcteam2910.common.math.Rotation2;
-import org.frcteam2910.common.math.Vector2;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+
+import org.frcteam2910.c2020.util.SideChooser.sideMode;
+import org.frcteam2910.common.control.MaxAccelerationConstraint;
+import org.frcteam2910.common.control.MaxVelocityConstraint;
+import org.frcteam2910.common.control.Path;
+import org.frcteam2910.common.control.SimplePathBuilder;
+import org.frcteam2910.common.control.Trajectory;
+import org.frcteam2910.common.control.TrajectoryConstraint;
+import org.frcteam2910.common.io.PathReader;
+import org.frcteam2910.common.math.Rotation2;
+import org.frcteam2910.common.math.Vector2;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutonomousTrajectories {
 
@@ -43,20 +51,29 @@ public class AutonomousTrajectories {
     private Trajectory coneBridgefromLoadtoPickUp2;
     private Trajectory coneBridgefromPickUp1ToLoad;
     private Trajectory coneBridgefromPickUp2ToLoad;
+
+    private Trajectory onToBridge;
 //#endregion
 
-    public AutonomousTrajectories(TrajectoryConstraint[] trajectoryConstraints, Boolean isBlue)throws IOException {
-        TrajectoryConstraint[] slowConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
+    private TrajectoryConstraint[] bridgeConstraints;
+    private TrajectoryConstraint[] mediumConstraints;
+    private TrajectoryConstraint[] slowConstraints;
+
+    public AutonomousTrajectories(TrajectoryConstraint[] trajectoryConstraints, sideMode side){
+        slowConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
         slowConstraints[slowConstraints.length - 1] = new MaxVelocityConstraint(6.0 * 12.0);
         slowConstraints[slowConstraints.length - 2] = new MaxAccelerationConstraint(4.0 * 12.0);
         
-        TrajectoryConstraint[] mediumConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
+        mediumConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
         mediumConstraints[mediumConstraints.length - 1] = new MaxVelocityConstraint(9.0 * 12.0);
         mediumConstraints[mediumConstraints.length - 2] = new MaxAccelerationConstraint(8.0 * 12.0);
 
-        if(isBlue){
-            xReflect=-1;  
-            angleOffset=0;      
+        bridgeConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
+        bridgeConstraints[mediumConstraints.length - 1] = new MaxVelocityConstraint(2.0 * 12.0);
+        bridgeConstraints[mediumConstraints.length - 2] = new MaxAccelerationConstraint(2.0 * 12.0);
+
+        if(side==sideMode.RED){
+            xReflect=-1;      
         }else{
             xReflect=1;
             angleOffset=180;
@@ -185,17 +202,17 @@ public class AutonomousTrajectories {
                         .build(),
                 slowConstraints, SAMPLE_DISTANCE
         );
-        
+
         coneBridgefromLoadtoPickUp2 = new Trajectory(
                 new SimplePathBuilder(new Vector2(xReflect*130.5, 126), Rotation2.fromDegrees(0+angleOffset))
-                        .arcTo(new Vector2(xReflect*58.5, 186), new Vector2(xReflect*130.5, 189))
+                        .arcTo(new Vector2(xReflect*58.5, 182), new Vector2(xReflect*130, 200))
                         .build(),
                 slowConstraints, SAMPLE_DISTANCE
         );
 
         coneBridgefromPickUp2ToLoad = new Trajectory(
-                new SimplePathBuilder(new Vector2(xReflect*58.5, 186), Rotation2.fromDegrees(0+angleOffset))
-                        .arcTo(new Vector2(xReflect*130.5, 126), new Vector2(xReflect*130.5, 185))
+                new SimplePathBuilder(new Vector2(xReflect*58.5, 182), Rotation2.fromDegrees(0+angleOffset))
+                        .arcTo(new Vector2(xReflect*130.5, 126), new Vector2(xReflect*130, 200))
                         .build(),
                 slowConstraints, SAMPLE_DISTANCE
         );
@@ -214,7 +231,13 @@ public class AutonomousTrajectories {
                 slowConstraints, SAMPLE_DISTANCE
         );
 //#endregion        
-    }
+    
+        onToBridge = new Trajectory(
+                new SimplePathBuilder(new Vector2(-252, 207), Rotation2.fromDegrees(180))
+                        .lineTo(new Vector2(-173, 207), Rotation2.fromDegrees(180))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE);
+        }
 
     @SuppressWarnings("unused")
     private Path getPath(String name) throws IOException {
@@ -271,8 +294,20 @@ public class AutonomousTrajectories {
 
     public Trajectory getConeBridgefromPlaceToLoad(){return coneBridgefromPlaceToLoad;}
 
-    public Trajectory getConeBridgePickup1(){return coneBridgefromLoadtoPickUp1;}
+    public Trajectory getConeBridgeLoadTOPickup1(){return coneBridgefromLoadtoPickUp1;}
 
-    public Trajectory getConeBridgePickup2(){return coneBridgefromLoadtoPickUp2;}
+    public Trajectory getConeBridgeLoadToPickup2(){return coneBridgefromLoadtoPickUp2;}
+
+    public Trajectory getOnToBridge(){return onToBridge;}
+
+    public Trajectory getUpBridge(Vector2 pose, Rotation2 rotation){
+        SmartDashboard.putNumber("Upbridge Pose x", pose.x);
+        SmartDashboard.putNumber("Upbridge Pose y", pose.y);
+        return new Trajectory(
+                new SimplePathBuilder(new Vector2(pose.x, pose.y), Rotation2.fromDegrees(180))
+                        .lineTo(new Vector2(pose.x+5, pose.y), Rotation2.fromDegrees(180))
+                        .build(), 
+                        bridgeConstraints, SAMPLE_DISTANCE);
+    }
 //#endregion
 }

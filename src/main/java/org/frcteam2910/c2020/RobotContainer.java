@@ -12,6 +12,7 @@ import org.frcteam2910.c2020.util.SideChooser;
 import org.frcteam2910.common.robot.input.Axis;
 import org.frcteam2910.common.robot.input.DPadButton;
 import org.frcteam2910.common.robot.input.XboxController;
+import org.frcteam2910.common.robot.input.DPadButton.Direction;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,12 +37,8 @@ public class RobotContainer {
 
     public RobotContainer() {
         sideChooser = new SideChooser();
-        try {
-            autonomousTrajectories = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, sideChooser.getSide()==SideChooser.sideMode.BLUE?true:false);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error building trajectories");
-        }
+
+        autonomousTrajectories = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, sideChooser.getSide());
         autonomousChooser = new AutonomousChooser(autonomousTrajectories);
 
         drivetrain.setController(primaryController);
@@ -53,6 +50,12 @@ public class RobotContainer {
         configureButtonBindings();
         
         instance = this;
+    }
+
+    public void updateTrajectoriesBasedOnSide(){
+        autonomousTrajectories = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, sideChooser.getSide());
+        autonomousChooser.updateTrajectories(autonomousTrajectories);
+        SmartDashboard.putString("Side", sideChooser.getSide().toString());
     }
 
     private void configureButtonBindings() {
@@ -85,6 +88,8 @@ public class RobotContainer {
         primaryController.getRightTriggerAxis().getButton(0.5).whenReleased(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
+
+        primaryController.getAButton().whenPressed(new DriveBalanceCommand(drivetrain, false));
 
         //Intake
         // secondaryController.getRightTriggerAxis().getButton(0.5).whenPressed(

@@ -20,7 +20,16 @@ public class SideChooser {
     }
 
     public enum sideMode { 
-        RED,
-        BLUE
+        RED("Red"),
+        BLUE("Blue");
+
+        sideMode(String s){
+            side=s;
+        }
+
+        String side;
+        public String toString(){
+            return side;
+        }
     }
 }

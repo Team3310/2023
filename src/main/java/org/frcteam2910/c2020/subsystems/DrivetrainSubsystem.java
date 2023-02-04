@@ -73,6 +73,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private double targetAngle; // for limelight and probably ball tracking
     private boolean isLimelightOverride = false;
 
+    private Vector2 balanceInitialPos = Vector2.ZERO;
+    private Timer balanceTimer = new Timer();
     
     // Initialized in constructor
     private ShuffleboardTab tab;
@@ -92,7 +94,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
     private final Object sensorLock = new Object();
     @GuardedBy("sensorLock")
-    private final Gyroscope gyroscope = new Pigeon(Constants.PIGEON_PORT);
+    private final Pigeon gyroscope = new Pigeon(Constants.PIGEON_PORT);
 
 
     //////////////////////////////////////////////////////////////
@@ -119,6 +121,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         HOLD,
         LIMELIGHT_BROKEN,
         LIMELIGHT_PROFILED,
+        BALANCE,
         ;
     }
 
@@ -190,6 +193,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public ProfiledPIDController profiledLimelightController = new ProfiledPIDController(1.0, 0.03, 0.02, constraints, 0.02);
     public PIDController limelightController = new PIDController(2.0, 0.03, 0.25, 0.02); //(3.0, 0.03, 0.02) (1.7, 0.03, 0.25) 0.02
     public PIDController ballTrackController = new PIDController(1.0, 0.03, 0.25, 0.02);
+    private PidController balanceController = new PidController(new PidConstants(0.5, 0.0, 0.02));
 
     public static final DrivetrainFeedforwardConstants FEEDFORWARD_CONSTANTS = 
         new DrivetrainFeedforwardConstants(
@@ -269,6 +273,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
         limelightController.setTolerance(0.1);
         limelightController.setIntegratorRange(-1.0, 1.0);
+
+        // TODO change these pi values
+        balanceController.setInputRange(0, Math.PI);
+        balanceController.setContinuous(true);
     }
 
     ///
@@ -556,6 +564,29 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         }
     }
 
+    public void balanceOutDrive() {
+        // DriveControlMode is BALANCE
+        balanceController.reset();
+        balanceController.setSetpoint(0);
+        boolean tiltedBackward = (getPitch() > 180);
+        double pitchOutput = tiltedBackward ? -1 : 1;
+        double degreesAwayFromBalance = tiltedBackward ? (360 - getPitch()) : getPitch();
+        if(degreesAwayFromBalance < Constants.BALANCE_DEADBAND){
+            degreesAwayFromBalance = 0;
+            if(!balanceTimer.hasElapsed(0.1))
+                balanceTimer.start();
+        }
+        else{
+            balanceTimer.stop();
+            balanceTimer.reset();
+        } 
+
+        double forwardAxisOutput = balanceController.calculate(Math.toRadians(degreesAwayFromBalance), 0.02);
+        if(degreesAwayFromBalance > Constants.BALANCE_DEADBAND)
+            forwardAxisOutput/=1.4;
+        drive(new Vector2(pitchOutput * forwardAxisOutput, 0.0), 0.0, false);
+    }
+
     public void limelightDrive(){
         // DriveControlMode is LIMELIGHT
         targetAngle = getPoseAtTime(Timer.getFPGATimestamp() - limelightGoal.getPipelineLatency() / 1000.0).rotation.toRadians() - Math.toRadians(limelightGoal.getFilteredTargetHorizOffset());
@@ -687,6 +718,30 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         return rotationController.atGoal();
     }
 
+    public void setBalanceInitialPos(Vector2 initialPos) {
+        if(!balanceInitialPos.equals(initialPos, 2)) {
+            balanceInitialPos = initialPos;
+        }
+    }
+
+    public Vector2 getBalanceInitialPos() {
+        return balanceInitialPos;
+    }
+
+    public Timer getBalanceTimer() {
+        return balanceTimer;
+    }
+
+    public boolean isBalanced() {
+        if(balanceTimer!=null && balanceTimer.hasElapsed(5)){
+            balanceTimer.stop();
+            balanceTimer=null;
+            return true;
+        }
+        else    
+            return false;
+    }
+
     ///
     ///     Calculations
     ///
@@ -807,6 +862,12 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                     );
                 }
                 break;
+            case BALANCE:
+                balanceOutDrive();
+                synchronized (stateLock) {
+                    currentDriveSignal = this.driveSignal;
+                }
+                break;
             case HOLD:
                 updateModulesHold();
                 break;
@@ -822,6 +883,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             // Tell all swerve modules their new targets based on the kinematics.
             updateModules(currentDriveSignal);
         }
+    }
+
+    public double getPitch(){
+        return gyroscope.getPitch().toDegrees() - 2; // -2 for bias when level
     }
 
     private void updateOdometry(double time, double dt) {
@@ -915,9 +980,11 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         odometryYEntry.setDouble(pose.translation.y);
         odometryAngleEntry.setDouble(pose.rotation.toDegrees());
         SmartDashboard.putNumber("Angle to goal", getRobotToGoalAngle());
-       SmartDashboard.putNumber("Distance to goal", getRobotToGoalDistance());
-       SmartDashboard.putNumber("X", pose.translation.x);
-       SmartDashboard.putNumber("Y", pose.translation.y);
+        SmartDashboard.putNumber("Distance to goal", getRobotToGoalDistance());
+        SmartDashboard.putNumber("X", pose.translation.x);
+        SmartDashboard.putNumber("Y", pose.translation.y);
+        SmartDashboard.putNumber("pitch", getPitch());
+        SmartDashboard.putString("Drive Mode", getDriveControlMode().toString());
 //        SmartDashboard.putNumber("Lag angle", getLagAngleDegrees());
 //        SmartDashboard.putNumber("Y velocity", getVelocity().y);
 //        SmartDashboard.putNumber("X velocity", getVelocity().x);

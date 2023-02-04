@@ -9,6 +9,7 @@ import java.util.List;
 
 import edu.wpi.first.net.PortForwarder;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
+import org.frcteam2910.c2020.util.AutonomousChooser.AutonomousMode;
 import org.frcteam2910.common.Logger;
 import org.frcteam2910.common.math.RigidTransform2;
 import org.frcteam2910.common.math.Rotation2;
@@ -33,6 +34,7 @@ public class Robot extends TimedRobot {
 
     private static boolean competitionBot;
     private static boolean practiceBot;
+    private static boolean teleopUsed = false;
 
     private RobotContainer robotContainer = new RobotContainer();
     private UpdateManager updateManager = new UpdateManager(
@@ -155,11 +157,13 @@ public class Robot extends TimedRobot {
 
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.TRAJECTORY);
 
+        robotContainer.updateTrajectoriesBasedOnSide();
         robotContainer.getAutonomousCommand().schedule();
     }
 
     @Override
     public void teleopInit() {
+        teleopUsed = true;
         robotContainer.getDrivetrainSubsystem().setBrake();
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.JOYSTICKS);
         //robotContainer.getClimbElevator().setElevatorMotionMagicPositionAbsolute(27.0);
@@ -168,7 +172,27 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit(){
         robotContainer.getDrivetrainSubsystem().alignWheels();
-        robotContainer.getDrivetrainSubsystem().setCoast();
+        
+        // Safety disable
+        List<AutonomousMode> vetted = new ArrayList<AutonomousMode>(
+            Arrays.asList(AutonomousMode.SEVEN_FEET,
+                        AutonomousMode.S_CURVE,
+                        AutonomousMode.THREE_OBJECT_BRIDGE,
+                        AutonomousMode.THREE_OBJECT_CLOSE,
+                        AutonomousMode.THREE_OBJECT_FAR,
+                        AutonomousMode.UP_BRIDGE,
+                        AutonomousMode.TO_BRIDGE));
+
+        if(vetted.contains(robotContainer.getAutonomousChooser().getAutonomousModeChooser().getSelected()) || teleopUsed)
+        {
+            robotContainer.getDrivetrainSubsystem().setCoast();
+            teleopUsed = false;
+        }
+        else
+        {
+            // Unsafe command (not been confirmed safe)
+            robotContainer.getDrivetrainSubsystem().setBrake();
+        }
     }
 
     @Override

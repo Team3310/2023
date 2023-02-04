@@ -20,6 +20,10 @@ public class Pigeon extends Gyroscope {
         return Rotation2.fromDegrees(handle.getYaw());
     }
 
+    public Rotation2 getPitch(){
+        return Rotation2.fromDegrees(handle.getPitch());
+    }
+
     @Override
     public double getUnadjustedRate() {
         return 0.0;

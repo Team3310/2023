@@ -1,6 +1,7 @@
 package org.frcteam2910.c2020.util;
 
 import org.frcteam2910.c2020.RobotContainer;
+import org.frcteam2910.c2020.commands.DriveBalanceCommand;
 import org.frcteam2910.c2020.commands.FollowTrajectoryCommand;
 import org.frcteam2910.c2020.commands.auton.*;
 import org.frcteam2910.common.control.Trajectory;
@@ -12,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class AutonomousChooser {
-    private final AutonomousTrajectories trajectories;
+    private AutonomousTrajectories trajectories;
 
     private SendableChooser<AutonomousMode> autonomousModeChooser = new SendableChooser<>();
 
@@ -23,12 +24,19 @@ public class AutonomousChooser {
         autonomousModeChooser.addOption("Left Three Object Close", AutonomousMode.THREE_OBJECT_CLOSE);
         autonomousModeChooser.addOption("Right Three Object", AutonomousMode.THREE_OBJECT_BRIDGE);
         autonomousModeChooser.addOption("Right 3 Cone", AutonomousMode.CONE_BRIDGE);
+        autonomousModeChooser.addOption("On To Bridge", AutonomousMode.TO_BRIDGE);
+        autonomousModeChooser.addOption("Up Bridge", AutonomousMode.UP_BRIDGE);
+        autonomousModeChooser.addOption("Bridge Balance", AutonomousMode.BALANCE);
         autonomousModeChooser.addOption("7 Feet", AutonomousMode.SEVEN_FEET);
         autonomousModeChooser.addOption("sCurve", AutonomousMode.S_CURVE);
     }
 
     public SendableChooser<AutonomousMode> getAutonomousModeChooser() {
         return autonomousModeChooser;
+    }
+
+    public void updateTrajectories(AutonomousTrajectories trajectories){
+        this.trajectories=trajectories;
     }
 
     private Command getSevenFeet(RobotContainer container) {
@@ -64,7 +72,13 @@ public class AutonomousChooser {
             case THREE_OBJECT_BRIDGE:
                 return new RightThreeObject(container, trajectories); 
             case CONE_BRIDGE:
-                return new RightSidecone(container, trajectories);                       
+                return new RightSidecone(container, trajectories);
+            case TO_BRIDGE:
+                return new OnToBridge(container, trajectories);
+            case UP_BRIDGE:
+                return new UpOnToBridge(container, trajectories);
+            case BALANCE:
+                return new DriveBalanceCommand(container.getDrivetrainSubsystem(), true);
             default:
                 return getSevenFeet(container);
         }
@@ -81,13 +95,16 @@ public class AutonomousChooser {
                 new RigidTransform2(trajectory.calculate(0.0).getPathState().getPosition(), trajectory.calculate(0.0).getPathState().getRotation()))));
     }
 
-    private enum AutonomousMode { 
+    public enum AutonomousMode { 
         SEVEN_FEET, 
         S_CURVE,
         THREE_OBJECT_FAR,
         THREE_OBJECT_CLOSE,
         THREE_OBJECT_BRIDGE,
         CONE_BRIDGE,
+        TO_BRIDGE,
+        UP_BRIDGE,
+        BALANCE
         ;
     }
 }
