@@ -4,36 +4,40 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
+import org.frcteam2910.common.math.RigidTransform2;
 import org.frcteam2910.common.math.Vector2;
 
 public class DriveBalanceCommand extends CommandBase {
     private final DrivetrainSubsystem drivetrain;
-    
-    private final boolean isAuton;
 
-    public DriveBalanceCommand(DrivetrainSubsystem drivetrain, boolean isAuton) {
+    private final boolean isAuton;
+    private final boolean setHold;
+
+    public DriveBalanceCommand(DrivetrainSubsystem drivetrain, boolean isAuton, boolean setHold) {
         this.drivetrain = drivetrain;
         this.isAuton=isAuton;
+        this.setHold=setHold;
 
-        drivetrain.setBalanceInitialPos(drivetrain.getPose().translation);
         addRequirements(drivetrain);
     }
 
     @Override
     public void initialize() {
+        drivetrain.setBalanceInitialPos(drivetrain.getPose().translation);
         drivetrain.setDriveControlMode(DriveControlMode.BALANCE);
     }
 
     @Override
     public boolean isFinished(){
         // If the distance we traveled from initial position > distance, go slower
-        int minTraveledInches = 10;
-        int maxTraveledInches = 40;
+        double minTraveledInches = 5.0;
+        double maxTraveledInches = 40.0;
         boolean traveledFarEnough = Math.abs(drivetrain.getPose().translation.subtract(drivetrain.getBalanceInitialPos()).x) > minTraveledInches;
         boolean traveledTooFar = Math.abs(drivetrain.getPose().translation.subtract(drivetrain.getBalanceInitialPos()).x) > maxTraveledInches;
         //boolean metTarget = drivetrain.getPitch()>180 ? (360-drivetrain.getPitch())<this.deadband:drivetrain.getPitch()<this.deadband;
         boolean isBalanced = drivetrain.isBalanced();
-        return /*metTarget &&*/ (traveledFarEnough && !traveledTooFar && isBalanced) || drivetrain.getDriveControlMode()==DriveControlMode.JOYSTICKS;
+        //TODO readd the condition for distance travelled
+        return /*metTarget &&*/ (/*traveledFarEnough && !traveledTooFar &&*/ isBalanced) || drivetrain.getDriveControlMode()==DriveControlMode.JOYSTICKS;
     }
 
     @Override
@@ -41,9 +45,13 @@ public class DriveBalanceCommand extends CommandBase {
         if(isAuton)
             drivetrain.setDriveControlMode(DriveControlMode.TRAJECTORY);
         else    
-            drivetrain.setDriveControlMode(DriveControlMode.JOYSTICKS);     
-        SmartDashboard.putNumber("Traveled BInches", Math.abs(drivetrain.getPose().translation.subtract(drivetrain.getBalanceInitialPos()).x));
+            drivetrain.setDriveControlMode(DriveControlMode.JOYSTICKS);   
+        if(setHold)
+            drivetrain.setDriveControlMode(DriveControlMode.HOLD);      
+        SmartDashboard.putNumber("Traveled BInches", Math.abs(drivetrain.getPose().translation.subtract(drivetrain.getBalanceInitialPos()).length));
         drivetrain.setBalanceInitialPos(Vector2.ZERO);
+        drivetrain.setBrake();
+        drivetrain.resetPose(new RigidTransform2(new Vector2(-164, drivetrain.getPose().translation.y), drivetrain.getPose().rotation));
         drivetrain.drive(Vector2.ZERO, 0.0, false);
     }
 }

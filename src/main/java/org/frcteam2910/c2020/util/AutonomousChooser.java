@@ -75,10 +75,8 @@ public class AutonomousChooser {
                 return new RightSidecone(container, trajectories);
             case TO_BRIDGE:
                 return new OnToBridge(container, trajectories);
-            case UP_BRIDGE:
-                return new UpOnToBridge(container, trajectories);
             case BALANCE:
-                return new DriveBalanceCommand(container.getDrivetrainSubsystem(), true);
+                return new DriveBalanceCommand(container.getDrivetrainSubsystem(), true, false);
             default:
                 return getSevenFeet(container);
         }

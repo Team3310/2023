@@ -10,19 +10,13 @@ public class ZeroAll extends CommandBase {
     private final DrivetrainSubsystem drivetrain;
 
     public ZeroAll(DrivetrainSubsystem drivetrain) {
-        // this.balanceElevator = balanceElevator;
-        // this.climbElevator = climbElevator;
         this.drivetrain = drivetrain;
         
-        // addRequirements(this.balanceElevator);
-        // addRequirements(this.climbElevator);
         addRequirements(this.drivetrain);
     }
 
     @Override
     public void initialize() {
-        // balanceElevator.setElevatorZero();
-        // climbElevator.setElevatorZero(Constants.ELEVATOR_HOME_POSITION);
         drivetrain.resetGyroAngle(Rotation2.ZERO);
     }
 

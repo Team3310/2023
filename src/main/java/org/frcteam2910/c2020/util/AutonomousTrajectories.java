@@ -235,6 +235,7 @@ public class AutonomousTrajectories {
         onToBridge = new Trajectory(
                 new SimplePathBuilder(new Vector2(-252, 207), Rotation2.fromDegrees(180))
                         .lineTo(new Vector2(-173, 207), Rotation2.fromDegrees(180))
+                        .lineTo(new Vector2(-176, 207), Rotation2.fromDegrees(180))
                         .build(),
                 slowConstraints, SAMPLE_DISTANCE);
         }
@@ -299,15 +300,5 @@ public class AutonomousTrajectories {
     public Trajectory getConeBridgeLoadToPickup2(){return coneBridgefromLoadtoPickUp2;}
 
     public Trajectory getOnToBridge(){return onToBridge;}
-
-    public Trajectory getUpBridge(Vector2 pose, Rotation2 rotation){
-        SmartDashboard.putNumber("Upbridge Pose x", pose.x);
-        SmartDashboard.putNumber("Upbridge Pose y", pose.y);
-        return new Trajectory(
-                new SimplePathBuilder(new Vector2(pose.x, pose.y), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(pose.x+5, pose.y), Rotation2.fromDegrees(180))
-                        .build(), 
-                        bridgeConstraints, SAMPLE_DISTANCE);
-    }
 //#endregion
 }

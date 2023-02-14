@@ -11,6 +11,7 @@ import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.Pigeon;
 import org.frcteam2910.c2020.Robot;
 import org.frcteam2910.c2020.RobotContainer;
+import org.frcteam2910.c2020.util.SideChooser.sideMode;
 import org.frcteam2910.common.control.*;
 import org.frcteam2910.common.drivers.Gyroscope;
 import org.frcteam2910.common.kinematics.ChassisVelocity;
@@ -46,6 +47,9 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.apriltag.*;
+import edu.wpi.first.apriltag.AprilTagPoseEstimator.Config;
+import edu.wpi.first.wpilibj.Servo;
 
 
 public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
@@ -90,13 +94,14 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
     Limelight limelightGoal = Limelight.getInstance();
     // Must be named limelight-ball in the Limelight config
-    Limelight limelightBall = new Limelight("ball");
+    Limelight limelightBall = new Limelight();
 
     private final Object sensorLock = new Object();
     @GuardedBy("sensorLock")
     private final Pigeon gyroscope = new Pigeon(Constants.PIGEON_PORT);
 
-
+    // private final Servo rightServo = new Servo(0);
+    // private final Servo leftServo = new Servo(0);
     //////////////////////////////////////////////////////////////
     //                                                          //
     //                   Driving and Kinematics                 //
@@ -237,7 +242,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         return INSTANCE;
     }
 
-    private DrivetrainSubsystem() {
+    private DrivetrainSubsystem() {  
         synchronized (sensorLock) {
             gyroscope.setInverted(false);
         }
@@ -295,7 +300,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 tab.getLayout("Front Left Module", BuiltInLayouts.kList)
                         .withPosition(0, 0)
                         .withSize(1, 3),
-                Mk4SwerveModuleHelper.GearRatio.L2i,
+                Mk4SwerveModuleHelper.GearRatio.WCP,
                 Constants.DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_LEFT_ANGLE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_PORT,
@@ -305,7 +310,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 tab.getLayout("Front Right Module", BuiltInLayouts.kList)
                         .withPosition(1, 0)
                         .withSize(1, 3),
-                Mk4SwerveModuleHelper.GearRatio.L2i,
+                Mk4SwerveModuleHelper.GearRatio.WCP,
                 Constants.DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_RIGHT_ANGLE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT,
@@ -315,7 +320,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 tab.getLayout("Back Left Module", BuiltInLayouts.kList)
                         .withPosition(2, 0)
                         .withSize(1, 3),
-                Mk4SwerveModuleHelper.GearRatio.L2i,
+                Mk4SwerveModuleHelper.GearRatio.WCP,
                 Constants.DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_BACK_LEFT_ANGLE_MOTOR,
                 Constants.DRIVETRAIN_BACK_LEFT_ENCODER_PORT,
@@ -325,7 +330,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 tab.getLayout("Back Right Module", BuiltInLayouts.kList)
                         .withPosition(3, 0)
                         .withSize(1, 3),
-                Mk4SwerveModuleHelper.GearRatio.L2i,
+                Mk4SwerveModuleHelper.GearRatio.WCP,
                 Constants.DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_BACK_RIGHT_ANGLE_MOTOR,
                 Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_PORT,
@@ -405,6 +410,16 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         this.isRight = isRight;
     }
 
+    // public void setServosOut(){
+    //     leftServo.setAngle(Constants.SERVO_OUT_DEGREES);
+    //     rightServo.setAngle(Constants.SERVO_OUT_DEGREES);
+    // }
+
+    // public void setServosIn(){
+    //     leftServo.setAngle(Constants.SERVO_IN_DEGREES);
+    //     rightServo.setAngle(Constants.SERVO_IN_DEGREES);
+    // }
+
     public DriveControlMode getDriveControlMode(){
         return driveControlMode;
     }
@@ -476,7 +491,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         primaryController.getRightXAxis().setInverted(true);
 
         // Set the drive signal to a field-centric (last boolean parameter is true) joystick-based input.
-        drive(new Vector2(getDriveForwardAxis().get(true), getDriveStrafeAxis().get(true)), getDriveRotationAxis().get(true) * 0.80, true);
+        drive(new Vector2(getDriveForwardAxis().get(true), getDriveStrafeAxis().get(true)), getDriveRotationAxis().get(true) * 0.80, true);  
     }
 
     public void rotationDrive(){
@@ -569,25 +584,34 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         balanceController.reset();
         balanceController.setSetpoint(0);
         boolean tiltedBackward = (getPitch() > 180);
-        double pitchOutput = tiltedBackward ? -1 : 1;
-        double degreesAwayFromBalance = tiltedBackward ? (360 - getPitch()) : getPitch();
-        if(degreesAwayFromBalance < Constants.BALANCE_DEADBAND){
-            degreesAwayFromBalance = 0;
+        //TODO change to field oriented
+        // boolean isFacingForward = getPose().rotation.toDegrees()>50&&Math.abs(getPose().rotation.toDegrees()-360.0)>50?false:true;
+        double pitchOutput = /*isFacingForward?*/tiltedBackward ? -1:1/*: tiltedBackward ? -1 : 1*/;
+        double degreesAwayFromBalance = getPitchDegreesOffLevel();
+        double forwardAxisOutput = balanceController.calculate(Math.toRadians(degreesAwayFromBalance), 0.02);
+        
+        if(degreesAwayFromBalance < Constants.BALANCE_DEADBAND)
+        {
+            degreesAwayFromBalance *= 1.2;
             if(!balanceTimer.hasElapsed(0.1))
                 balanceTimer.start();
         }
-        else{
+        else
+        {
             balanceTimer.stop();
             balanceTimer.reset();
-        } 
+            forwardAxisOutput /= 1.3;
+        }
 
-        double forwardAxisOutput = balanceController.calculate(Math.toRadians(degreesAwayFromBalance), 0.02);
-        if(degreesAwayFromBalance > Constants.BALANCE_DEADBAND)
-            forwardAxisOutput/=1.4;
         drive(new Vector2(pitchOutput * forwardAxisOutput, 0.0), 0.0, false);
     }
 
     public void limelightDrive(){
+        // Config config = new Config(152.4/1000, angularVelocity, angularVelocity, angularVelocity, angularVelocity);
+        // AprilTagPoseEstimator poseEstimator = new AprilTagPoseEstimator(config);
+        // AprilTagDetection aprilTagDetection = new AprilTagDetection(limelightBall., MAX_LATENCY_COMPENSATION_MAP_ENTRIES, MAX_LATENCY_COMPENSATION_MAP_ENTRIES, MAX_LATENCY_COMPENSATION_MAP_ENTRIES, lastModuleAngle, TRACKWIDTH, MAX_LATENCY_COMPENSATION_MAP_ENTRIES, lastModuleAngle)
+        // AprilTagDetector aprilTagDetector = new AprilTagDetector();
+        // poseEstimator.
         // DriveControlMode is LIMELIGHT
         targetAngle = getPoseAtTime(Timer.getFPGATimestamp() - limelightGoal.getPipelineLatency() / 1000.0).rotation.toRadians() - Math.toRadians(limelightGoal.getFilteredTargetHorizOffset());
 
@@ -733,9 +757,9 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     }
 
     public boolean isBalanced() {
-        if(balanceTimer!=null && balanceTimer.hasElapsed(5)){
+        if(balanceTimer!=null && balanceTimer.hasElapsed(2.5)){
             balanceTimer.stop();
-            balanceTimer=null;
+            balanceTimer.reset();
             return true;
         }
         else    
@@ -888,6 +912,14 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public double getPitch(){
         return gyroscope.getPitch().toDegrees() - 2; // -2 for bias when level
     }
+    
+    public double getPitchDegreesOffLevel(){
+        double pitch = getPitch();
+        if(pitch > 180) {
+            pitch = 360 - pitch;
+        }
+        return pitch;
+    }
 
     private void updateOdometry(double time, double dt) {
         Vector2[] moduleVelocities = new Vector2[modules.length];
@@ -965,6 +997,13 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         }
     }
 
+    public void setModulesAngle(double angle) {
+        for (int i = 0; i < modules.length; i++) {
+            var module = modules[i];
+            module.set(0, Math.toRadians(angle));
+        }
+    }
+
     @Override
     public void periodic() {
         // Must update the Tx/Ty filter to provide it samples for calculation
@@ -985,12 +1024,6 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         SmartDashboard.putNumber("Y", pose.translation.y);
         SmartDashboard.putNumber("pitch", getPitch());
         SmartDashboard.putString("Drive Mode", getDriveControlMode().toString());
-//        SmartDashboard.putNumber("Lag angle", getLagAngleDegrees());
-//        SmartDashboard.putNumber("Y velocity", getVelocity().y);
-//        SmartDashboard.putNumber("X velocity", getVelocity().x);
-//        SmartDashboard.putNumber("Time of ball flight", Shooter.getInstance().getBallFlightTime());
-//        SmartDashboard.putNumber("Actual distance", Shooter.getInstance().getActualDistanceFromGoal());
-//        SmartDashboard.putNumber("Target Angle", targetAngle);
-//        SmartDashboard.putNumber("Limelight Horizontal angle", limelightGoal.getFilteredTargetHorizOffset());
+        SmartDashboard.putNumber("blanace timer length", balanceTimer.get());
     }
 }

@@ -40,7 +40,7 @@ public final class Limelight {
     /**
      * Creates an instance of the Limelight, assuming the name is "limelight".
      */
-    public Limelight() {
+    public   Limelight() {
         this(NetworkTableInstance.getDefault().getTable("limelight"));
     }
 

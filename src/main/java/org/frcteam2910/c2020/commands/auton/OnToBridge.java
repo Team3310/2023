@@ -20,7 +20,7 @@ public class OnToBridge extends AutonCommandBase {
         resetRobotPose(container, trajectories.getOnToBridge());
         this.addCommands(
             new FollowTrajectoryCommand(drive, trajectories.getOnToBridge()),
-            new DriveBalanceCommand(drive, true)
+            new DriveBalanceCommand(drive, true, false)
         );
     }
 }
