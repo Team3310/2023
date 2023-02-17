@@ -16,8 +16,8 @@ public class Constants {
     public static final int DRIVETRAIN_FRONT_LEFT_ENCODER_PORT = 3;
 
     /********************************************************************************************************************/
-    public static final double DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET = -Math.toRadians(0); //68.81 Practice robot settings
-    public static final double DRIVETRAIN_FRONT_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(0); //64.07 Comp settings
+    public static final double DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET = -Math.toRadians(4.04); //68.81 Practice robot settings
+    public static final double DRIVETRAIN_FRONT_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(4.04); //64.07 Comp settings
     /********************************************************************************************************************/
 
     public static final int DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR = 11;
@@ -43,8 +43,8 @@ public class Constants {
     public static final int DRIVETRAIN_BACK_RIGHT_ENCODER_PORT = 0;
 
     /********************************************************************************************************************/
-    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET = -Math.toRadians(200.21); //192.91 Practice robot settings
-    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(200.21); //213.48 Comp settings
+    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET = -Math.toRadians(207.05); //192.91 Practice robot settings
+    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(207.05); //213.48 Comp settings
     /********************************************************************************************************************/
 
     public static final double ENCODER_TICKS_PER_MOTOR_REVOLUTION = 2048.0;
@@ -64,6 +64,8 @@ public class Constants {
     public static final int INTAKE_MOTOR_CAN_ID = 2;
     public static final double SERVO_OUT_DEGREES = 135.0;
     public static final double SERVO_IN_DEGREES = 0.0;
+    public static final int RIGHT_SERVO_PORT = 0;
+    public static final int LEFT_SERVO_PORT = 1;
 
     //Intake Lift
     public static final double LIFT_COMPETITION_HOME_POSITION_DEGREES = 39.0;//39.0;

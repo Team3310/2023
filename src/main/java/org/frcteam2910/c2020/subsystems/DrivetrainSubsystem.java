@@ -100,8 +100,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     @GuardedBy("sensorLock")
     private final Pigeon gyroscope = new Pigeon(Constants.PIGEON_PORT);
 
-    // private final Servo rightServo = new Servo(0);
-    // private final Servo leftServo = new Servo(0);
+    private final Servo rightServo = new Servo(Constants.RIGHT_SERVO_PORT);
+    private final Servo leftServo = new Servo(Constants.LEFT_SERVO_PORT);
     //////////////////////////////////////////////////////////////
     //                                                          //
     //                   Driving and Kinematics                 //
@@ -126,7 +126,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         HOLD,
         LIMELIGHT_BROKEN,
         LIMELIGHT_PROFILED,
-        BALANCE,
+        BALANCE, 
+        ZERO,
         ;
     }
 
@@ -410,15 +411,17 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         this.isRight = isRight;
     }
 
-    // public void setServosOut(){
-    //     leftServo.setAngle(Constants.SERVO_OUT_DEGREES);
-    //     rightServo.setAngle(Constants.SERVO_OUT_DEGREES);
-    // }
+    public void setServosOut(){
+        leftServo.setAngle(leftServo.getAngle());
+        rightServo.setAngle(rightServo.getAngle());
+        // leftServo.setRaw(0);
+        // rightServo.setRaw(180);
+    }
 
-    // public void setServosIn(){
-    //     leftServo.setAngle(Constants.SERVO_IN_DEGREES);
-    //     rightServo.setAngle(Constants.SERVO_IN_DEGREES);
-    // }
+    public void setServosIn(){
+        leftServo.setAngle(leftServo.getAngle());
+        rightServo.setAngle(rightServo.getAngle());
+    }
 
     public DriveControlMode getDriveControlMode(){
         return driveControlMode;
@@ -491,7 +494,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         primaryController.getRightXAxis().setInverted(true);
 
         // Set the drive signal to a field-centric (last boolean parameter is true) joystick-based input.
-        drive(new Vector2(getDriveForwardAxis().get(true), getDriveStrafeAxis().get(true)), getDriveRotationAxis().get(true) * 0.80, true);  
+        drive(new Vector2(getDriveForwardAxis().get(true)*0.8, getDriveStrafeAxis().get(true)*0.8), getDriveRotationAxis().get(true) * 0.80, true);  
     }
 
     public void rotationDrive(){
@@ -895,6 +898,9 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             case HOLD:
                 updateModulesHold();
                 break;
+            case ZERO:
+                setModulesAngle(0.0);
+                break;    
         }
 
         if(driveControlMode != DriveControlMode.BALL_TRACK) {
@@ -1004,6 +1010,11 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         }
     }
 
+    public void setServoSpeed(double speed){
+        leftServo.set(speed);
+        rightServo.set(speed);
+    }
+
     @Override
     public void periodic() {
         // Must update the Tx/Ty filter to provide it samples for calculation
@@ -1025,5 +1036,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         SmartDashboard.putNumber("pitch", getPitch());
         SmartDashboard.putString("Drive Mode", getDriveControlMode().toString());
         SmartDashboard.putNumber("blanace timer length", balanceTimer.get());
+        SmartDashboard.putNumber("left servo angle", leftServo.getRaw());
+        SmartDashboard.putNumber("right servo angle", rightServo.getRaw());
     }
 }

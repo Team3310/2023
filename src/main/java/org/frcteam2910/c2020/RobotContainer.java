@@ -77,24 +77,27 @@ public class RobotContainer {
         // primaryController.getXButton().whenReleased(
         //         new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         // );
-        primaryController.getRightTriggerAxis().getButton(0.5).whenPressed(
-                new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.BALL_TRACK)
-        );
-        primaryController.getRightTriggerAxis().getButton(0.5).whenReleased(
-                new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
-        );
+        // primaryController.getRightTriggerAxis().getButton(0.5).whenPressed(
+        //         new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.BALL_TRACK)
+        // );
+        // primaryController.getRightTriggerAxis().getButton(0.5).whenReleased(
+        //         new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
+        // );
 
         primaryController.getAButton().whenPressed(
             //new DriveBalanceCommand(drivetrain, false,true)
             new InstantCommand(()->drivetrain.setDriveControlMode(DriveControlMode.HOLD))
         );
 
+        // primaryController.getXButton().whenPressed(
+        //     new InstantCommand(()->drivetrain.setDriveControlMode(DriveControlMode.LIMELIGHT))
+        // );
         primaryController.getXButton().whenPressed(
-            new InstantCommand(()->drivetrain.setDriveControlMode(DriveControlMode.LIMELIGHT))
+           new InstantCommand(()->drivetrain.setServosOut())
         );
 
         primaryController.getYButton().whenPressed(
-            new InstantCommand(()->drivetrain.setModulesAngle(0.0))
+           new InstantCommand(()->drivetrain.setServosIn())
         );
 
         //Misc
