@@ -13,7 +13,9 @@ public interface SwerveModule {
 
     void resetAbsoluteSteerAngle();
 
-    void setMotorNeutralMode(NeutralMode neutralMode);
+    void setDriveNeutralMode(NeutralMode neutralMode);
+
+    void setSteerNeutralMode(NeutralMode neutralMode);
 
     void setEncoderAutoResetIterations(int iterations);
 }

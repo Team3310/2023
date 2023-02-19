@@ -49,7 +49,10 @@ public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
         }
 
         @Override
-        public void setMotorNeutralMode(NeutralMode neutralMode){driveController.setMotorNeutralMode(neutralMode);}
+        public void setDriveNeutralMode(NeutralMode neutralMode){driveController.setMotorNeutralMode(neutralMode);}
+        
+        @Override
+        public void setSteerNeutralMode(NeutralMode neutralMode){steerController.setMotorNeutralMode(neutralMode);}
 
         @Override
         public void setVoltageRamp(double rampTime){driveController.setVoltageRamp(rampTime);}

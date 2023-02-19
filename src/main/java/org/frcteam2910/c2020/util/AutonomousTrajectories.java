@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
-import org.frcteam2910.c2020.util.SideChooser.sideMode;
+import org.frcteam2910.c2020.util.SideChooser.SideMode;
 import org.frcteam2910.common.control.MaxAccelerationConstraint;
 import org.frcteam2910.common.control.MaxVelocityConstraint;
 import org.frcteam2910.common.control.Path;
@@ -59,7 +59,7 @@ public class AutonomousTrajectories {
     private TrajectoryConstraint[] mediumConstraints;
     private TrajectoryConstraint[] slowConstraints;
 
-    public AutonomousTrajectories(TrajectoryConstraint[] trajectoryConstraints, sideMode side){
+    public AutonomousTrajectories(TrajectoryConstraint[] trajectoryConstraints, SideMode side){
         slowConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
         slowConstraints[slowConstraints.length - 1] = new MaxVelocityConstraint(6.0 * 12.0);
         slowConstraints[slowConstraints.length - 2] = new MaxAccelerationConstraint(4.0 * 12.0);
@@ -72,7 +72,7 @@ public class AutonomousTrajectories {
         bridgeConstraints[mediumConstraints.length - 1] = new MaxVelocityConstraint(2.0 * 12.0);
         bridgeConstraints[mediumConstraints.length - 2] = new MaxAccelerationConstraint(2.0 * 12.0);
 
-        if(side==sideMode.RED){
+        if(side==SideMode.RED){
             xReflect=-1;      
         }else{
             xReflect=1;

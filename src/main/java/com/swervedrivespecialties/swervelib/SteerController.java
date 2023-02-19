@@ -1,5 +1,7 @@
 package com.swervedrivespecialties.swervelib;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 public interface SteerController {
     double getReferenceAngle();
 
@@ -10,4 +12,6 @@ public interface SteerController {
     void resetAbsoluteSteerAngle();
 
     void setEncoderAutoResetIterations(int iterations);
+
+    void setMotorNeutralMode(NeutralMode neutralMode);
 }

@@ -152,10 +152,15 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        robotContainer.getDrivetrainSubsystem().setBrake();
+        teleopUsed = false;
+        robotContainer.getDrivetrainSubsystem().setDriveBrake();
+        robotContainer.getDrivetrainSubsystem().setSteerBrake();
         robotContainer.getDrivetrainSubsystem().setLimelightOverride(false);
 
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.TRAJECTORY);
+
+        robotContainer.getIntake().setArmInchesZero(Constants.ARM_HOME_INCHES);
+        robotContainer.getIntake().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
 
         robotContainer.updateTrajectoriesBasedOnSide();
         robotContainer.getAutonomousCommand().schedule();
@@ -164,10 +169,11 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         teleopUsed = true;
-        if(robotContainer.getDrivetrainSubsystem().getPitch()>15)
-            robotContainer.getDrivetrainSubsystem().setCoast();
-        else    
-            robotContainer.getDrivetrainSubsystem().setBrake();
+
+        robotContainer.updateSide();
+        robotContainer.getDrivetrainSubsystem().setDriveBrake();
+        robotContainer.getDrivetrainSubsystem().setSteerBrake();
+        
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.JOYSTICKS);
         //robotContainer.getClimbElevator().setElevatorMotionMagicPositionAbsolute(27.0);
     }
@@ -188,13 +194,23 @@ public class Robot extends TimedRobot {
 
         if(vetted.contains(robotContainer.getAutonomousChooser().getAutonomousModeChooser().getSelected()) || teleopUsed)
         {
-            robotContainer.getDrivetrainSubsystem().setCoast();
-            teleopUsed = false;
+            robotContainer.getDrivetrainSubsystem().setDriveCoast();
         }
         else
         {
             // Unsafe command (not been confirmed safe)
-            robotContainer.getDrivetrainSubsystem().setBrake();
+            robotContainer.getDrivetrainSubsystem().setDriveBrake();
+        }
+
+        // Helpful development "unlock steer motors while tilted over" feature
+        if(teleopUsed) {
+            if(robotContainer.getDrivetrainSubsystem().getPitchDegreesOffLevel() > 15) {
+                robotContainer.getDrivetrainSubsystem().setDriveCoast();
+                robotContainer.getDrivetrainSubsystem().setSteerCoast();
+            }
+            else {
+                robotContainer.getDrivetrainSubsystem().setSteerBrake();
+            }
         }
     }
 

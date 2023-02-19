@@ -3,27 +3,27 @@ package org.frcteam2910.c2020.util;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class SideChooser {
-    private SendableChooser<sideMode> sideChooser = new SendableChooser<>();
+    private SendableChooser<SideMode> sideChooser = new SendableChooser<>();
 
     public SideChooser() {
 
-        sideChooser.setDefaultOption("Blue", sideMode.BLUE);
-        sideChooser.addOption("Red", sideMode.RED);
+        sideChooser.setDefaultOption("Blue", SideMode.BLUE);
+        sideChooser.addOption("Red", SideMode.RED);
     }
 
-    public SendableChooser<sideMode> getSideModeChooser() {
+    public SendableChooser<SideMode> getSideModeChooser() {
         return sideChooser;
     }
 
-    public sideMode getSide() {
+    public SideMode getSide() {
         return sideChooser.getSelected();
     }
 
-    public enum sideMode { 
+    public enum SideMode { 
         RED("Red"),
         BLUE("Blue");
 
-        sideMode(String s){
+        SideMode(String s){
             side=s;
         }
 

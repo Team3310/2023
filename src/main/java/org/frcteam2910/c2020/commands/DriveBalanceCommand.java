@@ -50,7 +50,7 @@ public class DriveBalanceCommand extends CommandBase {
             drivetrain.setDriveControlMode(DriveControlMode.HOLD);      
         SmartDashboard.putNumber("Traveled BInches", Math.abs(drivetrain.getPose().translation.subtract(drivetrain.getBalanceInitialPos()).length));
         drivetrain.setBalanceInitialPos(Vector2.ZERO);
-        drivetrain.setBrake();
+        drivetrain.setDriveBrake();
         drivetrain.resetPose(new RigidTransform2(new Vector2(-164, drivetrain.getPose().translation.y), drivetrain.getPose().rotation));
         drivetrain.drive(Vector2.ZERO, 0.0, false);
     }

@@ -1,12 +1,15 @@
 package com.swervedrivespecialties.swervelib.rev;
 
 import com.revrobotics.*;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.swervedrivespecialties.swervelib.*;
 import com.swervedrivespecialties.swervelib.AbsoluteEncoder;
 
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 
 import static com.swervedrivespecialties.swervelib.rev.RevUtils.checkNeoError;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 public final class NeoSteerControllerFactoryBuilder {
     // PID configuration
@@ -177,6 +180,10 @@ public final class NeoSteerControllerFactoryBuilder {
             motorEncoder.setPosition(absoluteEncoder.getAbsoluteAngle());
         }
 
+        @Override
+        public void setMotorNeutralMode(NeutralMode mode) {
+            this.motor.setIdleMode(mode == NeutralMode.Brake ? IdleMode.kBrake : IdleMode.kCoast);
+        }
 
         @Override
         public void setEncoderAutoResetIterations(int iterations) {

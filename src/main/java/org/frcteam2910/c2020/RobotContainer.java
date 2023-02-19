@@ -1,12 +1,15 @@
 package org.frcteam2910.c2020;
 
 import org.frcteam2910.c2020.commands.*;
-import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
+import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.AutonomousChooser;
 import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import org.frcteam2910.c2020.util.DriverReadout;
 import org.frcteam2910.c2020.util.SideChooser;
+import org.frcteam2910.common.math.RigidTransform2;
+import org.frcteam2910.common.math.Vector2;
+import org.frcteam2910.common.robot.input.Axis;
 import org.frcteam2910.common.robot.input.DPadButton;
 import org.frcteam2910.common.robot.input.XboxController;
 
@@ -23,6 +26,7 @@ public class RobotContainer {
     private static RobotContainer instance;
 
     private final DrivetrainSubsystem drivetrain = DrivetrainSubsystem.getInstance();
+    private final Intake intake = Intake.getInstance();
     
     private AutonomousTrajectories autonomousTrajectories;
     private final AutonomousChooser autonomousChooser;
@@ -41,6 +45,8 @@ public class RobotContainer {
         driverReadout = new DriverReadout(this);
 
         CommandScheduler.getInstance().registerSubsystem(drivetrain);
+        CommandScheduler.getInstance().setDefaultCommand(intake, new ArmRotationControlJoysticks(intake, getArmRotationAxis()));
+        CommandScheduler.getInstance().setDefaultCommand(intake, new ArmTranslationalControlJoysticks(intake, getArmTranslationalAxis()));
 
         configureButtonBindings();
         
@@ -51,6 +57,10 @@ public class RobotContainer {
         autonomousTrajectories = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, sideChooser.getSide());
         autonomousChooser.updateTrajectories(autonomousTrajectories);
         SmartDashboard.putString("Side", sideChooser.getSide().toString());
+    }
+
+    public void updateSide(){
+        drivetrain.setSide(sideChooser.getSide());
     }
 
     private void configureButtonBindings() {
@@ -74,31 +84,30 @@ public class RobotContainer {
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
 
-        // primaryController.getXButton().whenReleased(
-        //         new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
-        // );
-        // primaryController.getRightTriggerAxis().getButton(0.5).whenPressed(
-        //         new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.BALL_TRACK)
-        // );
-        // primaryController.getRightTriggerAxis().getButton(0.5).whenReleased(
-        //         new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
-        // );
+        primaryController.getXButton().whenPressed(
+                new InstantCommand(()->drivetrain.resetPose(new RigidTransform2(new Vector2(-288, 0), drivetrain.getPose().rotation)))//intake.setServoSpeed(1))
+        );
+        primaryController.getYButton().whenPressed(
+                new InstantCommand(()->intake.setServoSpeed(0))
+        );
+        primaryController.getBButton().whenPressed(
+                new InstantCommand(()->intake.setServoSpeed(-1))
+        );
+        primaryController.getRightTriggerAxis().getButton(0.5).whenPressed(
+                new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.BALL_TRACK)
+        );
+        primaryController.getRightTriggerAxis().getButton(0.5).whenReleased(
+                new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
+        );
 
         primaryController.getAButton().whenPressed(
             //new DriveBalanceCommand(drivetrain, false,true)
-            new InstantCommand(()->drivetrain.setDriveControlMode(DriveControlMode.HOLD))
+            new DriveBalanceCommand(drivetrain, false, true)
         );
 
         // primaryController.getXButton().whenPressed(
         //     new InstantCommand(()->drivetrain.setDriveControlMode(DriveControlMode.LIMELIGHT))
         // );
-        primaryController.getXButton().whenPressed(
-           new InstantCommand(()->drivetrain.setServosOut())
-        );
-
-        primaryController.getYButton().whenPressed(
-           new InstantCommand(()->drivetrain.setServosIn())
-        );
 
         //Misc
         secondaryController.getDPadButton(DPadButton.Direction.RIGHT).whenPressed(
@@ -115,7 +124,6 @@ public class RobotContainer {
 
         SmartDashboard.putData("Limelight broken", new InstantCommand(()-> drivetrain.setLimelightOverride(true)));
         SmartDashboard.putData("Limelight working", new InstantCommand(()-> drivetrain.setLimelightOverride(false)));
-
     }
     public Command getAutonomousCommand() {
         return autonomousChooser.getCommand(this);
@@ -133,12 +141,23 @@ public class RobotContainer {
         return primaryController;
     }
 
+    private Axis getArmRotationAxis() {
+        return secondaryController.getLeftYAxis();
+    }
+    private Axis getArmTranslationalAxis() {
+        return secondaryController.getRightYAxis();
+    }
+
     public AutonomousChooser getAutonomousChooser() {
         return autonomousChooser;
     }
 
     public DriverReadout getDriverReadout() {
         return driverReadout;
+    }
+
+    public Intake getIntake(){
+        return intake;
     }
 
     public static RobotContainer getInstance() {

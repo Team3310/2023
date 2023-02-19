@@ -11,7 +11,8 @@ import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.Pigeon;
 import org.frcteam2910.c2020.Robot;
 import org.frcteam2910.c2020.RobotContainer;
-import org.frcteam2910.c2020.util.SideChooser.sideMode;
+import org.frcteam2910.c2020.Servo;
+import org.frcteam2910.c2020.util.SideChooser.SideMode;
 import org.frcteam2910.common.control.*;
 import org.frcteam2910.common.drivers.Gyroscope;
 import org.frcteam2910.common.kinematics.ChassisVelocity;
@@ -49,7 +50,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.apriltag.*;
 import edu.wpi.first.apriltag.AprilTagPoseEstimator.Config;
-import edu.wpi.first.wpilibj.Servo;
 
 
 public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
@@ -71,6 +71,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private double backLeftOffset = Constants.DRIVETRAIN_BACK_LEFT_ENCODER_COMP_OFFSET;
     private double backRightOffset = Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_COMP_OFFSET;
 
+    private SideMode side = SideMode.BLUE;
     private double rCurrPoseX;
     private double rCurrPoseY;
     private boolean isRight = true;
@@ -82,12 +83,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     
     // Initialized in constructor
     private ShuffleboardTab tab;
-
-    //////////////////////////////////////////////////////////////
-    //                                                          //
-    //                     Motors and Sensors                   //
-    //                                                          //
-    //////////////////////////////////////////////////////////////
+    // #region --Motors and Sensors--
 
     private final SwerveModule[] modules;
     private double[] lastModuleAngle;
@@ -99,15 +95,9 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private final Object sensorLock = new Object();
     @GuardedBy("sensorLock")
     private final Pigeon gyroscope = new Pigeon(Constants.PIGEON_PORT);
+    //#endregion
 
-    private final Servo rightServo = new Servo(Constants.RIGHT_SERVO_PORT);
-    private final Servo leftServo = new Servo(Constants.LEFT_SERVO_PORT);
-    //////////////////////////////////////////////////////////////
-    //                                                          //
-    //                   Driving and Kinematics                 //
-    //                                                          //
-    //////////////////////////////////////////////////////////////
-
+    // #region --Driving and Kinematics--
     private Controller primaryController;  // For the driver
     private DriveControlMode driveControlMode = DriveControlMode.JOYSTICKS;
     private SwervePivotPoint pivotPoint = SwervePivotPoint.CENTER;
@@ -182,13 +172,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private final InterpolatingTreeMap<InterpolatingDouble, RigidTransform2> latencyCompensationMap = new InterpolatingTreeMap<>();
     @GuardedBy("kinematicsLock")
     private final SwerveOdometry swerveOdometry = new SwerveOdometry(RigidTransform2.ZERO);
+    
+    //#endregion
 
-
-    //////////////////////////////////////////////////////////////
-    //                                                          //
-    //     Drivetrain PID, Constraints, and Control Systems     //
-    //                                                          //
-    //////////////////////////////////////////////////////////////
+    //#region Drivetrain PID, Constraints, and Control Systems
     
     public TrapezoidProfile.Constraints constraints = new Constraints(20.0, 6.0);
 
@@ -228,13 +215,9 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private final GenericEntry odometryXEntry;
     private final GenericEntry odometryYEntry;
     private final GenericEntry odometryAngleEntry;
+    // #endregion
 
-    //////////////////////////////////////////////////////////////
-    //                                                          //
-    //                       Constructor/                       //
-    //                       Class Methods                      //
-    //                                                          //
-    //////////////////////////////////////////////////////////////
+    //#region Constructor/Class Methods
 
     public static DrivetrainSubsystem getInstance() {
         if(INSTANCE == null) {
@@ -284,11 +267,9 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         balanceController.setInputRange(0, Math.PI);
         balanceController.setContinuous(true);
     }
+    //#endregion
 
-    ///
-    /// Class Methods
-    ///
-
+    //#region Class Methods
 
     /** Lays out the Shuffleboard format out-of-the-box for this Drivetrain configuration. 
      * 
@@ -301,7 +282,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 tab.getLayout("Front Left Module", BuiltInLayouts.kList)
                         .withPosition(0, 0)
                         .withSize(1, 3),
-                Mk4SwerveModuleHelper.GearRatio.WCP,
+                Mk4SwerveModuleHelper.GearRatio.L2i,
                 Constants.DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_LEFT_ANGLE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_PORT,
@@ -311,7 +292,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 tab.getLayout("Front Right Module", BuiltInLayouts.kList)
                         .withPosition(1, 0)
                         .withSize(1, 3),
-                Mk4SwerveModuleHelper.GearRatio.WCP,
+                Mk4SwerveModuleHelper.GearRatio.L2i,
                 Constants.DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_RIGHT_ANGLE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT,
@@ -321,7 +302,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 tab.getLayout("Back Left Module", BuiltInLayouts.kList)
                         .withPosition(2, 0)
                         .withSize(1, 3),
-                Mk4SwerveModuleHelper.GearRatio.WCP,
+                Mk4SwerveModuleHelper.GearRatio.L2i,
                 Constants.DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_BACK_LEFT_ANGLE_MOTOR,
                 Constants.DRIVETRAIN_BACK_LEFT_ENCODER_PORT,
@@ -331,7 +312,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 tab.getLayout("Back Right Module", BuiltInLayouts.kList)
                         .withPosition(3, 0)
                         .withSize(1, 3),
-                Mk4SwerveModuleHelper.GearRatio.WCP,
+                Mk4SwerveModuleHelper.GearRatio.L2i,
                 Constants.DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_BACK_RIGHT_ANGLE_MOTOR,
                 Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_PORT,
@@ -377,13 +358,9 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
               
         tab.addNumber("Average Velocity", this::getAverageAbsoluteValueVelocity);
     }
+    //#endregion
 
-
-    //////////////////////////////////////////////////////////////
-    //                                                          //
-    //                    Getters and Setters                   //
-    //                                                          //
-    //////////////////////////////////////////////////////////////
+    //#region Getters and Setters
 
     public void setController(XboxController controller){
         primaryController = controller;
@@ -411,17 +388,6 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         this.isRight = isRight;
     }
 
-    public void setServosOut(){
-        leftServo.setAngle(leftServo.getAngle());
-        rightServo.setAngle(rightServo.getAngle());
-        // leftServo.setRaw(0);
-        // rightServo.setRaw(180);
-    }
-
-    public void setServosIn(){
-        leftServo.setAngle(leftServo.getAngle());
-        rightServo.setAngle(rightServo.getAngle());
-    }
 
     public DriveControlMode getDriveControlMode(){
         return driveControlMode;
@@ -474,12 +440,9 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public HolonomicMotionProfiledTrajectoryFollower getFollower() {
         return follower;
     }
+    //#endregion
 
-    //////////////////////////////////////////////////////////////
-    //                                                          //
-    //          Class Methods and Drive Control Modes           //
-    //                                                          //
-    //////////////////////////////////////////////////////////////
+    //#region Class Methods and Drive Control Modes
 
     public void drive(Vector2 translationalVelocity, double rotationalVelocity, boolean isFieldOriented) {
         synchronized (stateLock) {
@@ -494,7 +457,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         primaryController.getRightXAxis().setInverted(true);
 
         // Set the drive signal to a field-centric (last boolean parameter is true) joystick-based input.
-        drive(new Vector2(getDriveForwardAxis().get(true)*0.8, getDriveStrafeAxis().get(true)*0.8), getDriveRotationAxis().get(true) * 0.80, true);  
+        drive(new Vector2(getDriveForwardAxis().get(true)*Constants.TRANSLATIONAL_SCALAR, getDriveStrafeAxis().get(true)*Constants.ROTATIONAL_SCALAR), getDriveRotationAxis().get(true) * 0.80, true);  
     }
 
     public void rotationDrive(){
@@ -586,27 +549,74 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         // DriveControlMode is BALANCE
         balanceController.reset();
         balanceController.setSetpoint(0);
-        boolean tiltedBackward = (getPitch() > 180);
         //TODO change to field oriented
-        // boolean isFacingForward = getPose().rotation.toDegrees()>50&&Math.abs(getPose().rotation.toDegrees()-360.0)>50?false:true;
-        double pitchOutput = /*isFacingForward?*/tiltedBackward ? -1:1/*: tiltedBackward ? -1 : 1*/;
-        double degreesAwayFromBalance = getPitchDegreesOffLevel();
+        double angle = getPose().rotation.toDegrees();
+        boolean roll = (angle>60 && angle<120)||(angle>240 && angle<300);
+        boolean pitch = roll?false:(angle>330 || angle<30)||(angle>150 && angle<210);
+        boolean tiltedBackward = false;
+        double invertOutput = 1.0;
+        double degreesAwayFromBalance = 0;
+
+        SmartDashboard.putBoolean("isRoll", roll);
+        SmartDashboard.putBoolean("isPitch", pitch);
+        //if(degreesAwayFromBalance>1)
+        //    degreesAwayFromBalance*=degreesAwayFromBalance;
+        if(roll){
+            degreesAwayFromBalance = getRollDegreesOffLevel();
+        }else if(pitch){
+            degreesAwayFromBalance = getPitchDegreesOffLevel();
+        }else{
+            degreesAwayFromBalance = 0.0; 
+            setDriveControlMode(DriveControlMode.JOYSTICKS);
+            return;       
+        }
+
+        SmartDashboard.putNumber("degrees away", degreesAwayFromBalance);
+
+        double x = getPose().translation.x;
+
+        if(side==SideMode.RED){
+            if(x<-210){
+                invertOutput = -1.0;
+            }
+            else if(x>-210){
+                invertOutput = 1.0;
+            }
+        }
+        else if(side==SideMode.BLUE){    
+            if(x>210){
+                invertOutput = -1.0;
+            }
+            else if(x<210){
+                invertOutput = 1.0;
+            }
+        }
+
         double forwardAxisOutput = balanceController.calculate(Math.toRadians(degreesAwayFromBalance), 0.02);
         
         if(degreesAwayFromBalance < Constants.BALANCE_DEADBAND)
         {
-            degreesAwayFromBalance *= 1.2;
+            forwardAxisOutput *= 1.2;
             if(!balanceTimer.hasElapsed(0.1))
                 balanceTimer.start();
+        }
+        else if(degreesAwayFromBalance>10)
+        {
+            balanceTimer.stop();
+            balanceTimer.reset();
+            forwardAxisOutput *= 1.5;
         }
         else
         {
             balanceTimer.stop();
             balanceTimer.reset();
-            forwardAxisOutput /= 1.3;
+            forwardAxisOutput *= .8;
         }
 
-        drive(new Vector2(pitchOutput * forwardAxisOutput, 0.0), 0.0, false);
+        SmartDashboard.putNumber("invert", invertOutput);
+        SmartDashboard.putNumber("output", forwardAxisOutput);
+
+        drive(new Vector2(invertOutput * forwardAxisOutput, 0.0), 0.0, true);
     }
 
     public void limelightDrive(){
@@ -658,13 +668,9 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         // No x-y plane movement allowed, and we tell the PIDController to snap to the calculated angle
         drive(new Vector2(0, 0), rotationOutput, true);
     }
+    //#endregion
 
-
-    //////////////////////////////////////////////////////////////
-    //                                                          //
-    //     Utility (Control System) Methods and Calculations    //
-    //                                                          //
-    //////////////////////////////////////////////////////////////
+    //#region Utility (Control System) Methods and Calculations
 
     public void resetSteerAbsoluteAngle() {
         for (int i = 0; i < modules.length; i++) {
@@ -693,15 +699,31 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         }
     }
 
-    public void setCoast(){
+    public void setDriveCoast(){
         for(SwerveModule i : modules){
-            i.setMotorNeutralMode(NeutralMode.Coast);
+            i.setDriveNeutralMode(NeutralMode.Coast);
         }
     }
 
-    public void setBrake(){
+    public void setDriveBrake(){
         for(SwerveModule i : modules){
-            i.setMotorNeutralMode(NeutralMode.Brake);
+            i.setDriveNeutralMode(NeutralMode.Brake);
+        }
+    }
+
+    public void setSteerCoast(){
+        for(SwerveModule i : modules){
+            i.setSteerNeutralMode(NeutralMode.Coast);
+        }
+    }
+
+    public void setSide(SideMode side){
+        this.side = side;
+    }
+
+    public void setSteerBrake(){
+        for(SwerveModule i : modules){
+            i.setSteerNeutralMode(NeutralMode.Brake);
         }
     }
 
@@ -768,10 +790,9 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         else    
             return false;
     }
+    //#endregion
 
-    ///
-    ///     Calculations
-    ///
+    //#region Calculations
 
     // public double getLagAngleDegrees(){
     //     double timeOfFlight = Shooter.getInstance().getBallFlightTime();
@@ -918,6 +939,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public double getPitch(){
         return gyroscope.getPitch().toDegrees() - 2; // -2 for bias when level
     }
+
+    public double getRoll(){
+        return gyroscope.getRoll().toDegrees() + 0.3; // +0.3 for bias when level
+    }
     
     public double getPitchDegreesOffLevel(){
         double pitch = getPitch();
@@ -925,6 +950,14 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             pitch = 360 - pitch;
         }
         return pitch;
+    }
+
+    public double getRollDegreesOffLevel(){
+        double roll = getRoll();
+        if(roll > 180) {
+            roll = 360 - roll;
+        }
+        return roll;
     }
 
     private void updateOdometry(double time, double dt) {
@@ -946,8 +979,21 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         ChassisVelocity velocity = swerveKinematics.toChassisVelocity(moduleVelocities);
 
         synchronized (kinematicsLock) {
-
-            this.pose = swerveOdometry.update(swerveKinematics, angle, dt, moduleVelocities);
+            if(getPitchDegreesOffLevel()<2 && getRollDegreesOffLevel()<2){
+                // On the ground, update odometry
+                this.pose = swerveOdometry.update(swerveKinematics, angle, dt, moduleVelocities);
+            }
+            else {
+                // Not on the ground
+                double xacc = gyroscope.getAccels()[0]/(double)Short.MAX_VALUE;
+                double yacc = gyroscope.getAccels()[1]/(double)Short.MAX_VALUE;
+                if((xacc < .12 && getPitchDegreesOffLevel()>Constants.BALANCE_DEADBAND+2)
+                    || (yacc < .12 && getRollDegreesOffLevel()>Constants.BALANCE_DEADBAND+2)) {
+                    Vector2[] zeros = {new Vector2(0,0),new Vector2(0,0),new Vector2(0,0),new Vector2(0,0)};
+                    this.pose = swerveOdometry.update(swerveKinematics, angle, dt, zeros);
+                }
+                else this.pose = swerveOdometry.update(swerveKinematics, angle, dt, moduleVelocities);
+            }    
             if (latencyCompensationMap.size() > MAX_LATENCY_COMPENSATION_MAP_ENTRIES) {
                 latencyCompensationMap.remove(latencyCompensationMap.firstKey());
             }
@@ -1009,11 +1055,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             module.set(0, Math.toRadians(angle));
         }
     }
-
-    public void setServoSpeed(double speed){
-        leftServo.set(speed);
-        rightServo.set(speed);
-    }
+    //#endregion
 
     @Override
     public void periodic() {
@@ -1034,9 +1076,14 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         SmartDashboard.putNumber("X", pose.translation.x);
         SmartDashboard.putNumber("Y", pose.translation.y);
         SmartDashboard.putNumber("pitch", getPitch());
+        SmartDashboard.putNumber("roll", getRoll());
         SmartDashboard.putString("Drive Mode", getDriveControlMode().toString());
         SmartDashboard.putNumber("blanace timer length", balanceTimer.get());
-        SmartDashboard.putNumber("left servo angle", leftServo.getRaw());
-        SmartDashboard.putNumber("right servo angle", rightServo.getRaw());
+        SmartDashboard.putNumber("angle", getPose().rotation.toDegrees());
+        SmartDashboard.putString("side", side.toString());
+        SmartDashboard.putNumber("x accel", gyroscope.getAccels()[0]/(double)Short.MAX_VALUE);
+        SmartDashboard.putNumber("y accel", gyroscope.getAccels()[1]/(double)Short.MAX_VALUE);
+        SmartDashboard.putNumber("z accel", gyroscope.getAccels()[2]/(double)Short.MAX_VALUE);
+        //SmartDashboard.putString("accel", gyroscope.getAccels()[0]+" "+gyroscope.getAccels()[1]+" "+gyroscope.getAccels()[2]);
     }
 }

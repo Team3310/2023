@@ -24,6 +24,16 @@ public class Pigeon extends Gyroscope {
         return Rotation2.fromDegrees(handle.getPitch());
     }
 
+    public short[] getAccels(){
+        short[] refAccels = new short[] {0,0,0};
+        handle.getBiasedAccelerometer(refAccels);
+        return refAccels;
+    }
+
+    public Rotation2 getRoll(){
+        return Rotation2.fromDegrees(handle.getRoll());
+    }
+
     @Override
     public double getUnadjustedRate() {
         return 0.0;
