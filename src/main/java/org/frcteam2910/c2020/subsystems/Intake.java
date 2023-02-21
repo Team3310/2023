@@ -2,6 +2,8 @@ package org.frcteam2910.c2020.subsystems;
 
 import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.Servo;
+import org.frcteam2910.common.robot.input.Axis;
+import org.frcteam2910.common.robot.input.Controller;
 import org.frcteam2910.common.robot.input.XboxController;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -25,26 +27,17 @@ public class Intake implements Subsystem{
     private final Servo leftServo = new Servo(Constants.LEFT_SERVO_PORT);
 
     //falcons
-    private TalonFX armRotationMotor;
-    private TalonFX armTranslationMotor;
+    private TalonFX intakeMotor;
 
     //conversions
-    private double ARM_REVOLUTIONS_TO_ENCODER_TICKS = Constants.ARM_ROTATION_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
-    private double ARM_DEGREES_TO_ENCODER_TICKS = ARM_REVOLUTIONS_TO_ENCODER_TICKS/360;
-    private double DRUM_DIAMETER = 0.75;
-    private double TRANSLATIONAL_ROTATIONS_TO_INCHES = Math.PI * DRUM_DIAMETER;
-    private double ARM_INCHES_TO_ENCODER_TICKS = Constants.ARM_TRANSLATIONAL_GEAR_RATIO * Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION / TRANSLATIONAL_ROTATIONS_TO_INCHES;
+    private static final double INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 60.0 / 16.0;
+    public static final double INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
     
     //misc
-    private ArmControlMode rotatinControlMode = ArmControlMode.MANUAL;
-    private ArmControlMode translationControlMode = ArmControlMode.MANUAL;
+    private Controller secondaryController;
+
+    boolean hasSetIntakeZero = false;
     private ServoControlMode servoControlMode = ServoControlMode.MANUAL;
-    private double inchesOffset;
-    private double degreesOffset;
-    private double targetDegreesTicks;
-    private double targetInchesTicks;
-    private double manualTranslationSpeed;
-    private double manualRotationSpeed;
     private double lastCommandedSpeed;
 
     private static Intake INSTANCE;
@@ -58,21 +51,7 @@ public class Intake implements Subsystem{
     }
     
     private Intake(){
-        armRotationMotor = new TalonFX(Constants.ARM_ROTATION_MOTOR_PORT, "Drivetrain");
-        armTranslationMotor = new TalonFX(Constants.ARM_TRANSLATIONAL_MOTOR_PORT, "Drivetrain");
-
-        TalonFXConfiguration configs = new TalonFXConfiguration();
-        configs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
-        armRotationMotor.configAllSettings(configs);
-        armTranslationMotor.configAllSettings(configs);
-
-        armRotationMotor.configMotionCruiseVelocity(6000);
-        armRotationMotor.configMotionAcceleration(14000);
-        armRotationMotor.configMotionSCurveStrength(4);
-
-        armTranslationMotor.configMotionCruiseVelocity(6000);
-        armRotationMotor.configMotionAcceleration(14000);
-        armRotationMotor.configMotionSCurveStrength(4);
+        intakeMotor = new TalonFX(Constants.INTAKE_MOTOR_PORT);
         
         leftServo.setInverted(false);
         rightServo.setInverted(false);
@@ -91,138 +70,59 @@ public class Intake implements Subsystem{
         servoControlMode=mode;
     }
     //#endregion
-        //#region arm
-    public void setRotationControlMode(ArmControlMode mode){
-        rotatinControlMode = mode;
-    }
+        
+        //#region intake
+        public void variableIntakeRPM(){
 
-    public void setTranslationalControlMode(ArmControlMode mode){
-        translationControlMode = mode;
-    }
 
-    public double getRotationRotations(){
-        return armRotationMotor.getSelectedSensorPosition() / Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION / Constants.ARM_ROTATION_GEAR_RATIO;
-    }
-
-    public double getArmDegrees(){
-        return (getRotationRotations() * ARM_DEGREES_TO_ENCODER_TICKS)+degreesOffset;
-    }
-
-    public double getTranslationalRotations(){
-        return armTranslationMotor.getSelectedSensorPosition() / Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION / Constants.ARM_TRANSLATIONAL_GEAR_RATIO;
-    }
-
-    public double getArmInches(){
-        return (getTranslationalRotations() * ARM_INCHES_TO_ENCODER_TICKS)+inchesOffset;
-    }
-
-    public double getArmDegreesEncoderTicksAbsolute(double degrees){
-        return (int) (degrees * ARM_DEGREES_TO_ENCODER_TICKS);
-    }
-
-    public double getArmInchesEncoderTicksAbsolute(double inches){
-        return (int) (inches * ARM_INCHES_TO_ENCODER_TICKS);
-    }
-
-    public void setArmInchesZero(double offset){
-        inchesOffset = offset;
-        armTranslationMotor.setSelectedSensorPosition(0);
-    }
-
-    public void setArmDegreesZero(double offset){
-        degreesOffset = offset;
-        armRotationMotor.setSelectedSensorPosition(0);
-    }
-
-    public double limitArmDegrees(double targetDegrees){
-        if(targetDegrees < Constants.MIN_ARM_DEGREES){
-            return Constants.MIN_ARM_DEGREES;
-        }else if(targetDegrees > Constants.MAX_ARM_DEGREES){
-            return Constants.MAX_ARM_DEGREES;
+            if(getRightTriggerAxis().getButton(0.1).getAsBoolean()){
+                setRollerSpeed(getRightTriggerAxis().get(true));
+                //setRollerRPM(getRightTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
+                hasSetIntakeZero = false;
+            }
+            else if(getLeftTriggerAxis().getButton(0.1).getAsBoolean()){
+                setRollerSpeed(-getLeftTriggerAxis().get(true));
+                //setRollerRPM( -getLeftTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
+                hasSetIntakeZero = false;
+            }
+            else{
+                if(!hasSetIntakeZero){
+                    setRollerSpeed(0);
+                    hasSetIntakeZero = true;
+                }
+            }
         }
 
-        return targetDegrees;   
-    }
-
-    public double limitArmInches(double targetInches){
-        if(targetInches < Constants.MIN_ARM_INCHES){
-            return Constants.MIN_ARM_INCHES;
-        }else if(targetInches > Constants.MAX_ARM_INCHES){
-            return Constants.MAX_ARM_INCHES;
+        public void setRollerSpeed(double speed) {
+            this.intakeMotor.set(ControlMode.PercentOutput, speed);
+            //System.out.println("Set Intake Speed = " + speed);
+        }
+        
+        public void setRollerRPM(double rpm) {
+            this.intakeMotor.set(ControlMode.Velocity, this.RollerRPMToNativeUnits(rpm));
+            //System.out.println("Set Intake RPM = " + rpm);
+    
         }
 
-        return targetInches;   
-    }
-
-    public synchronized void setArmDegreesMotionMagicPositionAbsolute(double degrees) {
-        rotatinControlMode = ArmControlMode.MOTION_MAGIC;
-        armRotationMotor.selectProfileSlot(1, 0);
-        targetDegreesTicks = getArmDegreesEncoderTicksAbsolute(limitArmDegrees(degrees));
-        armRotationMotor.set(ControlMode.MotionMagic, targetDegreesTicks, DemandType.ArbitraryFeedForward, 0.04);
-    }
-
-    public synchronized void setArmInchesMotionMagicPositionAbsolute(double inches) {
-        rotatinControlMode = ArmControlMode.MOTION_MAGIC;
-        armRotationMotor.selectProfileSlot(1, 0);
-        targetInchesTicks = getArmInchesEncoderTicksAbsolute(limitArmInches(inches));
-        armTranslationMotor.set(ControlMode.MotionMagic, targetInchesTicks, DemandType.ArbitraryFeedForward, 0.04);
-    }
-
-    public synchronized void setRotationSpeed(double speed) {
-        manualRotationSpeed = speed;
-        double curSpeed = speed;
-
-        rotatinControlMode = ArmControlMode.MANUAL;
-        if (getArmDegrees() < Constants.MIN_ARM_DEGREES && speed < 0.0) {
-            curSpeed = 0;
-        } else if (getArmDegrees() > Constants.MAX_ARM_DEGREES && speed > 0.0) {
-            curSpeed = 0;
+        public double RollerRPMToNativeUnits(double rpm) {
+            return rpm * INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS / 10.0D / 60.0D;
         }
 
-        armRotationMotor.set(ControlMode.PercentOutput, curSpeed);
-    }
-
-    public synchronized void setTranslationalSpeed(double speed) {
-        manualTranslationSpeed = speed;
-        double curSpeed = speed;
-
-        translationControlMode = ArmControlMode.MANUAL;
-        if (getArmInches() < Constants.MIN_ARM_INCHES && speed < 0.0) {
-            curSpeed = 0;
-        } else if (getArmInches() > Constants.MAX_ARM_INCHES && speed > 0.0) {
-            curSpeed = 0;
+        public void setController(Controller secondaryController){
+            this.secondaryController = secondaryController;
         }
 
-        armTranslationMotor.set(ControlMode.PercentOutput, curSpeed);
-    }
-
-    public synchronized void setRotationHold(){
-        setArmDegreesMotionMagicPositionAbsolute(getArmDegrees());
-    }
-
-    public synchronized void setTranslationalHold(){
-        setArmInchesMotionMagicPositionAbsolute(getArmInches());
-    }
+        private Axis getRightTriggerAxis(){return secondaryController.getRightTriggerAxis();}
+        private Axis getLeftTriggerAxis(){return secondaryController.getLeftTriggerAxis();}
         //#endregion
     //#endregion
 
     @Override
     public void periodic(){
-        if (rotatinControlMode == ArmControlMode.MANUAL) {
-            if (getArmDegrees() < Constants.MIN_ARM_DEGREES && manualRotationSpeed < 0.0) {
-                setRotationHold();
-            } else if (getArmDegrees() > Constants.MAX_ARM_DEGREES && manualRotationSpeed > 0.0) {
-                setRotationHold();
-            }
-        }
-        if (translationControlMode == ArmControlMode.MANUAL) {
-            if (getArmInches() < Constants.MIN_ARM_INCHES && manualTranslationSpeed < 0.0) {
-                setTranslationalHold();
-            } else if (getArmDegrees() > Constants.MAX_ARM_INCHES && manualTranslationSpeed > 0.0) {
-                setTranslationalHold();
-            }
-        }
+        SmartDashboard.putBoolean("set zero intake rpm", hasSetIntakeZero);
+        SmartDashboard.putNumber("controller right axis", getRightTriggerAxis().get());
 
+        variableIntakeRPM();
         if(servoControlMode == ServoControlMode.HOLD){
             leftServo.setSpeed(lastCommandedSpeed);
             rightServo.setSpeed(lastCommandedSpeed); 

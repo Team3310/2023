@@ -159,8 +159,8 @@ public class Robot extends TimedRobot {
 
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.TRAJECTORY);
 
-        robotContainer.getIntake().setArmInchesZero(Constants.ARM_HOME_INCHES);
-        robotContainer.getIntake().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
+        //robotContainer.getArm().setArmInchesZero(Constants.ARM_HOME_INCHES);
+        //robotContainer.getArm().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
 
         robotContainer.updateTrajectoriesBasedOnSide();
         robotContainer.getAutonomousCommand().schedule();
@@ -169,6 +169,9 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         teleopUsed = true;
+
+        robotContainer.getArmExtender().setArmInchesZero(Constants.ARM_HOME_INCHES);
+        robotContainer.getArmRotator().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
 
         robotContainer.updateSide();
         robotContainer.getDrivetrainSubsystem().setDriveBrake();

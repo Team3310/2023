@@ -11,7 +11,6 @@ import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.Pigeon;
 import org.frcteam2910.c2020.Robot;
 import org.frcteam2910.c2020.RobotContainer;
-import org.frcteam2910.c2020.Servo;
 import org.frcteam2910.c2020.util.SideChooser.SideMode;
 import org.frcteam2910.common.control.*;
 import org.frcteam2910.common.drivers.Gyroscope;

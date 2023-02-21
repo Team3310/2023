@@ -27,6 +27,9 @@ public class RobotContainer {
 
     private final DrivetrainSubsystem drivetrain = DrivetrainSubsystem.getInstance();
     private final Intake intake = Intake.getInstance();
+    private final ArmRotator armRotator = ArmRotator.getInstance();
+    private final ArmExtender armExtender = ArmExtender.getInstance();
+
     
     private AutonomousTrajectories autonomousTrajectories;
     private final AutonomousChooser autonomousChooser;
@@ -41,12 +44,13 @@ public class RobotContainer {
         autonomousChooser = new AutonomousChooser(autonomousTrajectories);
 
         drivetrain.setController(primaryController);
+        intake.setController(secondaryController);
 
         driverReadout = new DriverReadout(this);
 
         CommandScheduler.getInstance().registerSubsystem(drivetrain);
-        CommandScheduler.getInstance().setDefaultCommand(intake, new ArmRotationControlJoysticks(intake, getArmRotationAxis()));
-        CommandScheduler.getInstance().setDefaultCommand(intake, new ArmTranslationalControlJoysticks(intake, getArmTranslationalAxis()));
+        CommandScheduler.getInstance().setDefaultCommand(armRotator, new ArmRotationControlJoysticks(armRotator, getArmRotationAxis()));
+        CommandScheduler.getInstance().setDefaultCommand(armExtender, new ArmTranslationalControlJoysticks(armExtender, getArmTranslationalAxis()));
 
         configureButtonBindings();
         
@@ -158,6 +162,14 @@ public class RobotContainer {
 
     public Intake getIntake(){
         return intake;
+    }
+
+    public ArmRotator getArmRotator(){
+        return armRotator;
+    }
+
+    public ArmExtender getArmExtender(){
+        return armExtender;
     }
 
     public static RobotContainer getInstance() {
