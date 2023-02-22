@@ -5,6 +5,7 @@ import org.frcteam2910.c2020.Constants;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
@@ -13,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class ArmExtender implements Subsystem{
     public enum ArmExtenderMode{
-        MANUAL, MOTION_MAGIC
+        MANUAL, HOLD
     }
 
     //falcons
@@ -22,13 +23,14 @@ public class ArmExtender implements Subsystem{
     //conversions
     private double DRUM_DIAMETER = 0.75;
     private double TRANSLATIONAL_ROTATIONS_TO_INCHES = Math.PI * DRUM_DIAMETER;
-    private double ARM_INCHES_TO_ENCODER_TICKS = ((11/60)*Math.PI*DRUM_DIAMETER)/Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;//Constants.ARM_TRANSLATIONAL_GEAR_RATIO * Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION / TRANSLATIONAL_ROTATIONS_TO_INCHES;
+    private double ARM_INCHES_TO_ENCODER_TICKS = (11/60*TRANSLATIONAL_ROTATIONS_TO_INCHES)/Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;//Constants.ARM_TRANSLATIONAL_GEAR_RATIO * Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION * TRANSLATIONAL_ROTATIONS_TO_INCHES;
     
     //misc
     private ArmExtenderMode controlMode = ArmExtenderMode.MANUAL;
     private double inchesOffset;
-    private double targetInchesTicks;
+    private double targetInchesTicks=0;
     private double manualTranslationSpeed;
+    private boolean firstHoldSet = false;
 
     private static ArmExtender INSTANCE;
 
@@ -44,8 +46,10 @@ public class ArmExtender implements Subsystem{
         armTranslationMotor = new TalonFX(Constants.ARM_TRANSLATIONAL_MOTOR_PORT);
 
         TalonFXConfiguration configs = new TalonFXConfiguration();
-        configs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;;
+        configs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
         armTranslationMotor.configAllSettings(configs);
+        armTranslationMotor.setNeutralMode(NeutralMode.Brake);
+        armTranslationMotor.setInverted(true);
 
         armTranslationMotor.configMotionCruiseVelocity(6000);
         armTranslationMotor.configMotionAcceleration(14000);
@@ -81,17 +85,13 @@ public class ArmExtender implements Subsystem{
     public void setArmInchesZero(double offset){
         inchesOffset = offset;
         armTranslationMotor.setSelectedSensorPosition(0);
+        targetInchesTicks = 0;
     }
 
-    public double limitArmDegrees(double targetDegrees){
-        if(targetDegrees < Constants.MIN_ARM_DEGREES){
-            return Constants.MIN_ARM_DEGREES;
-        }else if(targetDegrees > Constants.MAX_ARM_DEGREES){
-            return Constants.MAX_ARM_DEGREES;
-        }
-
-        return targetDegrees;   
+    public void setTargetTicks(double target){
+        targetInchesTicks = target;
     }
+
 
     public double limitArmInches(double targetInches){
         if(targetInches < Constants.MIN_ARM_INCHES){
@@ -103,29 +103,31 @@ public class ArmExtender implements Subsystem{
         return targetInches;   
     }
 
-    public synchronized void setArmInchesMotionMagicPositionAbsolute(double inches) {
-        controlMode = ArmExtenderMode.MOTION_MAGIC;
-        armTranslationMotor.selectProfileSlot(1, 0);
-        targetInchesTicks = getArmInchesEncoderTicksAbsolute(limitArmInches(inches));
-        armTranslationMotor.set(ControlMode.MotionMagic, targetInchesTicks, DemandType.ArbitraryFeedForward, 0.04);
-    }
-
     public synchronized void setTranslationalSpeed(double speed) {
         manualTranslationSpeed = speed;
         double curSpeed = speed;
+        if(!firstHoldSet)
+            firstHoldSet=true;
 
         controlMode = ArmExtenderMode.MANUAL;
+
         if (getArmInches() < Constants.MIN_ARM_INCHES && speed < 0.0) {
             curSpeed = 0;
         } else if (getArmInches() > Constants.MAX_ARM_INCHES && speed > 0.0) {
             curSpeed = 0;
         }
-
         armTranslationMotor.set(ControlMode.PercentOutput, curSpeed);
     }
 
     public synchronized void setTranslationalHold(){
-        setArmInchesMotionMagicPositionAbsolute(getArmInches());
+        // if(firstHoldSet){
+        //     firstHoldSet = false;
+        //     setTargetTicks(armTranslationMotor.getSelectedSensorPosition());
+        // }
+        controlMode = ArmExtenderMode.HOLD;
+        armTranslationMotor.selectProfileSlot(0, 0);    
+
+        armTranslationMotor.set(ControlMode.Position, targetInchesTicks, DemandType.ArbitraryFeedForward, 0.04);
     }
         //#endregion
         
@@ -133,15 +135,20 @@ public class ArmExtender implements Subsystem{
 
     @Override
     public void periodic(){
+        if(controlMode==ArmExtenderMode.MANUAL)
+            setTargetTicks(armTranslationMotor.getSelectedSensorPosition());
         SmartDashboard.putNumber("arm inches", getArmInches());
         SmartDashboard.putNumber("extender speed", manualTranslationSpeed);
         SmartDashboard.putString("extender control mode", controlMode.toString());
-        // if (translationControlMode == ArmControlMode.MANUAL) {
-        //     if (getArmInches() < Constants.MIN_ARM_INCHES && manualTranslationSpeed < 0.0) {
-        //         setTranslationalHold();
-        //     } else if (getArmDegrees() > Constants.MAX_ARM_INCHES && manualTranslationSpeed > 0.0) {
-        //         setTranslationalHold();
-        //     }
-        // } 
+        SmartDashboard.putNumber("commanded arm inches ticks", targetInchesTicks);
+        SmartDashboard.putNumber("arm inches ticks", getArmInchesEncoderTicksAbsolute(getArmInches()));
+        SmartDashboard.putNumber("motor ticks", armTranslationMotor.getSelectedSensorPosition());
+        if (controlMode == ArmExtenderMode.MANUAL) {
+            if (getArmInches() < Constants.MIN_ARM_INCHES && manualTranslationSpeed < 0.0) {
+                setTranslationalHold();
+            } else if (getArmInches() > Constants.MAX_ARM_INCHES && manualTranslationSpeed > 0.0) {
+                setTranslationalHold();
+            }
+        } 
     }
 }

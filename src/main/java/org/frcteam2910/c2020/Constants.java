@@ -104,13 +104,14 @@ public class Constants {
     public static final int INTAKE_MOTOR_PORT = 2;
     public static final double ARM_ROTATION_GEAR_RATIO = (50/11)*(60/26)*(36/18)*(36/18)*(60/18);
     public static final double ARM_TRANSLATIONAL_GEAR_RATIO = (60/11);
-    public static final double MIN_ARM_DEGREES = -90.0;
-    public static final double MAX_ARM_DEGREES = 90.0;
+    public static final double MIN_ARM_DEGREES = -100.0;
+    public static final double MAX_ARM_DEGREES = 100.0;
     public static final double MIN_ARM_INCHES = 0.0;
     public static final double MAX_ARM_INCHES = 17.0;
     public static final double ARM_HOME_DEGREES = 0.0;
     public static final double ARM_HOME_INCHES = 0.0;
     public static final double INTAKE_COLLECT_RPM = 950.0;
+    public static final double INTAKE_SPIT_RPM = -300.0;
     
 
     // Bridge Balance

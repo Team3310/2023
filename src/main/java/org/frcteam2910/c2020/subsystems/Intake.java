@@ -16,12 +16,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class Intake implements Subsystem{
-    public enum ArmControlMode{
-        MANUAL, MOTION_MAGIC
-    }
-    public enum ServoControlMode{
-        MANUAL, HOLD
-    }
     //servos
     private final Servo rightServo = new Servo(Constants.RIGHT_SERVO_PORT);
     private final Servo leftServo = new Servo(Constants.LEFT_SERVO_PORT);
@@ -37,10 +31,9 @@ public class Intake implements Subsystem{
     private Controller secondaryController;
 
     boolean hasSetIntakeZero = false;
-    private ServoControlMode servoControlMode = ServoControlMode.MANUAL;
     private double lastCommandedSpeed;
 
-    private static Intake INSTANCE;
+    private static Intake INSTANCE=null;
 
     //#region Constructors
     public static Intake getInstance(){
@@ -52,9 +45,8 @@ public class Intake implements Subsystem{
     
     private Intake(){
         intakeMotor = new TalonFX(Constants.INTAKE_MOTOR_PORT);
-        
-        leftServo.setInverted(false);
-        rightServo.setInverted(false);
+        intakeMotor.setInverted(true);
+        leftServo.setInverted(true);
     }
     //#endregion
     
@@ -62,12 +54,8 @@ public class Intake implements Subsystem{
         //#region servo
     public void setServoSpeed(double speed){
         lastCommandedSpeed=speed;
-        leftServo.setSpeed(-speed);
+        leftServo.setSpeed(speed);
         rightServo.setSpeed(speed);
-    }
-
-    public void setServoControlMode(ServoControlMode mode){
-        servoControlMode=mode;
     }
     //#endregion
         
@@ -120,12 +108,10 @@ public class Intake implements Subsystem{
     @Override
     public void periodic(){
         SmartDashboard.putBoolean("set zero intake rpm", hasSetIntakeZero);
-        SmartDashboard.putNumber("controller right axis", getRightTriggerAxis().get());
+        //SmartDashboard.putNumber("controller right axis", getRightTriggerAxis().get());
 
-        variableIntakeRPM();
-        if(servoControlMode == ServoControlMode.HOLD){
+        //variableIntakeRPM();
             leftServo.setSpeed(lastCommandedSpeed);
             rightServo.setSpeed(lastCommandedSpeed); 
-        }  
     }
 }

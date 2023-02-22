@@ -21,7 +21,7 @@ public class ArmRotator implements Subsystem{
 
     //conversions
     private double ARM_REVOLUTIONS_TO_ENCODER_TICKS = Constants.ARM_ROTATION_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
-    private double ARM_DEGREES_TO_ENCODER_TICKS = 2.574/Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;//ARM_REVOLUTIONS_TO_ENCODER_TICKS/360;
+    private double ARM_DEGREES_TO_ENCODER_TICKS = ARM_REVOLUTIONS_TO_ENCODER_TICKS/360.0;//ARM_REVOLUTIONS_TO_ENCODER_TICKS/360;
     //misc
     boolean firstHoldSet = true;
 
@@ -70,7 +70,9 @@ public class ArmRotator implements Subsystem{
     }
 
     public double getArmDegrees(){
-        return (getRotationRotations() * ARM_DEGREES_TO_ENCODER_TICKS)+degreesOffset;
+        double degrees = (getRotationRotations() * ARM_DEGREES_TO_ENCODER_TICKS)/2+degreesOffset;   
+
+        return degrees;
     }
 
     public double getArmDegreesEncoderTicksAbsolute(double degrees){
@@ -122,7 +124,7 @@ public class ArmRotator implements Subsystem{
         controlMode = ArmRotationMode.HOLD;
         armRotationMotor.selectProfileSlot(0, 0);    
         //targetDegreesTicks = getArmDegreesEncoderTicksAbsolute(limitArmDegrees(getArmDegrees()));
-        armRotationMotor.set(ControlMode.Position, targetDegreesTicks*2, DemandType.ArbitraryFeedForward, 0.04);
+        armRotationMotor.set(ControlMode.Position, targetDegreesTicks, DemandType.ArbitraryFeedForward, 0.04);
     }
         //#endregion
         

@@ -10,7 +10,7 @@ public class Servo extends PWM {
   private static final double kMaxServoAngle = 130.0;
   private static final double kMinServoAngle = 0.0;
 
-  protected static final double kDefaultMaxServoPWM = 2.2;
+  protected static final double kDefaultMaxServoPWM = 2.0;
   protected static final double kDefaultMinServoPWM = 0.8;
 
   private boolean inverted;

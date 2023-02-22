@@ -44,11 +44,12 @@ public class RobotContainer {
         autonomousChooser = new AutonomousChooser(autonomousTrajectories);
 
         drivetrain.setController(primaryController);
-        intake.setController(secondaryController);
+        //intake.setController(secondaryController);
 
         driverReadout = new DriverReadout(this);
 
         CommandScheduler.getInstance().registerSubsystem(drivetrain);
+        CommandScheduler.getInstance().setDefaultCommand(intake, new VariableIntakeRPMCommand(intake, getIntakeAxis(), getOuttakeAxis()));
         CommandScheduler.getInstance().setDefaultCommand(armRotator, new ArmRotationControlJoysticks(armRotator, getArmRotationAxis()));
         CommandScheduler.getInstance().setDefaultCommand(armExtender, new ArmTranslationalControlJoysticks(armExtender, getArmTranslationalAxis()));
 
@@ -87,15 +88,11 @@ public class RobotContainer {
         primaryController.getLeftBumperButton().whenReleased(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
-
-        primaryController.getXButton().whenPressed(
-                new InstantCommand(()->drivetrain.resetPose(new RigidTransform2(new Vector2(-288, 0), drivetrain.getPose().rotation)))//intake.setServoSpeed(1))
-        );
         primaryController.getYButton().whenPressed(
-                new InstantCommand(()->intake.setServoSpeed(0))
+                new InstantCommand(()->intake.setServoSpeed(-1))
         );
         primaryController.getBButton().whenPressed(
-                new InstantCommand(()->intake.setServoSpeed(-1))
+                new InstantCommand(()->intake.setServoSpeed(1))
         );
         primaryController.getRightTriggerAxis().getButton(0.5).whenPressed(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.BALL_TRACK)
@@ -150,6 +147,12 @@ public class RobotContainer {
     }
     private Axis getArmTranslationalAxis() {
         return secondaryController.getRightYAxis();
+    }
+    private Axis getIntakeAxis() {
+        return secondaryController.getRightTriggerAxis();
+    }
+    private Axis getOuttakeAxis() {
+        return secondaryController.getLeftTriggerAxis();
     }
 
     public AutonomousChooser getAutonomousChooser() {

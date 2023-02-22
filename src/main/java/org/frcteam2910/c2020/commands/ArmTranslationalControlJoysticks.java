@@ -25,9 +25,8 @@ public class ArmTranslationalControlJoysticks extends CommandBase {
     @Override
     public void execute() {
         double speed = YAxis.get(true);
-
         if (Math.abs(speed) > 0.1) {
-            arm.setTranslationalSpeed(speed*0.3);
+            arm.setTranslationalSpeed(speed*0.8);
         } else {
             arm.setTranslationalHold();
         }
