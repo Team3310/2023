@@ -14,7 +14,7 @@ public class SetServosIn extends CommandBase {
 
     @Override
     public void initialize() {
-        intake.setServoSpeed(-1.0);
+        intake.setServoPosition(-1.0);
     }
 
     @Override
@@ -24,6 +24,6 @@ public class SetServosIn extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        intake.setServoSpeed(0.0);
+        intake.setServoPosition(0.0);
     }
 }

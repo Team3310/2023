@@ -11,7 +11,7 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-
+import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
@@ -31,7 +31,7 @@ public class Intake implements Subsystem{
     private Controller secondaryController;
 
     boolean hasSetIntakeZero = false;
-    private double lastCommandedSpeed;
+    private double lastCommandedPosition;
 
     private static Intake INSTANCE=null;
 
@@ -52,13 +52,12 @@ public class Intake implements Subsystem{
     
     //#region Class Methods
         //#region servo
-    public void setServoSpeed(double speed){
-        lastCommandedSpeed=speed;
+    public void setServoPosition(double speed){
+        lastCommandedPosition=speed;
         leftServo.setSpeed(speed);
         rightServo.setSpeed(speed);
     }
     //#endregion
-        
         //#region intake
         public void variableIntakeRPM(){
 
@@ -107,11 +106,6 @@ public class Intake implements Subsystem{
 
     @Override
     public void periodic(){
-        SmartDashboard.putBoolean("set zero intake rpm", hasSetIntakeZero);
-        //SmartDashboard.putNumber("controller right axis", getRightTriggerAxis().get());
-
-        //variableIntakeRPM();
-            leftServo.setSpeed(lastCommandedSpeed);
-            rightServo.setSpeed(lastCommandedSpeed); 
+        setServoPosition(lastCommandedPosition);
     }
 }

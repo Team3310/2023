@@ -20,8 +20,9 @@ public class ArmRotator implements Subsystem{
     private TalonFX armRotationMotor;
 
     //conversions
-    private double ARM_REVOLUTIONS_TO_ENCODER_TICKS = Constants.ARM_ROTATION_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
-    private double ARM_DEGREES_TO_ENCODER_TICKS = ARM_REVOLUTIONS_TO_ENCODER_TICKS/360.0;//ARM_REVOLUTIONS_TO_ENCODER_TICKS/360;
+    private double ARM_ROTATION_GEAR_RATIO = (50.0/11.0)*(60.0/26.0)*(36.0/18.0)*(36.0/18.0)*(60.0/18.0)*(2.0/3.0);
+    private double ARM_REVOLUTIONS_TO_ENCODER_TICKS = ARM_ROTATION_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
+    private double ARM_DEGREES_TO_ENCODER_TICKS = ARM_REVOLUTIONS_TO_ENCODER_TICKS/360.0;
     //misc
     boolean firstHoldSet = true;
 
@@ -47,13 +48,9 @@ public class ArmRotator implements Subsystem{
         configs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
         armRotationMotor.configAllSettings(configs);
 
-        armRotationMotor.configMotionCruiseVelocity(6000);
-        armRotationMotor.configMotionAcceleration(14000);
-        armRotationMotor.configMotionSCurveStrength(4);
-
-        armRotationMotor.config_kF(0, 0.09);
-        armRotationMotor.config_kP(0, 0.40);
-        armRotationMotor.config_kI(0, 0.0001);
+        armRotationMotor.config_kF(0, 0.005);
+        armRotationMotor.config_kP(0, 0.01);
+        armRotationMotor.config_kI(0, 0.0);
         armRotationMotor.config_kD(0, 0.0);
         
     }
@@ -65,24 +62,18 @@ public class ArmRotator implements Subsystem{
         controlMode = mode;
     }
 
-    public double getRotationRotations(){
-        return armRotationMotor.getSelectedSensorPosition() / Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION / Constants.ARM_ROTATION_GEAR_RATIO;
-    }
-
     public double getArmDegrees(){
-        double degrees = (getRotationRotations() * ARM_DEGREES_TO_ENCODER_TICKS)/2+degreesOffset;   
-
-        return degrees;
+        return (armRotationMotor.getSelectedSensorPosition() / ARM_DEGREES_TO_ENCODER_TICKS)*(2.0/3.0)+ degreesOffset;
     }
 
-    public double getArmDegreesEncoderTicksAbsolute(double degrees){
-        return (int) (degrees * ARM_DEGREES_TO_ENCODER_TICKS);
+    public double getArmDegreesEncoderTicks(double degrees){
+        return degrees * ARM_DEGREES_TO_ENCODER_TICKS;
     }
 
     public void setArmDegreesZero(double offset){
         degreesOffset = offset;
-        armRotationMotor.setSelectedSensorPosition(0);
         targetDegreesTicks = 0;
+        armRotationMotor.setSelectedSensorPosition(0);
     }
 
     public double limitArmDegrees(double targetDegrees){
@@ -95,10 +86,10 @@ public class ArmRotator implements Subsystem{
         return targetDegrees;   
     }
 
-    public synchronized void setArmDegreesMotionMagicPositionAbsolute(double degrees) {
+    public synchronized void setArmDegreesPositionAbsolute(double degrees) {
         controlMode = ArmRotationMode.HOLD;
         armRotationMotor.selectProfileSlot(0, 0);
-        targetDegreesTicks = getArmDegreesEncoderTicksAbsolute(limitArmDegrees(degrees));
+        targetDegreesTicks = getArmDegreesEncoderTicks(limitArmDegrees(degrees));
         armRotationMotor.set(ControlMode.Position, targetDegreesTicks, DemandType.ArbitraryFeedForward, 0.04);
     }
 
@@ -107,24 +98,28 @@ public class ArmRotator implements Subsystem{
         double curSpeed = speed;
 
         controlMode = ArmRotationMode.MANUAL;
-        // if (getArmDegrees() < Constants.MIN_ARM_DEGREES && speed < 0.0) {
-        //     curSpeed = 0;
-        // } else if (getArmDegrees() > Constants.MAX_ARM_DEGREES && speed > 0.0) {
-        //     curSpeed = 0;
-        // }
+        if (getArmDegrees() < Constants.MIN_ARM_DEGREES && speed < 0.0) {
+            curSpeed = 0;
+        } else if (getArmDegrees() > Constants.MAX_ARM_DEGREES && speed > 0.0) {
+            curSpeed = 0;
+        }
 
         armRotationMotor.set(ControlMode.PercentOutput, curSpeed);
     }
 
     public synchronized void setRotationHold(){
-        if(firstHoldSet){
-            firstHoldSet = false;
-            targetDegreesTicks = getArmDegreesEncoderTicksAbsolute(limitArmDegrees(getArmDegrees()));
-        }
+        // if(firstHoldSet){
+        //     firstHoldSet = false;
+        //     targetDegreesTicks = getArmDegreesEncoderTicksAbsolute(limitArmDegrees(getArmDegrees()));
+        // }
         controlMode = ArmRotationMode.HOLD;
         armRotationMotor.selectProfileSlot(0, 0);    
         //targetDegreesTicks = getArmDegreesEncoderTicksAbsolute(limitArmDegrees(getArmDegrees()));
         armRotationMotor.set(ControlMode.Position, targetDegreesTicks, DemandType.ArbitraryFeedForward, 0.04);
+    }
+
+    private double getTargetDegrees(){
+        return targetDegreesTicks/ARM_DEGREES_TO_ENCODER_TICKS;
     }
         //#endregion
         
@@ -133,18 +128,21 @@ public class ArmRotator implements Subsystem{
     @Override
     public void periodic(){
         if(controlMode == ArmRotationMode.MANUAL)
-            targetDegreesTicks = getArmDegreesEncoderTicksAbsolute(getArmDegrees());
+            targetDegreesTicks = armRotationMotor.getSelectedSensorPosition()*(2.0/3.0);
 
         SmartDashboard.putNumber("arm degress", getArmDegrees());
-        SmartDashboard.putNumber("command Arm Degrees", targetDegreesTicks/ARM_DEGREES_TO_ENCODER_TICKS);
+        SmartDashboard.putNumber("command Arm Degrees", getTargetDegrees());
         SmartDashboard.putNumber("rotation speed", manualRotationSpeed);
         SmartDashboard.putString("rotator control mode", controlMode.toString());
-        // if (rotatinControlMode == ArmControlMode.MANUAL) {
-        //     if (getArmDegrees() < Constants.MIN_ARM_DEGREES && manualRotationSpeed < 0.0) {
-        //         setRotationHold();
-        //     } else if (getArmDegrees() > Constants.MAX_ARM_DEGREES && manualRotationSpeed > 0.0) {
-        //         setRotationHold();
-        //     }
-        // }
+        SmartDashboard.putNumber("target ticks", targetDegreesTicks);
+        SmartDashboard.putNumber("rotation motor ticks", armRotationMotor.getSelectedSensorPosition());
+        SmartDashboard.putNumber("degress to ticks", ARM_DEGREES_TO_ENCODER_TICKS);
+        if (controlMode == ArmRotationMode.MANUAL){
+            if (getArmDegrees() < Constants.MIN_ARM_DEGREES && manualRotationSpeed < 0.0) {
+                setRotationHold();
+            } else if (getArmDegrees() > Constants.MAX_ARM_DEGREES && manualRotationSpeed > 0.0) {
+                setRotationHold();
+            }
+        }
     }
 }

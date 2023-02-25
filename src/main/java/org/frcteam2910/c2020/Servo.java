@@ -4,13 +4,14 @@ import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
-import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.PWM.PeriodMultiplier;
+import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
 
-public class Servo extends PWM {
+public class Servo extends PWMMotorController {
   private static final double kMaxServoAngle = 130.0;
   private static final double kMinServoAngle = 0.0;
 
-  protected static final double kDefaultMaxServoPWM = 2.0;
+  protected static final double kDefaultMaxServoPWM = 1.7;
   protected static final double kDefaultMinServoPWM = 0.8;
 
   private boolean inverted;
@@ -22,10 +23,10 @@ public class Servo extends PWM {
    * By default {@value #kDefaultMinServoPWM} ms is used as the minPWM value<br>
    */
   public Servo(final int channel) {
-    super(channel);
-    setBounds(kDefaultMaxServoPWM, 1.52, 1.5, 1.48, kDefaultMinServoPWM);
-    setPeriodMultiplier(PeriodMultiplier.k4X);
-
+    super("generic", channel);
+    m_pwm.setBounds(kDefaultMaxServoPWM, 1.52, 1.5, 1.48, kDefaultMinServoPWM);
+    m_pwm.setPeriodMultiplier(PeriodMultiplier.k1X);
+    m_pwm.setZeroLatch();
     HAL.report(tResourceType.kResourceType_Servo, getChannel() + 1);
     SendableRegistry.setName(this, "Servo", getChannel());
   }
@@ -44,7 +45,12 @@ public class Servo extends PWM {
  
   public void setSpeed(double speed){
     int invert = inverted?-1:1;
-    super.setSpeed(speed*invert);
+    m_pwm.setSpeed(speed*invert);
+  }
+
+  public void setPosition(double position){
+    int invert = inverted?-1:1;
+    m_pwm.setPosition(position*invert);
   }
 
   public void setInverted(boolean inverted){
@@ -60,7 +66,7 @@ public class Servo extends PWM {
    * @return Position from 0.0 to 1.0.
    */
   public double get() {
-    return getPosition();
+    return m_pwm.getPosition();
   }
 
   /**
@@ -94,7 +100,7 @@ public class Servo extends PWM {
    * @return The angle in degrees to which the servo is set.
    */
   public double getAngle() {
-    return getPosition() * getServoAngleRange() + kMinServoAngle;
+    return m_pwm.getPosition() * getServoAngleRange() + kMinServoAngle;
   }
 
   private double getServoAngleRange() {

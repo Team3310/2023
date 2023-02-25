@@ -11,7 +11,7 @@ public class SideChooser {
         sideChooser.addOption("Red", SideMode.RED);
     }
 
-    public SendableChooser<SideMode> getSideModeChooser() {
+    public SendableChooser<SideMode> getSendableChooser() {
         return sideChooser;
     }
 

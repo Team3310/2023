@@ -1,14 +1,20 @@
 package org.frcteam2910.c2020;
 
-import org.frcteam2910.c2020.commands.*;
-import org.frcteam2910.c2020.subsystems.*;
-import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
+import org.frcteam2910.c2020.commands.ArmRotationControlJoysticks;
+import org.frcteam2910.c2020.commands.ArmTranslationalControlJoysticks;
+import org.frcteam2910.c2020.commands.ChangeDriveMode;
+import org.frcteam2910.c2020.commands.DriveBalanceCommand;
+import org.frcteam2910.c2020.commands.VariableIntakeRPMCommand;
+import org.frcteam2910.c2020.commands.ZeroAll;
+import org.frcteam2910.c2020.subsystems.ArmExtender;
+import org.frcteam2910.c2020.subsystems.ArmRotator;
+import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
+import org.frcteam2910.c2020.subsystems.Intake;
 import org.frcteam2910.c2020.util.AutonomousChooser;
 import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import org.frcteam2910.c2020.util.DriverReadout;
+import org.frcteam2910.c2020.util.GyroAutoChooser;
 import org.frcteam2910.c2020.util.SideChooser;
-import org.frcteam2910.common.math.RigidTransform2;
-import org.frcteam2910.common.math.Vector2;
 import org.frcteam2910.common.robot.input.Axis;
 import org.frcteam2910.common.robot.input.DPadButton;
 import org.frcteam2910.common.robot.input.XboxController;
@@ -34,11 +40,13 @@ public class RobotContainer {
     private AutonomousTrajectories autonomousTrajectories;
     private final AutonomousChooser autonomousChooser;
     private final SideChooser sideChooser;
+    private final GyroAutoChooser gyroAutoChooser;
 
     private final DriverReadout driverReadout;
 
     public RobotContainer() {
         sideChooser = new SideChooser();
+        gyroAutoChooser = new GyroAutoChooser();
 
         autonomousTrajectories = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, sideChooser.getSide());
         autonomousChooser = new AutonomousChooser(autonomousTrajectories);
@@ -51,7 +59,7 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(drivetrain);
         CommandScheduler.getInstance().setDefaultCommand(intake, new VariableIntakeRPMCommand(intake, getIntakeAxis(), getOuttakeAxis()));
         CommandScheduler.getInstance().setDefaultCommand(armRotator, new ArmRotationControlJoysticks(armRotator, getArmRotationAxis()));
-        CommandScheduler.getInstance().setDefaultCommand(armExtender, new ArmTranslationalControlJoysticks(armExtender, getArmTranslationalAxis()));
+        //CommandScheduler.getInstance().setDefaultCommand(armExtender, new ArmTranslationalControlJoysticks(armExtender, getArmTranslationalAxis()));
 
         configureButtonBindings();
         
@@ -89,10 +97,10 @@ public class RobotContainer {
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
         primaryController.getYButton().whenPressed(
-                new InstantCommand(()->intake.setServoSpeed(-1))
+                new InstantCommand(()->intake.setServoPosition(-1))
         );
         primaryController.getBButton().whenPressed(
-                new InstantCommand(()->intake.setServoSpeed(1))
+                new InstantCommand(()->intake.setServoPosition(1))
         );
         primaryController.getRightTriggerAxis().getButton(0.5).whenPressed(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.BALL_TRACK)
@@ -123,8 +131,12 @@ public class RobotContainer {
             
         SmartDashboard.putData("Turn to Goal", new InstantCommand(() -> drivetrain.setTurnToTarget()));
 
-        SmartDashboard.putData("Limelight broken", new InstantCommand(()-> drivetrain.setLimelightOverride(true)));
-        SmartDashboard.putData("Limelight working", new InstantCommand(()-> drivetrain.setLimelightOverride(false)));
+        SmartDashboard.putData("Limelight broken", new InstantCommand(() -> drivetrain.setLimelightOverride(true)));
+        SmartDashboard.putData("Limelight working", new InstantCommand(() -> drivetrain.setLimelightOverride(false)));
+        SmartDashboard.putData("set arm to 30 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(30)));
+        SmartDashboard.putData("set arm to 60 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(60)));
+        SmartDashboard.putData("set arm to 90 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(90)));
+        SmartDashboard.putData("set arm to 0 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(0)));
     }
     public Command getAutonomousCommand() {
         return autonomousChooser.getCommand(this);
@@ -132,6 +144,10 @@ public class RobotContainer {
 
     public DrivetrainSubsystem getDrivetrainSubsystem() {
         return drivetrain;
+    }
+
+    public GyroAutoChooser getGyroAutoAdjustMode() {
+        return gyroAutoChooser;
     }
 
     public SideChooser getSideChooser(){

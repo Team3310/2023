@@ -76,6 +76,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private boolean isRight = true;
     private double targetAngle; // for limelight and probably ball tracking
     private boolean isLimelightOverride = false;
+    private double commandedPoseAngle = 0.0;
 
     private Vector2 balanceInitialPos = Vector2.ZERO;
     private Timer balanceTimer = new Timer();
@@ -102,7 +103,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private SwervePivotPoint pivotPoint = SwervePivotPoint.CENTER;
 
     // Determines abilities of controller
-    public enum  DriveControlMode
+    public enum DriveControlMode
     {
         JOYSTICKS,
         ROBOT_CENTRIC,
@@ -186,6 +187,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public PIDController limelightController = new PIDController(2.0, 0.03, 0.25, 0.02); //(3.0, 0.03, 0.02) (1.7, 0.03, 0.25) 0.02
     public PIDController ballTrackController = new PIDController(1.0, 0.03, 0.25, 0.02);
     private PidController balanceController = new PidController(new PidConstants(0.5, 0.0, 0.02));
+    private PidController joyStickRotateGyroController = new PidController(new PidConstants(1, 0.0, 0.0));
 
     public static final DrivetrainFeedforwardConstants FEEDFORWARD_CONSTANTS = 
         new DrivetrainFeedforwardConstants(
@@ -243,15 +245,15 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
         createSwerveModulesAndShuffleboardInfo();
         odometryXEntry = tab.add("X", 0.0)
-                .withPosition(0, 3)
+                .withPosition(0, 2)
                 .withSize(1, 1)
                 .getEntry();
         odometryYEntry = tab.add("Y", 0.0)
-                .withPosition(1, 3)
+                .withPosition(1, 2)
                 .withSize(1, 1)
                 .getEntry();
         odometryAngleEntry = tab.add("Angle", 0.0)
-                .withPosition(2, 3)
+                .withPosition(2, 2)
                 .withSize(1, 1)
                 .getEntry();
 
@@ -265,6 +267,9 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         // TODO change these pi values
         balanceController.setInputRange(0, Math.PI);
         balanceController.setContinuous(true);
+
+        joyStickRotateGyroController.setInputRange(0, Math.PI);
+        // joyStickRotateGyroController.setOutputRange(0, 1);
     }
     //#endregion
 
@@ -280,8 +285,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         SwerveModule frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
                 tab.getLayout("Front Left Module", BuiltInLayouts.kList)
                         .withPosition(0, 0)
-                        .withSize(1, 3),
-                Mk4SwerveModuleHelper.GearRatio.L2i,
+                        .withSize(1, 2),
+                Mk4SwerveModuleHelper.GearRatio.WCP,
                 Constants.DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_LEFT_ANGLE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_PORT,
@@ -290,8 +295,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         SwerveModule frontRightModule = Mk4SwerveModuleHelper.createFalcon500(
                 tab.getLayout("Front Right Module", BuiltInLayouts.kList)
                         .withPosition(1, 0)
-                        .withSize(1, 3),
-                Mk4SwerveModuleHelper.GearRatio.L2i,
+                        .withSize(1, 2),
+                Mk4SwerveModuleHelper.GearRatio.WCP,
                 Constants.DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_RIGHT_ANGLE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT,
@@ -300,8 +305,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         SwerveModule backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
                 tab.getLayout("Back Left Module", BuiltInLayouts.kList)
                         .withPosition(2, 0)
-                        .withSize(1, 3),
-                Mk4SwerveModuleHelper.GearRatio.L2i,
+                        .withSize(1, 2),
+                Mk4SwerveModuleHelper.GearRatio.WCP,
                 Constants.DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_BACK_LEFT_ANGLE_MOTOR,
                 Constants.DRIVETRAIN_BACK_LEFT_ENCODER_PORT,
@@ -310,8 +315,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         SwerveModule backRightModule = Mk4SwerveModuleHelper.createFalcon500(
                 tab.getLayout("Back Right Module", BuiltInLayouts.kList)
                         .withPosition(3, 0)
-                        .withSize(1, 3),
-                Mk4SwerveModuleHelper.GearRatio.L2i,
+                        .withSize(1, 2),
+                Mk4SwerveModuleHelper.GearRatio.WCP,
                 Constants.DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_BACK_RIGHT_ANGLE_MOTOR,
                 Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_PORT,
@@ -329,7 +334,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                     }
                     return follower.getLastState().getPathState().getPosition().x;
                 })
-                .withPosition(0, 4)
+                .withPosition(3, 3)
                 .withSize(1, 1);
         tab.addNumber("Trajectory Y", () -> {
                     if (follower.getLastState() == null) {
@@ -337,7 +342,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                     }
                     return follower.getLastState().getPathState().getPosition().y;
                 })
-                .withPosition(1, 4)
+                .withPosition(4, 3)
                 .withSize(1, 1);
 
         tab.addNumber("Rotation Voltage", () -> {
@@ -351,11 +356,13 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 }
 
                 return signal.getRotation() * RobotController.getBatteryVoltage();
-            }).withPosition(2, 4)
+            }).withPosition(5, 3)
               .withSize(1, 1);
 
               
-        tab.addNumber("Average Velocity", this::getAverageAbsoluteValueVelocity);
+        tab.addNumber("Average Velocity", this::getAverageAbsoluteValueVelocity)
+            .withPosition(6, 3)
+            .withSize(1, 1);
     }
     //#endregion
 
@@ -401,6 +408,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     }
 
     private Axis getDriveRotationAxis() {
+        // For rotation axis, do not insert raw value
         return primaryController.getRightXAxis();
     }
 
@@ -454,9 +462,39 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
         primaryController.getLeftXAxis().setInverted(true);
         primaryController.getRightXAxis().setInverted(true);
+        boolean rotationInput = Math.abs(getDriveRotationAxis().get(false)) > Constants.DEADBAND_ROTATION_JOYSTICK;
+        
+        double rotationOutput = 0.0;
+        if(!rotationInput) {
+            // Auto gyro correction if no turning
+            if(commandedPoseAngle <= 0.0) {
+                joyStickRotateGyroController.setSetpoint(Math.toRadians(-getYawDegreesTargetOffset()) + getPose().rotation.toRadians());
+            }
+            else {
+                joyStickRotateGyroController.setSetpoint(Math.toRadians(-commandedPoseAngle) + getPose().rotation.toRadians());
+            }
+            rotationOutput = joyStickRotateGyroController.calculate(getPose().rotation.toRadians(), 0.02);
+            if(Math.abs(rotationOutput) > 0.5) {
+                rotationOutput = Math.copySign(0.5, rotationOutput);
+            }
+            if(getPose().rotation.toDegrees() > 180) {
+                rotationOutput *= -1;
+            }
+        }
+
+        SmartDashboard.putNumber("rotation output", rotationOutput);
+        SmartDashboard.putNumber("Yaw Angle off", getYawDegreesTargetOffset());
 
         // Set the drive signal to a field-centric (last boolean parameter is true) joystick-based input.
-        drive(new Vector2(getDriveForwardAxis().get(true)*Constants.TRANSLATIONAL_SCALAR, getDriveStrafeAxis().get(true)*Constants.ROTATIONAL_SCALAR), getDriveRotationAxis().get(true) * 0.80, true);  
+        drive(new Vector2(
+            getDriveForwardAxis().get(true)*Constants.TRANSLATIONAL_SCALAR, // Left Joystick YAxis
+            getDriveStrafeAxis().get(true)*Constants.TRANSLATIONAL_SCALAR),    // Left Joystick XAxis
+            rotationInput ? // R Joystick XAxis output
+                getDriveRotationAxis().get(true) * Constants.ROTATIONAL_SCALAR
+                : 
+                    RobotContainer.getInstance().getGyroAutoAdjustMode().getMode() == org.frcteam2910.c2020.util.GyroAutoChooser.Mode.On ?
+                    rotationOutput : 0,
+            true);  
     }
 
     public void rotationDrive(){
@@ -942,21 +980,34 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public double getRoll(){
         return gyroscope.getRoll().toDegrees() + 0.3; // +0.3 for bias when level
     }
+
+    public double centerOff0Or360(double value){
+        if(value > 180) {
+            value = 360 - value;
+        }
+        return value;
+    }
+    
+    public double centerOff0Or360(double value, double targetCenter){
+        if(value > 180) {
+            value = 360 - value;
+        }
+        return value;
+    }
+    
+    public double getYawDegreesTargetOffset() {
+        double yaw = getPose().rotation.toDegrees();
+        return centerOff0Or360(yaw);
+    }
     
     public double getPitchDegreesOffLevel(){
         double pitch = getPitch();
-        if(pitch > 180) {
-            pitch = 360 - pitch;
-        }
-        return pitch;
+        return centerOff0Or360(pitch);
     }
 
     public double getRollDegreesOffLevel(){
         double roll = getRoll();
-        if(roll > 180) {
-            roll = 360 - roll;
-        }
-        return roll;
+        return centerOff0Or360(roll);
     }
 
     private void updateOdometry(double time, double dt) {
@@ -1070,19 +1121,19 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         odometryXEntry.setDouble(pose.translation.x);
         odometryYEntry.setDouble(pose.translation.y);
         odometryAngleEntry.setDouble(pose.rotation.toDegrees());
-        SmartDashboard.putNumber("Angle to goal", getRobotToGoalAngle());
-        SmartDashboard.putNumber("Distance to goal", getRobotToGoalDistance());
-        SmartDashboard.putNumber("X", pose.translation.x);
-        SmartDashboard.putNumber("Y", pose.translation.y);
-        SmartDashboard.putNumber("pitch", getPitch());
-        SmartDashboard.putNumber("roll", getRoll());
-        SmartDashboard.putString("Drive Mode", getDriveControlMode().toString());
-        SmartDashboard.putNumber("blanace timer length", balanceTimer.get());
+        // SmartDashboard.putNumber("X", pose.translation.x);
+        // SmartDashboard.putNumber("Y", pose.translation.y);
+        SmartDashboard.putNumber("pitch", getPitchDegreesOffLevel());
+        SmartDashboard.putString("Translation Drive", driveSignal.getTranslation().x+"\n"+driveSignal.getTranslation().y);
+        SmartDashboard.putNumber("Rotation Drive", driveSignal.getRotation());
+        SmartDashboard.putNumber("roll", getRollDegreesOffLevel());
+        // SmartDashboard.putString("Drive Mode", getDriveControlMode().toString());
+        // SmartDashboard.putNumber("blanace timer length", balanceTimer.get());
         SmartDashboard.putNumber("angle", getPose().rotation.toDegrees());
-        SmartDashboard.putString("side", side.toString());
-        SmartDashboard.putNumber("x accel", gyroscope.getAccels()[0]/(double)Short.MAX_VALUE);
-        SmartDashboard.putNumber("y accel", gyroscope.getAccels()[1]/(double)Short.MAX_VALUE);
-        SmartDashboard.putNumber("z accel", gyroscope.getAccels()[2]/(double)Short.MAX_VALUE);
+        // SmartDashboard.putString("side", side.toString());
+        // SmartDashboard.putNumber("x accel", gyroscope.getAccels()[0]/(double)Short.MAX_VALUE);
+        // SmartDashboard.putNumber("y accel", gyroscope.getAccels()[1]/(double)Short.MAX_VALUE);
+        // SmartDashboard.putNumber("z accel", gyroscope.getAccels()[2]/(double)Short.MAX_VALUE);
         //SmartDashboard.putString("accel", gyroscope.getAccels()[0]+" "+gyroscope.getAccels()[1]+" "+gyroscope.getAccels()[2]);
     }
 }

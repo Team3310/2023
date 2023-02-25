@@ -14,7 +14,7 @@ public class SetServosOut extends CommandBase {
 
     @Override
     public void initialize() {
-        intake.setServoSpeed(1.0);
+        intake.setServoPosition(1.0);
     }
 
     @Override

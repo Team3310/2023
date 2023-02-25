@@ -22,12 +22,15 @@ public class DriverReadout {
         tab.add("Autonomous Mode", container.getAutonomousChooser().getAutonomousModeChooser())
                 .withSize(2, 1)
                 .withPosition(2, 0);
-        tab.add("Side", container.getSideChooser().getSideModeChooser())
+        tab.add("Side", container.getSideChooser().getSendableChooser())
                 .withSize(2, 1)
                 .withPosition(2, 1);
         tab.add("Zero Gyroscope", new ZeroGyroscope(container.getDrivetrainSubsystem()))
                 .withSize(2, 1)
                 .withPosition(4, 0);
+        tab.add("Gyro Auto Correct", container.getGyroAutoAdjustMode().getSendableChooser())
+                .withSize(1, 1)
+                .withPosition(4, 1);
     }
 
     public BallColor getTrackedBallColor() {
