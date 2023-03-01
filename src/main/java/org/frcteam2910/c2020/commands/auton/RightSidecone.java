@@ -27,14 +27,10 @@ public class RightSidecone extends AutonCommandBase {
             new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromLoadtoPlace()),
             new WaitCommand(2.0),
             new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromPlaceToLoad()),
-            new debugAutonPosition(drive,"1"),
             new FollowTrajectoryCommand(drive, trajectories.getConeBridgeLoadToPickup2()),
-            new debugAutonPosition(drive, "2"),
             new WaitCommand(2.0),
             new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromPickUp2ToLoad()),
-            new debugAutonPosition(drive,"3"),
-            new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromLoadtoPlace()),
-            new debugAutonPosition(drive,"4")
+            new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromLoadtoPlace())
         );
     }
 }

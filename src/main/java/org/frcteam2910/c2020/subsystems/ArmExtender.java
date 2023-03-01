@@ -51,7 +51,7 @@ public class ArmExtender implements Subsystem{
         armTranslationMotor.setNeutralMode(NeutralMode.Brake);
         armTranslationMotor.setInverted(true);
 
-        armTranslationMotor.config_kF(0, 0.055);
+        armTranslationMotor.config_kF(0, 0.0);
         armTranslationMotor.config_kP(0, 0.05); //0.1
         armTranslationMotor.config_kI(0, 0.0);
         armTranslationMotor.config_kD(0, 0.0);

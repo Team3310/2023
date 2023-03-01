@@ -187,7 +187,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public PIDController limelightController = new PIDController(2.0, 0.03, 0.25, 0.02); //(3.0, 0.03, 0.02) (1.7, 0.03, 0.25) 0.02
     public PIDController ballTrackController = new PIDController(1.0, 0.03, 0.25, 0.02);
     private PidController balanceController = new PidController(new PidConstants(0.5, 0.0, 0.02));
-    private PidController joyStickRotateGyroController = new PidController(new PidConstants(1, 0.0, 0.0));
+    private PidController joystickRotateGyroController = new PidController(new PidConstants(1, 0.0, 0.0));
 
     public static final DrivetrainFeedforwardConstants FEEDFORWARD_CONSTANTS = 
         new DrivetrainFeedforwardConstants(
@@ -268,7 +268,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         balanceController.setInputRange(0, Math.PI);
         balanceController.setContinuous(true);
 
-        joyStickRotateGyroController.setInputRange(0, Math.PI);
+        joystickRotateGyroController.setInputRange(0, Math.PI);
         // joyStickRotateGyroController.setOutputRange(0, 1);
     }
     //#endregion
@@ -468,20 +468,27 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         if(!rotationInput) {
             // Auto gyro correction if no turning
             if(commandedPoseAngle <= 0.0) {
-                joyStickRotateGyroController.setSetpoint(Math.toRadians(-getYawDegreesTargetOffset()) + getPose().rotation.toRadians());
+                joystickRotateGyroController.setSetpoint(Math.toRadians(-getYawDegreesTargetOffset()) + getPose().rotation.toRadians());
             }
             else {
-                joyStickRotateGyroController.setSetpoint(Math.toRadians(-commandedPoseAngle) + getPose().rotation.toRadians());
+                joystickRotateGyroController.setSetpoint(Math.toRadians(-commandedPoseAngle) + getPose().rotation.toRadians());
             }
-            rotationOutput = joyStickRotateGyroController.calculate(getPose().rotation.toRadians(), 0.02);
+            rotationOutput = joystickRotateGyroController.calculate(getPose().rotation.toRadians(), 0.02);
             if(Math.abs(rotationOutput) > 0.5) {
                 rotationOutput = Math.copySign(0.5, rotationOutput);
             }
-            if(getPose().rotation.toDegrees() > 180) {
-                rotationOutput *= -1;
+            if(Math.abs(commandedPoseAngle-getPose().rotation.toDegrees()) > 90 && (getPose().rotation.toDegrees()>180 && commandedPoseAngle<180)) {
+                //rotationOutput *= -1;
             }
+            // if(Math.abs(rotationOutput)<0.08){
+            //     rotationOutput = 0;
+            // }
+        }
+        else{
+            commandedPoseAngle = getPose().rotation.toRadians();
         }
 
+        SmartDashboard.putBoolean("rotation input", rotationInput);
         SmartDashboard.putNumber("rotation output", rotationOutput);
         SmartDashboard.putNumber("Yaw Angle off", getYawDegreesTargetOffset());
 
@@ -583,77 +590,93 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     }
 
     public void balanceOutDrive() {
-        // DriveControlMode is BALANCE
         balanceController.reset();
         balanceController.setSetpoint(0);
-        //TODO change to field oriented
-        double angle = getPose().rotation.toDegrees();
-        boolean roll = (angle>60 && angle<120)||(angle>240 && angle<300);
-        boolean pitch = roll?false:(angle>330 || angle<30)||(angle>150 && angle<210);
-        boolean tiltedBackward = false;
-        double invertOutput = 1.0;
-        double degreesAwayFromBalance = 0;
-
-        SmartDashboard.putBoolean("isRoll", roll);
-        SmartDashboard.putBoolean("isPitch", pitch);
-        //if(degreesAwayFromBalance>1)
-        //    degreesAwayFromBalance*=degreesAwayFromBalance;
-        if(roll){
-            degreesAwayFromBalance = getRollDegreesOffLevel();
-        }else if(pitch){
-            degreesAwayFromBalance = getPitchDegreesOffLevel();
-        }else{
-            degreesAwayFromBalance = 0.0; 
-            setDriveControlMode(DriveControlMode.JOYSTICKS);
-            return;       
-        }
-
-        SmartDashboard.putNumber("degrees away", degreesAwayFromBalance);
-
-        double x = getPose().translation.x;
-
-        if(side==SideMode.RED){
-            if(x<-210){
-                invertOutput = -1.0;
-            }
-            else if(x>-210){
-                invertOutput = 1.0;
-            }
-        }
-        else if(side==SideMode.BLUE){    
-            if(x>210){
-                invertOutput = -1.0;
-            }
-            else if(x<210){
-                invertOutput = 1.0;
-            }
-        }
-
-        double forwardAxisOutput = balanceController.calculate(Math.toRadians(degreesAwayFromBalance), 0.02);
-        
-        if(degreesAwayFromBalance < Constants.BALANCE_DEADBAND)
-        {
-            forwardAxisOutput *= 1.2;
+        boolean tiltedBackward = (getRoll() > 180);
+        double pitchOutput = tiltedBackward ? -1 : 1;
+        double degreesAwayFromBalance = tiltedBackward ? (360 - getRoll()) : getRoll();
+        if(degreesAwayFromBalance < Constants.BALANCE_DEADBAND){
+            degreesAwayFromBalance = 0;
             if(!balanceTimer.hasElapsed(0.1))
                 balanceTimer.start();
         }
-        else if(degreesAwayFromBalance>10)
-        {
+        else{
             balanceTimer.stop();
             balanceTimer.reset();
-            forwardAxisOutput *= 1.5;
-        }
-        else
-        {
-            balanceTimer.stop();
-            balanceTimer.reset();
-            forwardAxisOutput *= .8;
-        }
+        } 
 
-        SmartDashboard.putNumber("invert", invertOutput);
-        SmartDashboard.putNumber("output", forwardAxisOutput);
+        double forwardAxisOutput = balanceController.calculate(Math.toRadians(degreesAwayFromBalance), 0.02);
+        if(degreesAwayFromBalance > Constants.BALANCE_DEADBAND)
+            forwardAxisOutput/=1.4;
+        drive(new Vector2(pitchOutput * forwardAxisOutput, 0.0), 0.0, false);
+        // DriveControlMode is BALANCE
+        // balanceController.reset();
+        // balanceController.setSetpoint(0);
+        // //TODO change to field oriented
+        // double angle = getPose().rotation.toDegrees();
+        // boolean roll = (angle>60 && angle<120)||(angle>240 && angle<300);
+        // boolean pitch = roll?false:(angle>330 || angle<30)||(angle>150 && angle<210);
+        // boolean tiltedBackward = false;
+        // double invertOutput = 1.0;
+        // double degreesAwayFromBalance = 0;
 
-        drive(new Vector2(invertOutput * forwardAxisOutput, 0.0), 0.0, true);
+        // SmartDashboard.putBoolean("isRoll", roll);
+        // SmartDashboard.putBoolean("isPitch", pitch);
+        // //if(degreesAwayFromBalance>1)
+        // //    degreesAwayFromBalance*=degreesAwayFromBalance;
+        // if(roll){
+        //     degreesAwayFromBalance = getRollDegreesOffLevel();
+        // }else if(pitch){
+        //     degreesAwayFromBalance = getPitchDegreesOffLevel();
+        // }else{
+        //     degreesAwayFromBalance = 0.0; 
+        //     setDriveControlMode(DriveControlMode.JOYSTICKS);
+        //     return;       
+        // }
+
+        // SmartDashboard.putNumber("degrees away", degreesAwayFromBalance);
+
+        // // double x = getPose().translation.x;
+
+        // // if(side==SideMode.RED){
+        // //     if(x<-210){
+        // //         invertOutput = -1.0;
+        // //     }
+        // //     else if(x>-210){
+        // //         invertOutput = 1.0;
+        // //     }
+        // // }
+        // // else if(side==SideMode.BLUE){    
+        // //     if(x>210){
+        // //         invertOutput = -1.0;
+        // //     }
+        // //     else if(x<210){
+        // //         invertOutput = 1.0;
+        // //     }
+        // // }
+
+        // double forwardAxisOutput = balanceController.calculate(Math.toRadians(degreesAwayFromBalance), 0.02);
+        
+        // if(degreesAwayFromBalance < Constants.BALANCE_DEADBAND)
+        // {
+        //     forwardAxisOutput *= 1.2;
+        //     if(!balanceTimer.hasElapsed(0.1))
+        //         balanceTimer.start();
+        // }
+        // else if(degreesAwayFromBalance>10)
+        // {
+        //     balanceTimer.stop();
+        //     balanceTimer.reset();
+        //     forwardAxisOutput *= 1.5;
+        // }
+        // else
+        // {
+        //     balanceTimer.stop();
+        //     balanceTimer.reset();
+        //     forwardAxisOutput *= .8;
+        // }
+
+        // drive(new Vector2(invertOutput * forwardAxisOutput, 0.0), 0.0, false);
     }
 
     public void limelightDrive(){
@@ -1130,6 +1153,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         // SmartDashboard.putString("Drive Mode", getDriveControlMode().toString());
         // SmartDashboard.putNumber("blanace timer length", balanceTimer.get());
         SmartDashboard.putNumber("angle", getPose().rotation.toDegrees());
+        SmartDashboard.putNumber("commanded angle", Math.toDegrees(commandedPoseAngle));
         // SmartDashboard.putString("side", side.toString());
         // SmartDashboard.putNumber("x accel", gyroscope.getAccels()[0]/(double)Short.MAX_VALUE);
         // SmartDashboard.putNumber("y accel", gyroscope.getAccels()[1]/(double)Short.MAX_VALUE);
