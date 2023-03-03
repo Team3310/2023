@@ -1,7 +1,7 @@
 package org.frcteam2910.common.robot.input;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * <p>An interface for easily implementing gamepads as an input source.</p>
@@ -38,7 +38,7 @@ public abstract class Controller extends GenericHID {
 	 * @return The A button
 	 * @since 1.0
 	 */
-	public abstract Button getAButton();
+	public abstract JoystickButton getAButton();
 
 	/**
 	 * Get the B button of the controller.
@@ -46,7 +46,7 @@ public abstract class Controller extends GenericHID {
 	 * @return The B button
 	 * @since 1.0
 	 */
-	public abstract Button getBButton();
+	public abstract JoystickButton getBButton();
 
 	/**
 	 * Get the X button of the controller.
@@ -54,7 +54,7 @@ public abstract class Controller extends GenericHID {
 	 * @return The X button
 	 * @since 1.0
 	 */
-	public abstract Button getXButton();
+	public abstract JoystickButton getXButton();
 
 	/**
 	 * Get the Y button of the controller.
@@ -62,7 +62,7 @@ public abstract class Controller extends GenericHID {
 	 * @return The Y button
 	 * @since 1.0
 	 */
-	public abstract Button getYButton();
+	public abstract JoystickButton getYButton();
 
 	/**
 	 * Get the left bumper button of the controller.
@@ -70,7 +70,7 @@ public abstract class Controller extends GenericHID {
 	 * @return The left bumper button
 	 * @since 1.0
 	 */
-	public abstract Button getLeftBumperButton();
+	public abstract JoystickButton getLeftBumperButton();
 
 	/**
 	 * Get the right bumper button of the controller.
@@ -78,7 +78,7 @@ public abstract class Controller extends GenericHID {
 	 * @return The right bumper button
 	 * @since 1.0
 	 */
-	public abstract Button getRightBumperButton();
+	public abstract JoystickButton getRightBumperButton();
 
 	/**
 	 * Get the back button of the controller.
@@ -86,7 +86,7 @@ public abstract class Controller extends GenericHID {
 	 * @return The back button
 	 * @since 1.0
 	 */
-	public abstract Button getBackButton();
+	public abstract JoystickButton getBackButton();
 
 	/**
 	 * Get the start button of the controller.
@@ -94,7 +94,7 @@ public abstract class Controller extends GenericHID {
 	 * @return The start button
 	 * @since 1.0
 	 */
-	public abstract Button getStartButton();
+	public abstract JoystickButton getStartButton();
 
 	/**
 	 * Get the left joystick button of the controller.
@@ -102,7 +102,7 @@ public abstract class Controller extends GenericHID {
 	 * @return The left joystick button
 	 * @since 1.0
 	 */
-	public abstract Button getLeftJoystickButton();
+	public abstract JoystickButton getLeftJoystickButton();
 
 	/**
 	 * Get the right joystick button of the controller.
@@ -110,7 +110,7 @@ public abstract class Controller extends GenericHID {
 	 * @return The right joystick button
 	 * @since 1.0
 	 */
-	public abstract Button getRightJoystickButton();
+	public abstract JoystickButton getRightJoystickButton();
 
 	/**
 	 * Get a D-Pad button of the controller.
@@ -119,5 +119,5 @@ public abstract class Controller extends GenericHID {
 	 * @return The D-Pad button of the specified direction
 	 * @since 1.0
 	 */
-	public abstract Button getDPadButton(DPadButton.Direction direction);
+	public abstract DPadButton getDPadButton(DPadButton.Direction direction);
 }

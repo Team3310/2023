@@ -1,6 +1,8 @@
 package org.frcteam2910.c2020.subsystems;
 
 import org.frcteam2910.c2020.Constants;
+import org.frcteam2910.c2020.RobotContainer;
+import org.frcteam2910.common.robot.input.Axis;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -8,7 +10,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class ArmRotator implements Subsystem{
@@ -52,7 +53,6 @@ public class ArmRotator implements Subsystem{
         armRotationMotor.config_kP(0, 0.01);
         armRotationMotor.config_kI(0, 0.0);
         armRotationMotor.config_kD(0, 0.0);
-        
     }
     //#endregion
     
@@ -60,6 +60,10 @@ public class ArmRotator implements Subsystem{
         //#region arm
     public void setRotationControlMode(ArmRotationMode mode){
         controlMode = mode;
+    }
+
+    public Axis getArmRotationAxis() {
+        return RobotContainer.getInstance().getSecondaryController().getLeftYAxis();
     }
 
     public double getArmDegrees(){
@@ -130,13 +134,13 @@ public class ArmRotator implements Subsystem{
         if(controlMode == ArmRotationMode.MANUAL)
             targetDegreesTicks = armRotationMotor.getSelectedSensorPosition()*(2.0/3.0);
 
-        SmartDashboard.putNumber("arm degress", getArmDegrees());
-        SmartDashboard.putNumber("command Arm Degrees", getTargetDegrees());
-        SmartDashboard.putNumber("rotation speed", manualRotationSpeed);
-        SmartDashboard.putString("rotator control mode", controlMode.toString());
-        SmartDashboard.putNumber("target ticks", targetDegreesTicks);
-        SmartDashboard.putNumber("rotation motor ticks", armRotationMotor.getSelectedSensorPosition());
-        SmartDashboard.putNumber("degress to ticks", ARM_DEGREES_TO_ENCODER_TICKS);
+        // SmartDashboard.putNumber("arm degress", getArmDegrees());
+        // SmartDashboard.putNumber("command Arm Degrees", getTargetDegrees());
+        // SmartDashboard.putNumber("rotation speed", manualRotationSpeed);
+        // SmartDashboard.putString("rotator control mode", controlMode.toString());
+        // SmartDashboard.putNumber("target ticks", targetDegreesTicks);
+        // SmartDashboard.putNumber("rotation motor ticks", armRotationMotor.getSelectedSensorPosition());
+        // SmartDashboard.putNumber("degress to ticks", ARM_DEGREES_TO_ENCODER_TICKS);
         if (controlMode == ArmRotationMode.MANUAL){
             if (getArmDegrees() < Constants.MIN_ARM_DEGREES && manualRotationSpeed < 0.0) {
                 setRotationHold();

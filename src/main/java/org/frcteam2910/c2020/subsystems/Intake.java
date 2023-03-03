@@ -4,15 +4,9 @@ import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.Servo;
 import org.frcteam2910.common.robot.input.Axis;
 import org.frcteam2910.common.robot.input.Controller;
-import org.frcteam2910.common.robot.input.XboxController;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class Intake implements Subsystem{
@@ -26,7 +20,7 @@ public class Intake implements Subsystem{
     //conversions
     private static final double INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 60.0 / 16.0;
     public static final double INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
-    
+
     //misc
     private Controller secondaryController;
 
@@ -60,15 +54,13 @@ public class Intake implements Subsystem{
     //#endregion
         //#region intake
         public void variableIntakeRPM(){
-
-
-            if(getRightTriggerAxis().getButton(0.1).getAsBoolean()){
-                setRollerSpeed(getRightTriggerAxis().get(true));
+            if(getIntakeAxis().getButton(0.1).getAsBoolean()){
+                setRollerSpeed(getIntakeAxis().get(true));
                 //setRollerRPM(getRightTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
                 hasSetIntakeZero = false;
             }
-            else if(getLeftTriggerAxis().getButton(0.1).getAsBoolean()){
-                setRollerSpeed(-getLeftTriggerAxis().get(true));
+            else if(getOuttakeAxis().getButton(0.1).getAsBoolean()){
+                setRollerSpeed(-getOuttakeAxis().get(true));
                 //setRollerRPM( -getLeftTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
                 hasSetIntakeZero = false;
             }
@@ -94,13 +86,13 @@ public class Intake implements Subsystem{
         public double RollerRPMToNativeUnits(double rpm) {
             return rpm * INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS / 10.0D / 60.0D;
         }
-
+        
         public void setController(Controller secondaryController){
             this.secondaryController = secondaryController;
         }
 
-        private Axis getRightTriggerAxis(){return secondaryController.getRightTriggerAxis();}
-        private Axis getLeftTriggerAxis(){return secondaryController.getLeftTriggerAxis();}
+        public Axis getIntakeAxis(){return secondaryController.getRightTriggerAxis();}
+        public Axis getOuttakeAxis(){return secondaryController.getLeftTriggerAxis();}
         //#endregion
     //#endregion
 

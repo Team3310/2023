@@ -1,6 +1,8 @@
 package org.frcteam2910.c2020.subsystems;
 
 import org.frcteam2910.c2020.Constants;
+import org.frcteam2910.c2020.RobotContainer;
+import org.frcteam2910.common.robot.input.Axis;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -9,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class ArmExtender implements Subsystem{
@@ -129,15 +130,19 @@ public class ArmExtender implements Subsystem{
         
     //#endregion
 
+    private Axis getArmTranslationalAxis() {
+        return RobotContainer.getInstance().getSecondaryController().getRightYAxis();
+    }
+
     @Override
     public void periodic(){
         if(controlMode==ArmExtenderMode.MANUAL)
             setTargetTicks(armTranslationMotor.getSelectedSensorPosition());
-        SmartDashboard.putNumber("arm inches", getArmInches());
-        SmartDashboard.putNumber("extender speed", manualTranslationSpeed);
-        SmartDashboard.putString("extender control mode", controlMode.toString());
-        SmartDashboard.putNumber("commanded arm inches ticks", targetInchesTicks);
-        SmartDashboard.putNumber("arm inches ticks", armTranslationMotor.getSelectedSensorPosition());
+        // SmartDashboard.putNumber("arm inches", getArmInches());
+        // SmartDashboard.putNumber("extender speed", manualTranslationSpeed);
+        // SmartDashboard.putString("extender control mode", controlMode.toString());
+        // SmartDashboard.putNumber("commanded arm inches ticks", targetInchesTicks);
+        // SmartDashboard.putNumber("arm inches ticks", armTranslationMotor.getSelectedSensorPosition());
         if (controlMode == ArmExtenderMode.MANUAL) {
             if (getArmInches() < Constants.MIN_ARM_INCHES && manualTranslationSpeed < 0.0) {
                 setTranslationalHold();

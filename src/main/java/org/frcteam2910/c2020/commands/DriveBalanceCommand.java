@@ -36,7 +36,7 @@ public class DriveBalanceCommand extends CommandBase {
         boolean traveledTooFar = Math.abs(drivetrain.getPose().translation.subtract(drivetrain.getBalanceInitialPos()).x) > maxTraveledInches;
         //boolean metTarget = drivetrain.getPitch()>180 ? (360-drivetrain.getPitch())<this.deadband:drivetrain.getPitch()<this.deadband;
         boolean isBalanced = drivetrain.isBalanced();
-        //TODO readd the condition for distance travelled
+        //TODO Read the condition for distance traveled
         return /*metTarget &&*/ (/*traveledFarEnough && !traveledTooFar &&*/ isBalanced) || drivetrain.getDriveControlMode()==DriveControlMode.JOYSTICKS;
     }
 

@@ -5,10 +5,13 @@ public class Constants {
     Wheel gears to the left for offsets
      */
 
+    //#region Drivetrain
     public static final double DRIVETRAIN_VOLTAGE_RAMP = 5.0;
 
     public static final double ROTATIONAL_SCALAR = 0.8;
     public static final double TRANSLATIONAL_SCALAR = 0.8;
+
+    public static final double INCHES_PER_ONE_METER = 39.37008;
 
     public static final int DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR = 8;
     public static final int DRIVETRAIN_FRONT_LEFT_ANGLE_MOTOR = 9;
@@ -52,9 +55,9 @@ public class Constants {
     public static final int SECONDARY_CONTROLLER_PORT = 1;
 
     public static final int PIGEON_PORT = 0;
-
+    //#endregion
     
-    // Intake
+    //#region Intake
     // public static final double SERVO_OUT_DEGREES = 135.0;
     // public static final double SERVO_IN_DEGREES = 0.0;
     public static final int RIGHT_SERVO_PORT = 0;
@@ -72,6 +75,7 @@ public class Constants {
     public static final double ARM_HOME_INCHES = 0.0;
     public static final double INTAKE_COLLECT_RPM = 950.0;
     public static final double INTAKE_SPIT_RPM = -300.0;
+    //#endregion
     
 
     // Bridge Balance

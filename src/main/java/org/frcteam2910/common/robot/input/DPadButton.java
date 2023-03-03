@@ -1,7 +1,7 @@
 package org.frcteam2910.common.robot.input;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.InternalButton;
 
 /**
  * A button for different directions on a directional-pad.
@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
  * @author Jacob Bublitz
  * @since 1.0
  */
-public class DPadButton extends Button {
+public class DPadButton extends InternalButton {
 
 	public enum Direction {
 		UP(0),
