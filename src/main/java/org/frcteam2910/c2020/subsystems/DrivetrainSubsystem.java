@@ -467,15 +467,18 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         double rotationOutput = 0.0;
         if(!rotationInput) {
             // Auto gyro correction if no turning
-            if(commandedPoseAngle <= 0.0) {
-                joystickRotateGyroController.setSetpoint(Math.toRadians(-getYawDegreesTargetOffset()) + getPose().rotation.toRadians());
-            }
-            else {
-                joystickRotateGyroController.setSetpoint(Math.toRadians(-commandedPoseAngle) + getPose().rotation.toRadians());
-            }
-            rotationOutput = joystickRotateGyroController.calculate(getPose().rotation.toRadians(), 0.02);
+            //joystickRotateGyroController.setSetpoint(Math.toRadians(-commandedPoseAngle) + getPose().rotation.toRadians());
+            if(commandedPoseAngle>180)
+                joystickRotateGyroController.setSetpoint(Math.toRadians(-commandedPoseAngle));
+            else
+                joystickRotateGyroController.setSetpoint(Math.toRadians(commandedPoseAngle));   
+
+            rotationOutput = joystickRotateGyroController.calculate(getPose().rotation.toRadians()>Math.PI?getPose().rotation.toRadians()-Math.PI:getPose().rotation.toRadians(), 0.02);
             if(Math.abs(rotationOutput) > 0.5) {
                 rotationOutput = Math.copySign(0.5, rotationOutput);
+            }
+            if(commandedPoseAngle>180 && (commandedPoseAngle-getPose().rotation.toDegrees()<180)){
+                rotationOutput *= -1;
             }
             if(Math.abs(commandedPoseAngle-getPose().rotation.toDegrees()) > 90 && (getPose().rotation.toDegrees()>180 && commandedPoseAngle<180)) {
                 //rotationOutput *= -1;
@@ -485,7 +488,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             // }
         }
         else{
-            commandedPoseAngle = getPose().rotation.toRadians();
+            commandedPoseAngle = getPose().rotation.toDegrees();
         }
 
         SmartDashboard.putBoolean("rotation input", rotationInput);
@@ -751,6 +754,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                     gyroscope.getUnadjustedAngle().rotateBy(angle.inverse())
             );
         }
+        commandedPoseAngle=0;
     }
 
     public void alignWheels() {
@@ -1153,7 +1157,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         // SmartDashboard.putString("Drive Mode", getDriveControlMode().toString());
         // SmartDashboard.putNumber("blanace timer length", balanceTimer.get());
         SmartDashboard.putNumber("angle", getPose().rotation.toDegrees());
-        SmartDashboard.putNumber("commanded angle", Math.toDegrees(commandedPoseAngle));
+        SmartDashboard.putNumber("commanded angle", commandedPoseAngle);
         // SmartDashboard.putString("side", side.toString());
         // SmartDashboard.putNumber("x accel", gyroscope.getAccels()[0]/(double)Short.MAX_VALUE);
         // SmartDashboard.putNumber("y accel", gyroscope.getAccels()[1]/(double)Short.MAX_VALUE);

@@ -52,14 +52,15 @@ public class RobotContainer {
         autonomousChooser = new AutonomousChooser(autonomousTrajectories);
 
         drivetrain.setController(primaryController);
-        //intake.setController(secondaryController);
+        intake.setController(secondaryController);
 
         driverReadout = new DriverReadout(this);
 
         CommandScheduler.getInstance().registerSubsystem(drivetrain);
-        CommandScheduler.getInstance().setDefaultCommand(intake, new VariableIntakeRPMCommand(intake, getIntakeAxis(), getOuttakeAxis()));
+        CommandScheduler.getInstance().registerSubsystem(intake);
+        
         CommandScheduler.getInstance().setDefaultCommand(armRotator, new ArmRotationControlJoysticks(armRotator, getArmRotationAxis()));
-        //CommandScheduler.getInstance().setDefaultCommand(armExtender, new ArmTranslationalControlJoysticks(armExtender, getArmTranslationalAxis()));
+        CommandScheduler.getInstance().setDefaultCommand(armExtender, new ArmTranslationalControlJoysticks(armExtender, getArmTranslationalAxis()));
 
         configureButtonBindings();
         
