@@ -42,6 +42,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 
@@ -217,6 +218,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     }
 
     private DrivetrainSubsystem() {  
+        CommandScheduler.getInstance().registerSubsystem(this);
         synchronized (sensorLock) {
             gyroscope.setInverted(false);
         }

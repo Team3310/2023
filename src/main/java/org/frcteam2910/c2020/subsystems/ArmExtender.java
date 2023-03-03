@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class ArmExtender implements Subsystem{
@@ -44,6 +45,7 @@ public class ArmExtender implements Subsystem{
     }
     
     private ArmExtender(){
+        CommandScheduler.getInstance().registerSubsystem(this);
         armTranslationMotor = new TalonFX(Constants.ARM_TRANSLATIONAL_MOTOR_PORT);
 
         TalonFXConfiguration configs = new TalonFXConfiguration();

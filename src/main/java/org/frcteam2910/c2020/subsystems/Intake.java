@@ -7,6 +7,8 @@ import org.frcteam2910.common.robot.input.Controller;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class Intake implements Subsystem{
@@ -38,6 +40,7 @@ public class Intake implements Subsystem{
     }
     
     private Intake(){
+        CommandScheduler.getInstance().registerSubsystem(this);
         intakeMotor = new TalonFX(Constants.INTAKE_MOTOR_PORT);
         intakeMotor.setInverted(true);
         leftServo.setInverted(true);

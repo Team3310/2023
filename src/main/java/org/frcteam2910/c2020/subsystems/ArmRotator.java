@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class ArmRotator implements Subsystem{
@@ -43,6 +44,7 @@ public class ArmRotator implements Subsystem{
     }
     
     private ArmRotator(){
+        CommandScheduler.getInstance().registerSubsystem(this);
         armRotationMotor = new TalonFX(Constants.ARM_ROTATION_MOTOR_PORT, "Drivetrain");
 
         TalonFXConfiguration configs = new TalonFXConfiguration();
