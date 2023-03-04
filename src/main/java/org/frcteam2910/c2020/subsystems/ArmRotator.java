@@ -7,6 +7,7 @@ import org.frcteam2910.common.robot.input.Axis;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
@@ -22,7 +23,7 @@ public class ArmRotator implements Subsystem{
     private TalonFX armRotationMotor;
 
     //conversions
-    private double ARM_ROTATION_GEAR_RATIO = (50.0/11.0)*(60.0/26.0)*(36.0/18.0)*(36.0/18.0)*(60.0/18.0)*(2.0/3.0);
+    private double ARM_ROTATION_GEAR_RATIO = (50.0/11.0)*(60.0/26.0)*(36.0/18.0)*(36.0/18.0)*(72.0/18.0);//*(2.0/3.0);
     private double ARM_REVOLUTIONS_TO_ENCODER_TICKS = ARM_ROTATION_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
     private double ARM_DEGREES_TO_ENCODER_TICKS = ARM_REVOLUTIONS_TO_ENCODER_TICKS/360.0;
     //misc
@@ -51,8 +52,13 @@ public class ArmRotator implements Subsystem{
         configs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
         armRotationMotor.configAllSettings(configs);
 
-        armRotationMotor.config_kF(0, 0.005);
-        armRotationMotor.config_kP(0, 0.01);
+        final StatorCurrentLimitConfiguration statorCurrentConfigs = new StatorCurrentLimitConfiguration();
+        statorCurrentConfigs.currentLimit = 30.0;
+        statorCurrentConfigs.enable = true;
+        armRotationMotor.configStatorCurrentLimit(statorCurrentConfigs);
+
+        armRotationMotor.config_kF(0, 0.0);
+        armRotationMotor.config_kP(0, 0.05);
         armRotationMotor.config_kI(0, 0.0);
         armRotationMotor.config_kD(0, 0.0);
     }
@@ -69,7 +75,7 @@ public class ArmRotator implements Subsystem{
     }
 
     public double getArmDegrees(){
-        return (armRotationMotor.getSelectedSensorPosition() / ARM_DEGREES_TO_ENCODER_TICKS)*(2.0/3.0)+ degreesOffset;
+        return (armRotationMotor.getSelectedSensorPosition() / ARM_DEGREES_TO_ENCODER_TICKS)+ degreesOffset;
     }
 
     public double getArmDegreesEncoderTicks(double degrees){
@@ -134,7 +140,7 @@ public class ArmRotator implements Subsystem{
     @Override
     public void periodic(){
         if(controlMode == ArmRotationMode.MANUAL)
-            targetDegreesTicks = armRotationMotor.getSelectedSensorPosition()*(2.0/3.0);
+            targetDegreesTicks = armRotationMotor.getSelectedSensorPosition();
 
         // SmartDashboard.putNumber("arm degress", getArmDegrees());
         // SmartDashboard.putNumber("command Arm Degrees", getTargetDegrees());

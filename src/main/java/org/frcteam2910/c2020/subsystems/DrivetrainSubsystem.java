@@ -744,6 +744,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                     gyroscope.getUnadjustedAngle().rotateBy(angle.inverse())
             );
         }
+        commandedPoseAngle=0;
     }
 
     public void alignWheels() {

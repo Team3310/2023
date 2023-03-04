@@ -8,6 +8,8 @@ import org.frcteam2910.common.robot.input.Controller;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
@@ -18,6 +20,10 @@ public class Intake implements Subsystem{
 
     //falcons
     private TalonFX intakeMotor;
+
+    //sensors
+    private DigitalInput cubeSensor;
+    private DigitalInput Sensor;
 
     //conversions
     private static final double INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 60.0 / 16.0;
@@ -44,6 +50,9 @@ public class Intake implements Subsystem{
         intakeMotor = new TalonFX(Constants.INTAKE_MOTOR_PORT);
         intakeMotor.setInverted(true);
         leftServo.setInverted(true);
+
+        cubeSensor = new DigitalInput(0);
+        Sensor = new DigitalInput(1);
     }
     //#endregion
     
@@ -56,6 +65,7 @@ public class Intake implements Subsystem{
     }
     //#endregion
         //#region intake
+        
         public void variableIntakeRPM(){
             if(getIntakeAxis().getButton(0.1).getAsBoolean()){
                 setRollerSpeed(getIntakeAxis().get(true));
@@ -87,7 +97,7 @@ public class Intake implements Subsystem{
         }
 
         public double RollerRPMToNativeUnits(double rpm) {
-            return rpm * INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS / 10.0D / 60.0D;
+            return rpm * INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS;
         }
         
         public void setController(Controller secondaryController){
@@ -101,6 +111,9 @@ public class Intake implements Subsystem{
 
     @Override
     public void periodic(){
+        SmartDashboard.putNumber("right trigger axis", getIntakeAxis().get());
+        SmartDashboard.putNumber("left trigger axis", getOuttakeAxis().get());
         setServoPosition(lastCommandedPosition);
+        variableIntakeRPM();
     }
 }

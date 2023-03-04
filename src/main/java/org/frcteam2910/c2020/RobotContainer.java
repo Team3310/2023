@@ -52,7 +52,7 @@ public class RobotContainer {
         autonomousChooser = new AutonomousChooser(autonomousTrajectories);
 
         drivetrain.setController(primaryController);
-        //intake.setController(secondaryController);
+        intake.setController(secondaryController);
 
         driverReadoutTab = new AutoFormatShuffleboardTab(this, "Driver Readout", 2, 9);
         
@@ -67,7 +67,7 @@ public class RobotContainer {
         CommandScheduler.getInstance().setDefaultCommand(intake, new VariableIntakeRPMCommand(intake));
         CommandScheduler.getInstance().setDefaultCommand(armRotator, new ArmRotationControlJoysticks(armRotator));
         //CommandScheduler.getInstance().setDefaultCommand(armExtender, new ArmTranslationalControlJoysticks(armExtender, getArmTranslationalAxis()));
-
+        
         configureButtonBindings();
     }
 

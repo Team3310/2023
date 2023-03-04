@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
@@ -23,7 +24,7 @@ public class ArmExtender implements Subsystem{
     private TalonFX armTranslationMotor;
 
     //conversions
-    private double DRUM_DIAMETER = 0.75;
+    private double DRUM_DIAMETER = 0.54134;
     private double TRANSLATIONAL_ROTATIONS_TO_INCHES = Math.PI * DRUM_DIAMETER;
     private double ARM_INCHES_TO_ENCODER_TICKS = Constants.ARM_TRANSLATIONAL_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION/TRANSLATIONAL_ROTATIONS_TO_INCHES;//Constants.ARM_TRANSLATIONAL_GEAR_RATIO * Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION * TRANSLATIONAL_ROTATIONS_TO_INCHES;
     
@@ -52,7 +53,12 @@ public class ArmExtender implements Subsystem{
         configs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
         armTranslationMotor.configAllSettings(configs);
         armTranslationMotor.setNeutralMode(NeutralMode.Brake);
-        armTranslationMotor.setInverted(true);
+        armTranslationMotor.setInverted(false);
+
+        final StatorCurrentLimitConfiguration statorCurrentConfigs = new StatorCurrentLimitConfiguration();
+        statorCurrentConfigs.currentLimit = 30.0;
+        statorCurrentConfigs.enable = true;
+        armTranslationMotor.configStatorCurrentLimit(statorCurrentConfigs);
 
         armTranslationMotor.config_kF(0, 0.0);
         armTranslationMotor.config_kP(0, 0.05); //0.1
@@ -145,6 +151,7 @@ public class ArmExtender implements Subsystem{
         // SmartDashboard.putString("extender control mode", controlMode.toString());
         // SmartDashboard.putNumber("commanded arm inches ticks", targetInchesTicks);
         // SmartDashboard.putNumber("arm inches ticks", armTranslationMotor.getSelectedSensorPosition());
+        // SmartDashboard.putNumber("current",armTranslationMotor.getStatorCurrent());
         if (controlMode == ArmExtenderMode.MANUAL) {
             if (getArmInches() < Constants.MIN_ARM_INCHES && manualTranslationSpeed < 0.0) {
                 setTranslationalHold();

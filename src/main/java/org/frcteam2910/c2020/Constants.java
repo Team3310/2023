@@ -18,26 +18,26 @@ public class Constants {
     public static final int DRIVETRAIN_FRONT_LEFT_ENCODER_PORT = 3;
 
     /********************************************************************************************************************/
-    public static final double DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET = -Math.toRadians(4.53); //68.81 Practice robot settings
-    public static final double DRIVETRAIN_FRONT_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(4.52); //64.07 Comp settings
+    public static final double DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET = -Math.toRadians(347.78); //68.81 Practice robot settings
+    public static final double DRIVETRAIN_FRONT_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(347.78); //64.07 Comp settings
     /********************************************************************************************************************/
 
     public static final int DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR = 11;
     public static final int DRIVETRAIN_FRONT_RIGHT_ANGLE_MOTOR = 10;
-    public static final int DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT = 1;
+    public static final int DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT = 2;
 
     /********************************************************************************************************************/
-    public static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET = -Math.toRadians(348.75); //192.33 Practice robot settings
-    public static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(348.75); //152.49 Comp settings
+    public static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET = -Math.toRadians(35.77); //192.33 Practice robot settings
+    public static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(35.77); //152.49 Comp settings
     /********************************************************************************************************************/
 
     public static final int DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR = 0;
     public static final int DRIVETRAIN_BACK_LEFT_ANGLE_MOTOR = 1;
-    public static final int DRIVETRAIN_BACK_LEFT_ENCODER_PORT = 2;
+    public static final int DRIVETRAIN_BACK_LEFT_ENCODER_PORT = 1;
 
     /********************************************************************************************************************/
-    public static final double DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET = -Math.toRadians(262.71); //314.73 Practice robot settings
-    public static final double DRIVETRAIN_BACK_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(262.71);//48.34 Comp settings
+    public static final double DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET = -Math.toRadians(169.01); //314.73 Practice robot settings
+    public static final double DRIVETRAIN_BACK_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(169.01);//48.34 Comp settings
     /********************************************************************************************************************/
 
     public static final int DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR = 19;
@@ -45,8 +45,8 @@ public class Constants {
     public static final int DRIVETRAIN_BACK_RIGHT_ENCODER_PORT = 0;
 
     /********************************************************************************************************************/
-    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET = -Math.toRadians(205.56); //192.91 Practice robot settings
-    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(205.56); //213.48 Comp settings
+    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET = -Math.toRadians(257.16); //192.91 Practice robot settings
+    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(257.16); //213.48 Comp settings
     /********************************************************************************************************************/
 
     public static final double ENCODER_TICKS_PER_MOTOR_REVOLUTION = 2048.0;
@@ -66,7 +66,7 @@ public class Constants {
     public static final int ARM_TRANSLATIONAL_MOTOR_PORT = 13;
     public static final int INTAKE_MOTOR_PORT = 2;
     public static final double ARM_ROTATION_GEAR_RATIO = (50/11)*(60/26)*(36/18)*(36/18)*(60/18);
-    public static final double ARM_TRANSLATIONAL_GEAR_RATIO = (60/11);
+    public static final double ARM_TRANSLATIONAL_GEAR_RATIO = (36/12)*(36/18);
     public static final double MIN_ARM_DEGREES = -100.0;
     public static final double MAX_ARM_DEGREES = 100.0;
     public static final double MIN_ARM_INCHES = 0.0;
