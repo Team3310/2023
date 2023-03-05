@@ -1,6 +1,8 @@
 package org.frcteam2910.c2020;
 
 public class Constants {
+
+    //#region DrivetrainSubsystem
     /*
     Wheel gears to the left for offsets
      */
@@ -42,8 +44,8 @@ public class Constants {
     public static final int DRIVETRAIN_BACK_RIGHT_ENCODER_PORT = 0;
 
     /********************************************************************************************************************/
-    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET = -Math.toRadians(257.16); //192.91 Practice robot settings
-    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(257.16); //213.48 Comp settings
+    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET = -Math.toRadians(274.16); //192.91 Practice robot settings
+    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(274.16); //213.48 Comp settings
     /********************************************************************************************************************/
 
     public static final double ENCODER_TICKS_PER_MOTOR_REVOLUTION = 2048.0;
@@ -54,7 +56,11 @@ public class Constants {
     public static final int PIGEON_PORT = 0;
 
     
-    // Intake
+    public static final double BALANCE_DEADBAND = 0.5;
+    public static final double DRIVE_ROTATION_JOYSTICK_DEADBAND = 0.2;
+    //#endregion
+    
+    //#region Intake
     // public static final double SERVO_OUT_DEGREES = 135.0;
     // public static final double SERVO_IN_DEGREES = 0.0;
     public static final int RIGHT_SERVO_PORT = 0;
@@ -62,20 +68,34 @@ public class Constants {
     public static final int ARM_ROTATION_MOTOR_PORT = 14;
     public static final int ARM_TRANSLATIONAL_MOTOR_PORT = 13;
     public static final int INTAKE_MOTOR_PORT = 2;
-    public static final double ARM_ROTATION_GEAR_RATIO = (50/11)*(60/26)*(36/18)*(36/18)*(60/18);
-    public static final double ARM_TRANSLATIONAL_GEAR_RATIO = (36/12)*(36/18);
-    public static final double MIN_ARM_DEGREES = -100.0;
-    public static final double MAX_ARM_DEGREES = 100.0;
-    public static final double MIN_ARM_INCHES = 0.0;
-    public static final double MAX_ARM_INCHES = 17.0;
+    
+    // Arm Home Values, Offsets, and Ratios
+                                                        // (50.0/11.0)*(60.0/26.0)*(36.0/18.0)*(36.0/18.0)*(72.0/18.0);
+    public static final double ARM_ROTATION_GEAR_RATIO = (50.0/11.0)*
+                                                         (60.0/26.0)*
+                                                         (36.0/18.0)*
+                                                         (36.0/18.0)*
+                                                         (72.0/18.0);
+    public static final double ARM_REVOLUTIONS_TO_ENCODER_TICKS = ARM_ROTATION_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
+    public static final double ARM_DEGREES_TO_ENCODER_TICKS = ARM_REVOLUTIONS_TO_ENCODER_TICKS/360.0;
     public static final double ARM_HOME_DEGREES = 0.0;
-    public static final double ARM_HOME_INCHES = 0.0;
+
+    public static final double ARM_TRANSLATIONAL_GEAR_RATIO = (36/12.0)*(36/18.0);
+    public static final double ARM_EXTEND_ZEROING_SPEED = 0.25;
+    public static final double ARM_EXTEND_HOME_INCHES = 0.0;
+    
+    // Define Arm motion parameters
+    public static final double ARM_MIN_ROTATION_DEGREES = -110.0;
+    public static final double ARM_MAX_ROTATION_DEGREES = 110.0;
+    
+    public static final double ARM_MIN_EXTEND_INCHES = 0.0;
+    public static final double ARM_MAX_EXTEND_INCHES = 17.0;
+
+    // Intake Motor Constants
     public static final double INTAKE_COLLECT_RPM = 950.0;
     public static final double INTAKE_SPIT_RPM = -300.0;
-    
 
-    // Bridge Balance
-    public static final double BALANCE_DEADBAND = 0.5;
-
-    public static final double DEADBAND_ROTATION_JOYSTICK = 0.2;
+    public static final double INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 60.0 / 16.0;
+    public static final double INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * ENCODER_TICKS_PER_MOTOR_REVOLUTION;
+    //#endregion
 }

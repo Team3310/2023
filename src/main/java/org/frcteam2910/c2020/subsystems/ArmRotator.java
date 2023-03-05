@@ -5,6 +5,7 @@ import org.frcteam2910.c2020.Constants;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -17,14 +18,8 @@ public class ArmRotator implements Subsystem{
         MANUAL, HOLD
     }
 
-    //falcons
     private TalonFX armRotationMotor;
 
-    //conversions
-    private double ARM_ROTATION_GEAR_RATIO = (50.0/11.0)*(60.0/26.0)*(36.0/18.0)*(36.0/18.0)*(72.0/18.0);//*(2.0/3.0);
-    private double ARM_REVOLUTIONS_TO_ENCODER_TICKS = ARM_ROTATION_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
-    private double ARM_DEGREES_TO_ENCODER_TICKS = ARM_REVOLUTIONS_TO_ENCODER_TICKS/360.0;
-    //misc
     boolean firstHoldSet = true;
 
     private ArmRotationMode controlMode = ArmRotationMode.MANUAL;
@@ -62,18 +57,17 @@ public class ArmRotator implements Subsystem{
     }
     //#endregion
     
-    //#region Class Methods
-        //#region arm
+    //#region Arm Methods
     public void setRotationControlMode(ArmRotationMode mode){
         controlMode = mode;
     }
 
     public double getArmDegrees(){
-        return (armRotationMotor.getSelectedSensorPosition() / ARM_DEGREES_TO_ENCODER_TICKS)+ degreesOffset;
+        return (armRotationMotor.getSelectedSensorPosition() / Constants.ARM_DEGREES_TO_ENCODER_TICKS)+ degreesOffset;
     }
 
     public double getArmDegreesEncoderTicks(double degrees){
-        return degrees * ARM_DEGREES_TO_ENCODER_TICKS;
+        return degrees * Constants.ARM_DEGREES_TO_ENCODER_TICKS;
     }
 
     public void setArmDegreesZero(double offset){
@@ -83,10 +77,10 @@ public class ArmRotator implements Subsystem{
     }
 
     public double limitArmDegrees(double targetDegrees){
-        if(targetDegrees < Constants.MIN_ARM_DEGREES){
-            return Constants.MIN_ARM_DEGREES;
-        }else if(targetDegrees > Constants.MAX_ARM_DEGREES){
-            return Constants.MAX_ARM_DEGREES;
+        if(targetDegrees < Constants.ARM_MIN_ROTATION_DEGREES){
+            return Constants.ARM_MIN_ROTATION_DEGREES;
+        }else if(targetDegrees > Constants.ARM_MAX_ROTATION_DEGREES){
+            return Constants.ARM_MAX_ROTATION_DEGREES;
         }
 
         return targetDegrees;   
@@ -96,21 +90,25 @@ public class ArmRotator implements Subsystem{
         controlMode = ArmRotationMode.HOLD;
         armRotationMotor.selectProfileSlot(0, 0);
         targetDegreesTicks = getArmDegreesEncoderTicks(limitArmDegrees(degrees));
-        armRotationMotor.set(ControlMode.Position, targetDegreesTicks, DemandType.ArbitraryFeedForward, 0.04);
+        // armRotationMotor.set(ControlMode.Position, targetDegreesTicks, DemandType.ArbitraryFeedForward, 0.03);
+        armRotationMotor.set(ControlMode.Position, targetDegreesTicks);
     }
 
     public synchronized void setRotationSpeed(double speed) {
         manualRotationSpeed = speed;
-        double curSpeed = speed;
 
         controlMode = ArmRotationMode.MANUAL;
-        if (getArmDegrees() < Constants.MIN_ARM_DEGREES && speed < 0.0) {
-            curSpeed = 0;
-        } else if (getArmDegrees() > Constants.MAX_ARM_DEGREES && speed > 0.0) {
-            curSpeed = 0;
+        if (getArmDegrees() < Constants.ARM_MIN_ROTATION_DEGREES && speed < 0.0) {
+            speed = 0;
+        } else if (getArmDegrees() > Constants.ARM_MAX_ROTATION_DEGREES && speed > 0.0) {
+            speed = 0;
         }
 
-        armRotationMotor.set(ControlMode.PercentOutput, curSpeed);
+        if(Math.abs(speed) > 0.5) {
+            speed = Math.copySign(0.5, speed);
+        }
+
+        armRotationMotor.set(ControlMode.PercentOutput, speed);
     }
 
     public synchronized void setRotationHold(){
@@ -121,14 +119,16 @@ public class ArmRotator implements Subsystem{
         controlMode = ArmRotationMode.HOLD;
         armRotationMotor.selectProfileSlot(0, 0);    
         //targetDegreesTicks = getArmDegreesEncoderTicksAbsolute(limitArmDegrees(getArmDegrees()));
-        armRotationMotor.set(ControlMode.Position, targetDegreesTicks, DemandType.ArbitraryFeedForward, 0.04);
+        armRotationMotor.set(ControlMode.Position, targetDegreesTicks);
     }
 
     private double getTargetDegrees(){
-        return targetDegreesTicks/ARM_DEGREES_TO_ENCODER_TICKS;
+        return targetDegreesTicks/Constants.ARM_DEGREES_TO_ENCODER_TICKS;
+    }   
+
+    public void setMotorNeutralMode(NeutralMode nm) {
+        armRotationMotor.setNeutralMode(nm);
     }
-        //#endregion
-        
     //#endregion
 
     @Override
@@ -136,13 +136,14 @@ public class ArmRotator implements Subsystem{
         if(controlMode == ArmRotationMode.MANUAL)
             targetDegreesTicks = armRotationMotor.getSelectedSensorPosition();
 
-        SmartDashboard.putNumber("arm degress", getArmDegrees());
-        SmartDashboard.putString("rotator control mode", controlMode.toString());
+        SmartDashboard.putNumber("Arm Degrees", getArmDegrees());
+        // SmartDashboard.putString("rotator control mode", controlMode.toString());
+        SmartDashboard.putNumber("Arm Target Degrees", getTargetDegrees());
         
         if (controlMode == ArmRotationMode.MANUAL){
-            if (getArmDegrees() < Constants.MIN_ARM_DEGREES && manualRotationSpeed < 0.0) {
+            if (getArmDegrees() < Constants.ARM_MIN_ROTATION_DEGREES && manualRotationSpeed < 0.0) {
                 setRotationHold();
-            } else if (getArmDegrees() > Constants.MAX_ARM_DEGREES && manualRotationSpeed > 0.0) {
+            } else if (getArmDegrees() > Constants.ARM_MAX_ROTATION_DEGREES && manualRotationSpeed > 0.0) {
                 setRotationHold();
             }
         }

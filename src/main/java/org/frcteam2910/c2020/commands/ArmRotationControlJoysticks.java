@@ -27,7 +27,7 @@ public class ArmRotationControlJoysticks extends CommandBase {
         double speed = YAxis.get(true);
 
         if (Math.abs(speed) > 0.1) {
-            arm.setRotationSpeed(speed);
+            arm.setRotationSpeed(speed / 2.0);
         } else {
             arm.setRotationHold();
         }

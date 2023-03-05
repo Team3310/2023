@@ -6,6 +6,7 @@ import org.frcteam2910.c2020.commands.ChangeDriveMode;
 import org.frcteam2910.c2020.commands.DriveBalanceCommand;
 import org.frcteam2910.c2020.commands.VariableIntakeRPMCommand;
 import org.frcteam2910.c2020.commands.ZeroAll;
+import org.frcteam2910.c2020.commands.ArmExtenderZero;
 import org.frcteam2910.c2020.subsystems.ArmExtender;
 import org.frcteam2910.c2020.subsystems.ArmRotator;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
@@ -70,7 +71,7 @@ public class RobotContainer {
     public void updateTrajectoriesBasedOnSide(){
         autonomousTrajectories = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, sideChooser.getSide());
         autonomousChooser.updateTrajectories(autonomousTrajectories);
-        SmartDashboard.putString("Side", sideChooser.getSide().toString());
+        // SmartDashboard.putString("Side", sideChooser.getSide().toString());
     }
 
     public void updateSide(){
@@ -91,9 +92,9 @@ public class RobotContainer {
         primaryController.getRightBumperButton().whenReleased(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
-       primaryController.getLeftBumperButton().whenPressed(
-               new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.LIMELIGHT)
-       );
+        primaryController.getLeftBumperButton().whenPressed(
+                new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.LIMELIGHT)
+        );
         primaryController.getLeftBumperButton().whenReleased(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
@@ -129,11 +130,34 @@ public class RobotContainer {
         secondaryController.getRightJoystickButton().whenPressed(
                 new InstantCommand(()-> drivetrain.setLimelightOverride(false))
         );
-            
-        SmartDashboard.putData("Turn to Goal", new InstantCommand(() -> drivetrain.setTurnToTarget()));
 
-        SmartDashboard.putData("Limelight broken", new InstantCommand(() -> drivetrain.setLimelightOverride(true)));
-        SmartDashboard.putData("Limelight working", new InstantCommand(() -> drivetrain.setLimelightOverride(false)));
+        secondaryController.getBButton().onTrue(new InstantCommand(() -> {
+            armRotator.setArmDegreesPositionAbsolute(30);
+            armExtender.setTargetArmInchesPositionAbsolute(3.5);
+        }));
+
+        secondaryController.getAButton().onTrue(new InstantCommand(() -> {
+            armRotator.setArmDegreesPositionAbsolute(0);
+            armExtender.setTargetArmInchesPositionAbsolute(0);
+        }));
+
+        secondaryController.getXButton().onTrue(new InstantCommand(() -> {
+            armRotator.setArmDegreesPositionAbsolute(-87);
+            armExtender.setTargetArmInchesPositionAbsolute(0);
+        }));
+
+        secondaryController.getYButton().onTrue(new InstantCommand(() -> {
+            armRotator.setArmDegreesPositionAbsolute(-105);
+            armExtender.setTargetArmInchesPositionAbsolute(12);
+        }));
+
+        
+        secondaryController.getStartButton().onTrue(new ArmExtenderZero(armExtender));
+            
+        // SmartDashboard.putData("Turn to Goal", new InstantCommand(() -> drivetrain.setTurnToTarget()));
+
+        // SmartDashboard.putData("Limelight broken", new InstantCommand(() -> drivetrain.setLimelightOverride(true)));
+        // SmartDashboard.putData("Limelight working", new InstantCommand(() -> drivetrain.setLimelightOverride(false)));
         SmartDashboard.putData("set arm to 30 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(30)));
         SmartDashboard.putData("set arm to 60 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(60)));
         SmartDashboard.putData("set arm to 90 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(90)));
@@ -157,6 +181,10 @@ public class RobotContainer {
 
     public XboxController getPrimaryController() {
         return primaryController;
+    }
+
+    public XboxController getSecondaryController() {
+        return secondaryController;
     }
 
     private Axis getArmRotationAxis() {
