@@ -109,11 +109,11 @@ public class Intake implements Subsystem{
         this.secondaryController = secondaryController;
     }
 
-    private Axis getIntakeAxis() {
+    public Axis getIntakeAxis() {
         return secondaryController.getRightTriggerAxis();
     }
 
-    private Axis getOuttakeAxis() {
+    public Axis getOuttakeAxis() {
         return secondaryController.getLeftTriggerAxis();
     }
 
