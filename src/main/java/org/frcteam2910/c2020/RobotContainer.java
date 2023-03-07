@@ -6,6 +6,7 @@ import org.frcteam2910.c2020.commands.DriveBalanceCommand;
 import org.frcteam2910.c2020.commands.VariableIntakeRPMCommand;
 import org.frcteam2910.c2020.commands.ZeroAllWheels;
 import org.frcteam2910.c2020.commands.ZeroGyroscope;
+import org.frcteam2910.c2020.commands.ArmExtenderZero;
 import org.frcteam2910.c2020.subsystems.ArmExtender;
 import org.frcteam2910.c2020.subsystems.ArmRotator;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
@@ -18,6 +19,7 @@ import org.frcteam2910.c2020.util.SideChooser;
 import org.frcteam2910.common.robot.input.DPadButton;
 import org.frcteam2910.common.robot.input.XboxController;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -74,6 +76,7 @@ public class RobotContainer {
     public void updateTrajectoriesBasedOnSide(){
         autonomousTrajectories = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, sideChooser.getSide());
         autonomousChooser.updateTrajectories(autonomousTrajectories);
+        // SmartDashboard.putString("Side", sideChooser.getSide().toString());
     }
 
     public void updateSide(){
@@ -132,15 +135,38 @@ public class RobotContainer {
         secondaryController.getRightJoystickButton().onTrue(
                 new InstantCommand(()-> drivetrain.setLimelightOverride(false))
         );
+
+        secondaryController.getBButton().onTrue(new InstantCommand(() -> {
+            armRotator.setArmDegreesPositionAbsolute(30);
+            armExtender.setTargetArmInchesPositionAbsolute(3.5);
+        }));
+
+        secondaryController.getAButton().onTrue(new InstantCommand(() -> {
+            armRotator.setArmDegreesPositionAbsolute(0);
+            armExtender.setTargetArmInchesPositionAbsolute(0);
+        }));
+
+        secondaryController.getXButton().onTrue(new InstantCommand(() -> {
+            armRotator.setArmDegreesPositionAbsolute(-87);
+            armExtender.setTargetArmInchesPositionAbsolute(0);
+        }));
+
+        secondaryController.getYButton().onTrue(new InstantCommand(() -> {
+            armRotator.setArmDegreesPositionAbsolute(-105);
+            armExtender.setTargetArmInchesPositionAbsolute(12);
+        }));
+
+        
+        secondaryController.getStartButton().onTrue(new ArmExtenderZero(armExtender));
             
         // SmartDashboard.putData("Turn to Goal", new InstantCommand(() -> drivetrain.setTurnToTarget()));
 
         // SmartDashboard.putData("Limelight broken", new InstantCommand(() -> drivetrain.setLimelightOverride(true)));
         // SmartDashboard.putData("Limelight working", new InstantCommand(() -> drivetrain.setLimelightOverride(false)));
-        // SmartDashboard.putData("set arm to 30 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(30)));
-        // SmartDashboard.putData("set arm to 60 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(60)));
-        // SmartDashboard.putData("set arm to 90 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(90)));
-        // SmartDashboard.putData("set arm to 0 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(0)));
+        SmartDashboard.putData("set arm to 30 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(30)));
+        SmartDashboard.putData("set arm to 60 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(60)));
+        SmartDashboard.putData("set arm to 90 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(90)));
+        SmartDashboard.putData("set arm to 0 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(0)));
     }
     
     public Command getSelectedAutonomousCommand() {

@@ -8,9 +8,13 @@ import java.util.Enumeration;
 import java.util.List;
 
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
+import org.frcteam2910.c2020.subsystems.ArmRotator.ArmRotationMode;
+import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.AutonomousChooser.AutonomousMode;
 import org.frcteam2910.common.Logger;
 import org.frcteam2910.common.robot.UpdateManager;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -134,8 +138,6 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         updateManager.startLoop(0.02);
-        robotContainer.getArmExtender().setArmInchesZero(Constants.ARM_HOME_INCHES);
-        robotContainer.getArmRotator().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
 //        PortForwarder.add(5800, "limelight.local", 5800);
 //        PortForwarder.add(5801, "limelight.local", 5801);
 //        PortForwarder.add(5802, "limelight.local", 5802);
@@ -171,11 +173,12 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         teleopUsed = true;
 
+        robotContainer.getDrivetrainSubsystem().resetSteerAbsoluteAngle();
         robotContainer.getDrivetrainSubsystem().resetGyroAngle(robotContainer.getDrivetrainSubsystem().getPose().rotation);
 
         // robotContainer.getDrivetrainSubsystem().alignWheels();
 
-        robotContainer.getArmExtender().setArmInchesZero(Constants.ARM_HOME_INCHES);
+        robotContainer.getArmExtender().setArmInchesZero(Constants.ARM_EXTEND_HOME_INCHES);
         robotContainer.getArmRotator().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
 
         robotContainer.updateSide();
@@ -222,7 +225,10 @@ public class Robot extends TimedRobot {
     @Override
     public void testInit() {
         // Helpful development "unlock steer motors while tilted over" feature
+        robotContainer.getDrivetrainSubsystem().setDriveControlMode(DriveControlMode.HOLD);
         robotContainer.getDrivetrainSubsystem().alignWheels();
+        robotContainer.getArmRotator().setRotationControlMode(ArmRotationMode.MANUAL);
+        robotContainer.getArmRotator().setMotorNeutralMode(NeutralMode.Coast);
         if(!steerMotorSetToCoast) {
             if(robotContainer.getDrivetrainSubsystem().getPitchDegreesOffLevel() > 15
             || robotContainer.getDrivetrainSubsystem().getRollDegreesOffLevel() > 15){

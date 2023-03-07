@@ -6,8 +6,8 @@ public class GyroAutoChooser {
     private SendableChooser<Mode> modeChooser = new SendableChooser<>();
 
     public GyroAutoChooser() {
-        modeChooser.setDefaultOption("Off", Mode.Off);
-        modeChooser.addOption("On", Mode.On);
+        modeChooser.setDefaultOption(Mode.On.name(), Mode.On);
+        modeChooser.addOption(Mode.Off.name(), Mode.Off);
     }
 
     public SendableChooser<Mode> getSendableChooser() {

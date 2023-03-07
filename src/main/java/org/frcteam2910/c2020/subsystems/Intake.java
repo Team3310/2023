@@ -1,6 +1,7 @@
 package org.frcteam2910.c2020.subsystems;
 
 import org.frcteam2910.c2020.Constants;
+import org.frcteam2910.c2020.RobotContainer;
 import org.frcteam2910.c2020.Servo;
 import org.frcteam2910.common.robot.input.Axis;
 import org.frcteam2910.common.robot.input.Controller;
@@ -18,18 +19,13 @@ public class Intake implements Subsystem{
     private final Servo rightServo = new Servo(Constants.RIGHT_SERVO_PORT);
     private final Servo leftServo = new Servo(Constants.LEFT_SERVO_PORT);
 
-    //falcons
+    //Talons
     private TalonFX intakeMotor;
 
     //sensors
     private DigitalInput cubeSensor;
-    private DigitalInput Sensor;
-
-    //conversions
-    private static final double INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 60.0 / 16.0;
-    public static final double INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
-
-    //misc
+    private DigitalInput coneSensor;
+    
     private Controller secondaryController;
 
     boolean hasSetIntakeZero = false;
@@ -52,68 +48,91 @@ public class Intake implements Subsystem{
         leftServo.setInverted(true);
 
         cubeSensor = new DigitalInput(0);
-        Sensor = new DigitalInput(1);
+        coneSensor = new DigitalInput(1);
     }
     //#endregion
-    
-    //#region Class Methods
-        //#region servo
-    public void setServoPosition(double speed){
-        lastCommandedPosition=speed;
-        leftServo.setSpeed(speed);
-        rightServo.setSpeed(speed);
+
+    //#region servo
+    public void setServoPosition(double position){
+        lastCommandedPosition=position;
+        leftServo.setPosition(position);
+        rightServo.setPosition(position);
     }
     //#endregion
-        //#region intake
-        
-        public void variableIntakeRPM(){
-            if(getIntakeAxis().getButton(0.1).getAsBoolean()){
-                setRollerSpeed(getIntakeAxis().get(true));
-                //setRollerRPM(getRightTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
-                hasSetIntakeZero = false;
-            }
-            else if(getOuttakeAxis().getButton(0.1).getAsBoolean()){
-                setRollerSpeed(-getOuttakeAxis().get(true));
-                //setRollerRPM( -getLeftTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
-                hasSetIntakeZero = false;
-            }
-            else{
-                if(!hasSetIntakeZero){
-                    setRollerSpeed(0);
-                    hasSetIntakeZero = true;
-                }
-            }
-        }
 
-        public void setRollerSpeed(double speed) {
-            this.intakeMotor.set(ControlMode.PercentOutput, speed);
-            //System.out.println("Set Intake Speed = " + speed);
-        }
+    //#region intake
         
-        public void setRollerRPM(double rpm) {
-            this.intakeMotor.set(ControlMode.Velocity, this.RollerRPMToNativeUnits(rpm));
-            //System.out.println("Set Intake RPM = " + rpm);
+    public void variableIntakeRPM(){
+        if(getIntakeAxis().getButton(0.1).getAsBoolean()){
+            setRollerRPM(getIntakeAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
+            hasSetIntakeZero = false;
+        }
+        else if(getOuttakeAxis().getButton(0.1).getAsBoolean()){
+            setRollerRPM(-getOuttakeAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
+            hasSetIntakeZero = false;
+        }
+        else if(RobotContainer.getInstance().getSecondaryController().getLeftBumperButton().getAsBoolean()) {
+            setRollerRPM(Constants.INTAKE_SPIT_RPM);
+            hasSetIntakeZero = false;
+        }
+        else if(RobotContainer.getInstance().getSecondaryController().getRightBumperButton().getAsBoolean()) {
+            setRollerRPM(Constants.INTAKE_COLLECT_RPM);
+            hasSetIntakeZero = false;
+        }
+        else{
+            setRollerSpeed(0);
+            if(hasSetIntakeZero){
+                hasSetIntakeZero = true;
+            }
+        }
+    }
+
+    public void setRollerSpeed(double speed) {
+        this.intakeMotor.set(ControlMode.PercentOutput, speed);
+        //System.out.println("Set Intake Speed = " + speed);
+    }
     
-        }
+    public void setRollerRPM(double rpm) {
+        this.intakeMotor.set(ControlMode.Velocity, this.RollerRPMToNativeUnits(rpm));
+        //System.out.println("Set Intake RPM = " + rpm);
 
-        public double RollerRPMToNativeUnits(double rpm) {
-            return rpm * INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS;
-        }
-        
-        public void setController(Controller secondaryController){
-            this.secondaryController = secondaryController;
-        }
+    }
 
-        public Axis getIntakeAxis(){return secondaryController.getRightTriggerAxis();}
-        public Axis getOuttakeAxis(){return secondaryController.getLeftTriggerAxis();}
-        //#endregion
+    public double RollerRPMToNativeUnits(double rpm) {
+        return (rpm * Constants.INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) / (10*60);
+    }
+    public double NativeUnitsToRollerRPM(double ticks) {
+        return (ticks / Constants.INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) * (10*60);
+    }
+    
+    public void setController(Controller secondaryController){
+        this.secondaryController = secondaryController;
+    }
+
+    private Axis getIntakeAxis() {
+        return secondaryController.getRightTriggerAxis();
+    }
+
+    private Axis getOuttakeAxis() {
+        return secondaryController.getLeftTriggerAxis();
+    }
+
+    public DigitalInput getCubeSensor() {
+        return cubeSensor;
+    }
+    
+    public DigitalInput getConeSensor() {
+        return coneSensor;
+    }
     //#endregion
 
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("right trigger axis", getIntakeAxis().get());
-        SmartDashboard.putNumber("left trigger axis", getOuttakeAxis().get());
-        setServoPosition(lastCommandedPosition);
+        // SmartDashboard.putNumber("right trigger axis", getRightTriggerAxis().get());
+        // SmartDashboard.putNumber("left trigger axis", getLeftTriggerAxis().get());
+        // SmartDashboard.putNumber("rpm", ((60.0*(1000/100)*intakeMotor.getSelectedSensorVelocity())/2048));
+        SmartDashboard.putNumber("rpm", NativeUnitsToRollerRPM(intakeMotor.getSelectedSensorVelocity()));
+
         variableIntakeRPM();
     }
 }

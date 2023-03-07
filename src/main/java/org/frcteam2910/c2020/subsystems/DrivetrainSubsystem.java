@@ -42,6 +42,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
@@ -66,7 +67,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private double targetAngle; // for limelight and probably ball tracking
     private boolean isLimelightOverride = false;
     private boolean updateLimelightPipeline = false;
-    private double commandedPoseAngle = 0.0;
+    private double commandedPoseAngleDeg = 0.0;
 
     private Vector2 balanceInitialPos = Vector2.ZERO;
     private Timer balanceTimer = new Timer();
@@ -178,7 +179,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public PIDController limelightController = new PIDController(2.0, 0.03, 0.25, 0.02); //(3.0, 0.03, 0.02) (1.7, 0.03, 0.25) 0.02
     public PIDController ballTrackController = new PIDController(1.0, 0.03, 0.25, 0.02);
     private PidController balanceController = new PidController(new PidConstants(0.5, 0.0, 0.02));
-    private PidController joystickRotateGyroController = new PidController(new PidConstants(1, 0.0, 0.0));
+    private PidController joystickRotateGyroController = new PidController(new PidConstants(.01, 0.001, 0.0));
 
     public static final DrivetrainFeedforwardConstants FEEDFORWARD_CONSTANTS = 
         new DrivetrainFeedforwardConstants(
@@ -256,7 +257,9 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         balanceController.setContinuous(true);
 
         // We can, at worst, look 180 degrees away from a new target -- 180 is our max error input.
-        joystickRotateGyroController.setInputRange(0, 180);
+        joystickRotateGyroController.setInputRange(-180, 180);
+        joystickRotateGyroController.setOutputRange(-1, 1);
+        joystickRotateGyroController.setShouldClearIntegralOnErrorSignChange(true);
         // joyStickRotateGyroController.setOutputRange(0, 1);
     }
     //#endregion
@@ -444,26 +447,31 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         double rotationInput = Math.abs(getDriveRotationAxis().get(false));
         
         double rotationOutput = 0.0;
-        if(rotationInput <= Constants.DEADBAND_ROTATION_JOYSTICK)
+        if(rotationInput <= Constants.DRIVE_ROTATION_JOYSTICK_DEADBAND)
         {
-            // No joystick pressure applied
+            // No joystick pressure applied - Auto gyro correction if no turning
             if(RobotContainer.getInstance().getGyroAutoAdjustMode().getMode() == org.frcteam2910.c2020.util.GyroAutoChooser.Mode.On)
             {
                 // Auto gyro correction if no turning
-                double deltaAngleCurrToTarget = getLeastAngleDifference(getPose().rotation.toDegrees(), Math.toDegrees(commandedPoseAngle));
-                SmartDashboard.putNumber("calculated delta target", deltaAngleCurrToTarget);
-                // joystickRotateGyroController.setSetpoint(Math.toRadians(-commandedPoseAngle) + getPose().rotation.toRadians());
-                joystickRotateGyroController.setSetpoint(Math.abs(deltaAngleCurrToTarget));
-                rotationOutput = joystickRotateGyroController.calculate(getPose().rotation.toRadians(), 0.02);
+                double deltaAngleCurrToTarget = getLeastAngleDifference(getPose().rotation.toDegrees(), commandedPoseAngleDeg);
+                SmartDashboard.putNumber("Delta Gyro To Cmd", deltaAngleCurrToTarget);
+                // Radians version: joystickRotateGyroController.setSetpoint(Math.toRadians(-commandedPoseAngle) + getPose().rotation.toRadians());
+                rotationOutput = joystickRotateGyroController.calculate(deltaAngleCurrToTarget, 0.02);
+                
+                SmartDashboard.putNumber("Gyro Rotation Out", rotationOutput);
+
                 if(Math.abs(rotationOutput) > 0.5) {
-                    rotationOutput = Math.copySign(0.5, deltaAngleCurrToTarget);
+                    rotationOutput = Math.copySign(0.5, rotationOutput);
                 }
+                // else if(Math.abs(rotationOutput) < 0.15) {
+                //     rotationOutput = Math.copySign(Math.min(0.5, rotationOutput * 4), -deltaAngleCurrToTarget);
+                // }
             }
         }
         else
         {
             // Follow the joystick's commands.
-            commandedPoseAngle = getPose().rotation.toRadians();
+            commandedPoseAngleDeg = getPose().rotation.toDegrees();
             rotationOutput = getDriveRotationAxis().get(true) * Constants.ROTATIONAL_SCALAR;
         }
 
@@ -743,8 +751,9 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             gyroscope.setAdjustmentAngle(
                     gyroscope.getUnadjustedAngle().rotateBy(angle.inverse())
             );
+            // Can't allow discrepancy between gyro and commandedPoseAngle
+            commandedPoseAngleDeg=angle.toDegrees();
         }
-        commandedPoseAngle=0;
     }
 
     public void alignWheels() {
@@ -1119,14 +1128,14 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         odometryAngleEntry.setDouble(pose.rotation.toDegrees());
         // SmartDashboard.putNumber("X", pose.translation.x);
         // SmartDashboard.putNumber("Y", pose.translation.y);
-        SmartDashboard.putNumber("pitch", getPitchDegreesOffLevel());
-        SmartDashboard.putString("Translation Drive", driveSignal.getTranslation().x+"\n"+driveSignal.getTranslation().y);
-        SmartDashboard.putNumber("Rotation Drive", driveSignal.getRotation());
-        SmartDashboard.putNumber("roll", getRollDegreesOffLevel());
+        SmartDashboard.putNumber("Pitch", getPitchDegreesOffLevel());
+        // SmartDashboard.putString("Translation Drive", driveSignal.getTranslation().x+"\n"+driveSignal.getTranslation().y);
+        // SmartDashboard.putNumber("Rotation Drive", driveSignal.getRotation());
+        SmartDashboard.putNumber("Roll", getRollDegreesOffLevel());
         // SmartDashboard.putString("Drive Mode", getDriveControlMode().toString());
         // SmartDashboard.putNumber("blanace timer length", balanceTimer.get());
-        SmartDashboard.putNumber("angle", getPose().rotation.toDegrees());
-        SmartDashboard.putNumber("commanded angle", commandedPoseAngle);
+        SmartDashboard.putNumber("Yaw Target", commandedPoseAngleDeg);
+        SmartDashboard.putNumber("Yaw Curr", getPose().rotation.toDegrees());
         // SmartDashboard.putString("side", side.toString());
         // SmartDashboard.putNumber("x accel", gyroscope.getAccels()[0]/(double)Short.MAX_VALUE);
         // SmartDashboard.putNumber("y accel", gyroscope.getAccels()[1]/(double)Short.MAX_VALUE);
