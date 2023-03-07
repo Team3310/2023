@@ -32,7 +32,7 @@ public class AutonomousChooser {
         autonomousModeChooser.addOption("sCurve", AutonomousMode.S_CURVE);
     }
 
-    public SendableChooser<AutonomousMode> getAutonomousModeChooser() {
+    public SendableChooser<AutonomousMode> getSendableChooser() {
         return autonomousModeChooser;
     }
 
@@ -60,7 +60,7 @@ public class AutonomousChooser {
         return command;
     }
 
-    public Command getCommand(RobotContainer container) {
+    public Command getCommandBasedSelection(RobotContainer container) {
         switch (autonomousModeChooser.getSelected()) {
             case SEVEN_FEET:
                 return getSevenFeet(container);

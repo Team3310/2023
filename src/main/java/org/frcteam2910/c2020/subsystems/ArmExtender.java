@@ -1,9 +1,10 @@
 package org.frcteam2910.c2020.subsystems;
 
 import org.frcteam2910.c2020.Constants;
+import org.frcteam2910.c2020.RobotContainer;
+import org.frcteam2910.common.robot.input.Axis;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
@@ -12,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class ArmExtender implements Subsystem{
@@ -47,6 +49,7 @@ public class ArmExtender implements Subsystem{
     }
     
     private ArmExtender(){
+        CommandScheduler.getInstance().registerSubsystem(this);
         armTranslationMotor = new TalonFX(Constants.ARM_TRANSLATIONAL_MOTOR_PORT);
 
         TalonFXConfiguration configs = new TalonFXConfiguration();
@@ -157,6 +160,10 @@ public class ArmExtender implements Subsystem{
         //#endregion
         
     //#endregion
+
+    private Axis getArmTranslationalAxis() {
+        return RobotContainer.getInstance().getSecondaryController().getRightYAxis();
+    }
 
     @Override
     public void periodic(){

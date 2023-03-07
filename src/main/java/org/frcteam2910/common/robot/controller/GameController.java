@@ -232,13 +232,15 @@ public class GameController extends Joystick {
 		private int m_axis;
 		private double m_tolerance;
 
+		@SuppressWarnings("deprecation")
 		public AxisTriggerButton(GameController controller, int axis, double tolerance) {
 			m_controller = controller;
 			m_axis = axis;
 			m_tolerance = tolerance;
 		}
 
-		public boolean get() {
+		@Override
+		public boolean getAsBoolean() {
 			return (m_controller.getTriggerAxis(m_axis) > m_tolerance);
 		}
 	}
@@ -248,6 +250,7 @@ public class GameController extends Joystick {
 		private int buttonAngle;
 		private GameController  controller;
 
+		@SuppressWarnings("deprecation")
 		public DPadTriggerButton(GameController controller, int dPadButtonAngle) {
 			this.buttonAngle = dPadButtonAngle;
 			this.controller = controller;

@@ -7,10 +7,13 @@ public class Constants {
     Wheel gears to the left for offsets
      */
 
+
     public static final double DRIVETRAIN_VOLTAGE_RAMP = 5.0;
 
     public static final double ROTATIONAL_SCALAR = 0.8;
     public static final double TRANSLATIONAL_SCALAR = 0.8;
+
+    public static final double INCHES_PER_ONE_METER = 39.37008;
 
     public static final int DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR = 8;
     public static final int DRIVETRAIN_FRONT_LEFT_ANGLE_MOTOR = 9;
@@ -54,8 +57,6 @@ public class Constants {
     public static final int SECONDARY_CONTROLLER_PORT = 1;
 
     public static final int PIGEON_PORT = 0;
-
-    
     public static final double BALANCE_DEADBAND = 0.5;
     public static final double DRIVE_ROTATION_JOYSTICK_DEADBAND = 0.2;
     //#endregion
@@ -94,7 +95,6 @@ public class Constants {
     // Intake Motor Constants
     public static final double INTAKE_COLLECT_RPM = 950.0;
     public static final double INTAKE_SPIT_RPM = -300.0;
-
     public static final double INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 60.0 / 16.0;
     public static final double INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * ENCODER_TICKS_PER_MOTOR_REVOLUTION;
     //#endregion

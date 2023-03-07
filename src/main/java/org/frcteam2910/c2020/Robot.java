@@ -7,19 +7,15 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 
-import edu.wpi.first.net.PortForwarder;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.c2020.subsystems.ArmRotator.ArmRotationMode;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.AutonomousChooser.AutonomousMode;
 import org.frcteam2910.common.Logger;
-import org.frcteam2910.common.math.RigidTransform2;
-import org.frcteam2910.common.math.Rotation2;
 import org.frcteam2910.common.robot.UpdateManager;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -39,7 +35,7 @@ public class Robot extends TimedRobot {
     private static boolean competitionBot;
     private static boolean practiceBot;
     private static boolean teleopUsed = false;
-    private static boolean testUsed = false;
+    private static boolean steerMotorSetToCoast = false;
 
     private RobotContainer robotContainer = new RobotContainer();
     private UpdateManager updateManager = new UpdateManager(
@@ -152,12 +148,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        CommandScheduler.getInstance().run(); 
+        CommandScheduler.getInstance().run();
+        SmartDashboard.putString("Side", robotContainer.getSideChooser().getSide().toString());
     }
 
     @Override
     public void autonomousInit() {
         teleopUsed = false;
+        robotContainer.updateSide();
         robotContainer.getDrivetrainSubsystem().setDriveBrake();
         robotContainer.getDrivetrainSubsystem().setSteerBrake();
         robotContainer.getDrivetrainSubsystem().setLimelightOverride(false);
@@ -168,7 +166,7 @@ public class Robot extends TimedRobot {
         //robotContainer.getArm().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
 
         robotContainer.updateTrajectoriesBasedOnSide();
-        robotContainer.getAutonomousCommand().schedule();
+        robotContainer.getSelectedAutonomousCommand().schedule();
     }
 
     @Override
@@ -193,7 +191,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit(){
-        if(!testUsed) {
+        if(!steerMotorSetToCoast) {
             robotContainer.getDrivetrainSubsystem().setSteerBrake();
             robotContainer.getDrivetrainSubsystem().alignWheels();
         }
@@ -208,7 +206,7 @@ public class Robot extends TimedRobot {
                         AutonomousMode.UP_BRIDGE,
                         AutonomousMode.TO_BRIDGE));
 
-        if(vetted.contains(robotContainer.getAutonomousChooser().getAutonomousModeChooser().getSelected()) || teleopUsed)
+        if(vetted.contains(robotContainer.getAutonomousChooser().getSendableChooser().getSelected()) || teleopUsed)
         {
             robotContainer.getDrivetrainSubsystem().setDriveCoast();
         }
@@ -231,17 +229,17 @@ public class Robot extends TimedRobot {
         robotContainer.getDrivetrainSubsystem().alignWheels();
         robotContainer.getArmRotator().setRotationControlMode(ArmRotationMode.MANUAL);
         robotContainer.getArmRotator().setMotorNeutralMode(NeutralMode.Coast);
-        if(!testUsed) {
+        if(!steerMotorSetToCoast) {
             if(robotContainer.getDrivetrainSubsystem().getPitchDegreesOffLevel() > 15
             || robotContainer.getDrivetrainSubsystem().getRollDegreesOffLevel() > 15){
                 robotContainer.getDrivetrainSubsystem().setSteerCoast();
-                testUsed = true;
+                steerMotorSetToCoast = true;
             }
         }
         else
         {
             robotContainer.getDrivetrainSubsystem().setSteerBrake();
-            testUsed = false;
+            steerMotorSetToCoast = false;
         }
     }
 

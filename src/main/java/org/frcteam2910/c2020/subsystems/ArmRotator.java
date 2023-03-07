@@ -1,9 +1,10 @@
 package org.frcteam2910.c2020.subsystems;
 
 import org.frcteam2910.c2020.Constants;
+import org.frcteam2910.c2020.RobotContainer;
+import org.frcteam2910.common.robot.input.Axis;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
@@ -11,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class ArmRotator implements Subsystem{
@@ -38,6 +40,7 @@ public class ArmRotator implements Subsystem{
     }
     
     private ArmRotator(){
+        CommandScheduler.getInstance().registerSubsystem(this);
         armRotationMotor = new TalonFX(Constants.ARM_ROTATION_MOTOR_PORT, "Drivetrain");
 
         TalonFXConfiguration configs = new TalonFXConfiguration();
@@ -53,13 +56,16 @@ public class ArmRotator implements Subsystem{
         armRotationMotor.config_kP(0, 0.05);
         armRotationMotor.config_kI(0, 0.0);
         armRotationMotor.config_kD(0, 0.0);
-        
     }
     //#endregion
     
     //#region Arm Methods
     public void setRotationControlMode(ArmRotationMode mode){
         controlMode = mode;
+    }
+
+    public Axis getArmRotationAxis() {
+        return RobotContainer.getInstance().getSecondaryController().getLeftYAxis();
     }
 
     public double getArmDegrees(){

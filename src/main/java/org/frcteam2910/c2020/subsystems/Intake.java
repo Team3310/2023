@@ -5,17 +5,13 @@ import org.frcteam2910.c2020.RobotContainer;
 import org.frcteam2910.c2020.Servo;
 import org.frcteam2910.common.robot.input.Axis;
 import org.frcteam2910.common.robot.input.Controller;
-import org.frcteam2910.common.robot.input.XboxController;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class Intake implements Subsystem{
@@ -23,16 +19,13 @@ public class Intake implements Subsystem{
     private final Servo rightServo = new Servo(Constants.RIGHT_SERVO_PORT);
     private final Servo leftServo = new Servo(Constants.LEFT_SERVO_PORT);
 
-    //falcons
+    //Talons
     private TalonFX intakeMotor;
 
     //sensors
     private DigitalInput cubeSensor;
     private DigitalInput coneSensor;
-
-    //conversions
     
-    //misc
     private Controller secondaryController;
 
     boolean hasSetIntakeZero = false;
@@ -49,6 +42,7 @@ public class Intake implements Subsystem{
     }
     
     private Intake(){
+        CommandScheduler.getInstance().registerSubsystem(this);
         intakeMotor = new TalonFX(Constants.INTAKE_MOTOR_PORT);
         intakeMotor.setInverted(true);
         leftServo.setInverted(true);
@@ -57,79 +51,79 @@ public class Intake implements Subsystem{
         coneSensor = new DigitalInput(1);
     }
     //#endregion
-    
-    //#region Class Methods
-        //#region servo
+
+    //#region servo
     public void setServoPosition(double position){
         lastCommandedPosition=position;
         leftServo.setPosition(position);
         rightServo.setPosition(position);
     }
     //#endregion
-        //#region intake
-        
-        public void variableIntakeRPM(){
-            hasSetIntakeZero = true;
-            if(getRightTriggerAxis().getButton(0.1).getAsBoolean()){
-                //intakeMotor.set(ControlMode.PercentOutput, getRightTriggerAxis().get());
-                setRollerRPM(-getRightTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
-                hasSetIntakeZero = false;
-            }
-            else if(getLeftTriggerAxis().getButton(0.1).getAsBoolean()){
-                //intakeMotor.set(ControlMode.PercentOutput, getLeftTriggerAxis().get());
-                setRollerRPM(-getLeftTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
-                hasSetIntakeZero = false;
-            }
-            else if(RobotContainer.getInstance().getSecondaryController().getLeftBumperButton().getAsBoolean()) {
-                setRollerRPM(Constants.INTAKE_SPIT_RPM);
-                hasSetIntakeZero = false;
-            }
-            else if(RobotContainer.getInstance().getSecondaryController().getRightBumperButton().getAsBoolean()) {
-                setRollerRPM(Constants.INTAKE_COLLECT_RPM);
-                hasSetIntakeZero = false;
-            }
-            else{
 
-                if(hasSetIntakeZero){
-                    setRollerSpeed(0);
-                    hasSetIntakeZero = true;
-                }
+    //#region intake
+        
+    public void variableIntakeRPM(){
+        if(getIntakeAxis().getButton(0.1).getAsBoolean()){
+            setRollerRPM(getIntakeAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
+            hasSetIntakeZero = false;
+        }
+        else if(getOuttakeAxis().getButton(0.1).getAsBoolean()){
+            setRollerRPM(-getOuttakeAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
+            hasSetIntakeZero = false;
+        }
+        else if(RobotContainer.getInstance().getSecondaryController().getLeftBumperButton().getAsBoolean()) {
+            setRollerRPM(Constants.INTAKE_SPIT_RPM);
+            hasSetIntakeZero = false;
+        }
+        else if(RobotContainer.getInstance().getSecondaryController().getRightBumperButton().getAsBoolean()) {
+            setRollerRPM(Constants.INTAKE_COLLECT_RPM);
+            hasSetIntakeZero = false;
+        }
+        else{
+            setRollerSpeed(0);
+            if(hasSetIntakeZero){
+                hasSetIntakeZero = true;
             }
         }
+    }
 
-        public void setRollerSpeed(double speed) {
-            this.intakeMotor.set(ControlMode.PercentOutput, speed);
-            //System.out.println("Set Intake Speed = " + speed);
-        }
-        
-        public void setRollerRPM(double rpm) {
-            this.intakeMotor.set(ControlMode.Velocity, this.RollerRPMToNativeUnits(rpm));
-            //System.out.println("Set Intake RPM = " + rpm);
+    public void setRollerSpeed(double speed) {
+        this.intakeMotor.set(ControlMode.PercentOutput, speed);
+        //System.out.println("Set Intake Speed = " + speed);
+    }
     
-        }
+    public void setRollerRPM(double rpm) {
+        this.intakeMotor.set(ControlMode.Velocity, this.RollerRPMToNativeUnits(rpm));
+        //System.out.println("Set Intake RPM = " + rpm);
 
-        public double RollerRPMToNativeUnits(double rpm) {
-            return (rpm * Constants.INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) / (10*60);
-        }
-        public double NativeUnitsToRollerRPM(double ticks) {
-            return (ticks / Constants.INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) * (10*60);
-        }
+    }
 
-        public void setController(Controller secondaryController){
-            this.secondaryController = secondaryController;
-        }
+    public double RollerRPMToNativeUnits(double rpm) {
+        return (rpm * Constants.INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) / (10*60);
+    }
+    public double NativeUnitsToRollerRPM(double ticks) {
+        return (ticks / Constants.INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) * (10*60);
+    }
+    
+    public void setController(Controller secondaryController){
+        this.secondaryController = secondaryController;
+    }
 
-        public DigitalInput getCubeSensor() {
-            return cubeSensor;
-        }
+    public Axis getIntakeAxis() {
+        return secondaryController.getRightTriggerAxis();
+    }
 
-        public DigitalInput getConeSensor() {
-            return coneSensor;
-        }
+    public Axis getOuttakeAxis() {
+        return secondaryController.getLeftTriggerAxis();
+    }
 
-        private Axis getRightTriggerAxis(){return secondaryController.getRightTriggerAxis();}
-        private Axis getLeftTriggerAxis(){return secondaryController.getLeftTriggerAxis();}
-        //#endregion
+    public DigitalInput getCubeSensor() {
+        return cubeSensor;
+    }
+    
+    public DigitalInput getConeSensor() {
+        return coneSensor;
+    }
     //#endregion
 
     @Override

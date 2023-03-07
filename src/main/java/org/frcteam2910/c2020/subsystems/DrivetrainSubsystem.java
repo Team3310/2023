@@ -11,9 +11,9 @@ import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.Pigeon;
 import org.frcteam2910.c2020.Robot;
 import org.frcteam2910.c2020.RobotContainer;
+import org.frcteam2910.c2020.util.AutoFormatShuffleboardTab;
 import org.frcteam2910.c2020.util.SideChooser.SideMode;
 import org.frcteam2910.common.control.*;
-import org.frcteam2910.common.drivers.Gyroscope;
 import org.frcteam2910.common.kinematics.ChassisVelocity;
 import org.frcteam2910.common.kinematics.SwerveKinematics;
 import org.frcteam2910.common.kinematics.SwerveOdometry;
@@ -26,7 +26,6 @@ import org.frcteam2910.common.robot.input.Axis;
 import org.frcteam2910.common.robot.input.Controller;
 import org.frcteam2910.common.robot.input.PlaystationController;
 import org.frcteam2910.common.robot.input.XboxController;
-import org.frcteam2910.common.util.BallColor;
 import org.frcteam2910.common.util.DrivetrainFeedforwardConstants;
 import org.frcteam2910.common.util.HolonomicDriveSignal;
 import org.frcteam2910.common.util.HolonomicFeedforward;
@@ -38,27 +37,19 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.apriltag.*;
-import edu.wpi.first.apriltag.AprilTagPoseEstimator.Config;
 
 
 public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
-    //////////////////////////////////////////////////////////////
-    //                                                          //
-    //                   Class Data and States                  //
-    //                                                          //
-    //////////////////////////////////////////////////////////////
+    //#region Class Data and States
 
     private static DrivetrainSubsystem INSTANCE;
 
@@ -72,24 +63,24 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private double backRightOffset = Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_COMP_OFFSET;
 
     private SideMode side = SideMode.BLUE;
-    private double rCurrPoseX;
-    private double rCurrPoseY;
     private boolean isRight = true;
     private double targetAngle; // for limelight and probably ball tracking
     private boolean isLimelightOverride = false;
+    private boolean updateLimelightPipeline = false;
     private double commandedPoseAngleDeg = 0.0;
 
     private Vector2 balanceInitialPos = Vector2.ZERO;
     private Timer balanceTimer = new Timer();
-    
-    // Initialized in constructor
-    private ShuffleboardTab tab;
-    // #region --Motors and Sensors--
 
+    // Initialized in constructor
+    private AutoFormatShuffleboardTab tab;
+    //#endregion
+
+    // #region --Motors and Sensors--
     private final SwerveModule[] modules;
     private double[] lastModuleAngle;
 
-    Limelight limelightGoal = Limelight.getInstance();
+    Limelight primaryLimelight = Limelight.getInstance();
     // Must be named limelight-ball in the Limelight config
     Limelight limelightBall = new Limelight();
 
@@ -101,6 +92,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     // #region --Driving and Kinematics--
     private Controller primaryController;  // For the driver
     private DriveControlMode driveControlMode = DriveControlMode.JOYSTICKS;
+    private LimelightPipelineType limelightPrimaryCurrPipeline = LimelightPipelineType.CONES;
     private SwervePivotPoint pivotPoint = SwervePivotPoint.CENTER;
 
     // Determines abilities of controller
@@ -134,23 +126,23 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             new Vector2(-TRACKWIDTH / 2.0, WHEELBASE / 2.0),       //back left
             new Vector2(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0)        //back right
     );
-
+    
     private final SwerveKinematics swerveKinematicsBack = new SwerveKinematics(
             new Vector2(TRACKWIDTH * 1.354 / 2.0, WHEELBASE / 2.0),         //front left
             new Vector2(TRACKWIDTH * 1.354 / 2.0, -WHEELBASE / 2.0),        //front right
             new Vector2(TRACKWIDTH * 0.354 / 2.0, WHEELBASE / 2.0),       //back left
             new Vector2(TRACKWIDTH * 0.354 / 2.0, -WHEELBASE / 2.0)        //back right
     );
-
+    
     private SwerveKinematics swerveKinematics = swerveKinematicsCenter;
-
+    
     /*private final SwerveKinematics swerveKinematics = new SwerveKinematics(
             new Vector2(-TRACKWIDTH*0.25, WHEELBASE / 2.0),         //front left
             new Vector2(-TRACKWIDTH*0.25, -WHEELBASE / 2.0),        //front right
             new Vector2(-TRACKWIDTH*1.25, WHEELBASE / 2.0),       //back left
             new Vector2(-TRACKWIDTH*1.25, -WHEELBASE / 2.0)        //back right
     ); */
-
+    
     /** Locks to do with certain censors or data */
     private final Object stateLock = new Object();
 
@@ -160,7 +152,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
      * */
     @GuardedBy("stateLock")
     private HolonomicDriveSignal driveSignal = new HolonomicDriveSignal(new Vector2(0, 0), 0, true);
-
+    
     private final Object kinematicsLock = new Object();
     
     @GuardedBy("kinematicsLock")
@@ -177,10 +169,9 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     //#endregion
 
     //#region Drivetrain PID, Constraints, and Control Systems
-    
-    public TrapezoidProfile.Constraints constraints = new Constraints(20.0, 6.0);
 
-    //private PidConstants RotationConstants = new PidConstants(0.0, 0.0, 0.0);
+    public TrapezoidProfile.Constraints constraints = new Constraints(20.0, 6.0);
+    
     //public PidController limelightController = new PidController(RotationConstants);
 
     public ProfiledPIDController rotationController = new ProfiledPIDController(2.0, 0.03, 0.02, constraints, 0.02);
@@ -212,7 +203,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             new PidConstants(5.0, 0.0, 0.0),
             new HolonomicFeedforward(FEEDFORWARD_CONSTANTS)
         );
-
+        
     // Logging of odometry to SmartDashboard/Shuffleboard
     private final GenericEntry odometryXEntry;
     private final GenericEntry odometryYEntry;
@@ -220,7 +211,6 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     // #endregion
 
     //#region Constructor/Class Methods
-
     public static DrivetrainSubsystem getInstance() {
         if(INSTANCE == null) {
             INSTANCE = new DrivetrainSubsystem();
@@ -229,6 +219,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     }
 
     private DrivetrainSubsystem() {  
+        CommandScheduler.getInstance().registerSubsystem(this);
         synchronized (sensorLock) {
             gyroscope.setInverted(false);
         }
@@ -242,20 +233,16 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
         modules = new SwerveModule[4];
         lastModuleAngle = new double[4];        
-        tab = Shuffleboard.getTab("Drivetrain");
+        tab = RobotContainer.getInstance().getDrivetrainTab();
 
         createSwerveModulesAndShuffleboardInfo();
-        odometryXEntry = tab.add("Odo X", 0.0)
-                .withPosition(0, 2)
-                .withSize(1, 1)
+
+        tab.setIndexes(0, 2);
+        odometryXEntry = tab.addToGrid("X", 0.0, 1, 1)
                 .getEntry();
-        odometryYEntry = tab.add("Odo Y", 0.0)
-                .withPosition(1, 2)
-                .withSize(1, 1)
+        odometryYEntry = tab.addToGrid("Y", 0.0, 1, 1)
                 .getEntry();
-        odometryAngleEntry = tab.add("Pose Angle", 0.0)
-                .withPosition(2, 2)
-                .withSize(1, 1)
+        odometryAngleEntry = tab.addToGrid("Angle", 0.0, 1, 1)
                 .getEntry();
 
         for(SwerveModule i : modules){
@@ -269,6 +256,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         balanceController.setInputRange(0, Math.PI);
         balanceController.setContinuous(true);
 
+        // We can, at worst, look 180 degrees away from a new target -- 180 is our max error input.
         joystickRotateGyroController.setInputRange(-180, 180);
         joystickRotateGyroController.setOutputRange(-1, 1);
         joystickRotateGyroController.setShouldClearIntegralOnErrorSignChange(true);
@@ -284,11 +272,11 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
      * @see SwerveDriveSpecialties Falcon500Drive(and Steer)ControllerFactory
     */
     private void createSwerveModulesAndShuffleboardInfo() {
+        tab.setIndexes(0, 0);
+        
         //CANivore string key is "Drivetrain" which can be located in the ctre Falcon 500 factories
         SwerveModule frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
-                tab.getLayout("Front Left Module", BuiltInLayouts.kList)
-                        .withPosition(0, 0)
-                        .withSize(1, 2),
+                tab.addLayoutToGrid("Front Left Module", 1, 2, BuiltInLayouts.kList),
                 Mk4SwerveModuleHelper.GearRatio.WCP,
                 Constants.DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_LEFT_ANGLE_MOTOR,
@@ -296,9 +284,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 frontLeftOffset
         );
         SwerveModule frontRightModule = Mk4SwerveModuleHelper.createFalcon500(
-                tab.getLayout("Front Right Module", BuiltInLayouts.kList)
-                        .withPosition(1, 0)
-                        .withSize(1, 2),
+                tab.addLayoutToGrid("Front Right Module", 1, 2, BuiltInLayouts.kList),
                 Mk4SwerveModuleHelper.GearRatio.WCP,
                 Constants.DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_RIGHT_ANGLE_MOTOR,
@@ -306,9 +292,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 frontRightOffset
         );
         SwerveModule backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
-                tab.getLayout("Back Left Module", BuiltInLayouts.kList)
-                        .withPosition(2, 0)
-                        .withSize(1, 2),
+                tab.addLayoutToGrid("Back Left Module", 1, 2, BuiltInLayouts.kList),
                 Mk4SwerveModuleHelper.GearRatio.WCP,
                 Constants.DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_BACK_LEFT_ANGLE_MOTOR,
@@ -316,9 +300,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 backLeftOffset
         );
         SwerveModule backRightModule = Mk4SwerveModuleHelper.createFalcon500(
-                tab.getLayout("Back Right Module", BuiltInLayouts.kList)
-                        .withPosition(3, 0)
-                        .withSize(1, 2),
+                tab.addLayoutToGrid("Back Right Module", 1, 2, BuiltInLayouts.kList),
                 Mk4SwerveModuleHelper.GearRatio.WCP,
                 Constants.DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_BACK_RIGHT_ANGLE_MOTOR,
@@ -331,24 +313,24 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         modules[2] = backLeftModule;
         modules[3] = backRightModule;
 
-        tab.addNumber("Trajectory X", () -> {
+        tab.setIndexes(3, 3);
+        tab.addNumberToGrid("Trajectory X", () -> {
                     if (follower.getLastState() == null) {
                         return 0.0;
                     }
                     return follower.getLastState().getPathState().getPosition().x;
-                })
-                .withPosition(3, 3)
-                .withSize(1, 1);
-        tab.addNumber("Trajectory Y", () -> {
+                },
+                1, 1, 0);
+
+        tab.addNumberToGrid("Trajectory Y", () -> {
                     if (follower.getLastState() == null) {
                         return 0.0;
                     }
                     return follower.getLastState().getPathState().getPosition().y;
-                })
-                .withPosition(4, 3)
-                .withSize(1, 1);
+                },
+                1, 1, 0);
 
-        tab.addNumber("Rotation Voltage", () -> {
+        tab.addNumberToGrid("Rotation Voltage", () -> {
                 HolonomicDriveSignal signal;
                 synchronized (stateLock) {
                     signal = driveSignal;
@@ -359,13 +341,11 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 }
 
                 return signal.getRotation() * RobotController.getBatteryVoltage();
-            }).withPosition(5, 3)
-              .withSize(1, 1);
-
+            },
+            1, 1, 0);
               
-        tab.addNumber("Average Velocity", this::getAverageAbsoluteValueVelocity)
-            .withPosition(6, 3)
-            .withSize(1, 1);
+        tab.addNumberToGrid("Average Velocity", this::getAverageAbsoluteValueVelocity,
+            1, 1, 0);
     }
     //#endregion
 
@@ -418,10 +398,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public void setLimelightOverride(boolean isOveridden){
         isLimelightOverride = isOveridden;
         if(isOveridden) {
-            limelightGoal.setLedMode(Limelight.LedMode.OFF);
+            primaryLimelight.setLedMode(Limelight.LedMode.OFF);
         }
         else{
-            limelightGoal.setLedMode(Limelight.LedMode.ON);
+            primaryLimelight.setLedMode(Limelight.LedMode.ON);
         }
     }
 
@@ -452,8 +432,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     }
     //#endregion
 
-    //#region Class Methods and Drive Control Modes
-
+    //#region DrivetrainSubSystem Class Methods and Drive Control Modes
     public void drive(Vector2 translationalVelocity, double rotationalVelocity, boolean isFieldOriented) {
         synchronized (stateLock) {
             driveSignal = new HolonomicDriveSignal(translationalVelocity, rotationalVelocity, isFieldOriented);
@@ -496,8 +475,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             rotationOutput = getDriveRotationAxis().get(true) * Constants.ROTATIONAL_SCALAR;
         }
 
-        // SmartDashboard.putNumber("rotation input", rotationInput);
-        // SmartDashboard.putNumber("rotation output", rotationOutput);
+        SmartDashboard.putNumber("rotation input", rotationInput);
+        SmartDashboard.putNumber("rotation output", rotationOutput);
         // SmartDashboard.putNumber("Yaw Angle off", getYawDegreesTargetOffset());
 
         // Set the drive signal to a field-centric (last boolean parameter is true) joystick-based input.
@@ -519,12 +498,12 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         // Set the drive signal to a robot-centric joystick-based input for drive & strafe only (not rotation/chassis angle).
         drive(new Vector2(getDriveForwardAxis().get(true), getDriveStrafeAxis().get(true)), rotationOutput, true);
 
-        double target = getPoseAtTime(Timer.getFPGATimestamp() - limelightGoal.getPipelineLatency() / 1000.0).rotation.toRadians() - Math.toRadians(limelightGoal.getFilteredTargetHorizOffset());
+        double target = getPoseAtTime(Timer.getFPGATimestamp() - primaryLimelight.getPipelineLatency() / 1000.0).rotation.toRadians() - Math.toRadians(primaryLimelight.getFilteredTargetHorizOffset());
 
         //System.out.println("Goal = " + Math.toDegrees(rotationController.getGoal().position) +", Target = " + Math.toDegrees(target) + ", Gyro Angle = " + getPose().rotation.toDegrees() + ", Position Error" + Math.abs(rotationController.getPositionError()) + ", Control Mode = " + driveControlMode);
 
         double error = Math.toDegrees(rotationController.getGoal().position) - getPose().rotation.toDegrees();
-        if(Math.abs(error) < 3.0 && limelightGoal.hasTarget()) {
+        if(Math.abs(error) < 3.0 && primaryLimelight.hasTarget()) {
             setDriveControlMode(DriveControlMode.LIMELIGHT);
             //System.out.println("Position Error" + Math.abs(rotationController.getPositionError()) + ", Control Mode = " + driveControlMode);
         }
@@ -540,22 +519,40 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         drive(new Vector2(getDriveForwardAxis().get(true), getDriveStrafeAxis().get(true)), getDriveRotationAxis().get(true), false);
     }
 
-    public void ballTrackDrive(){
-        // DriveControlMode is BALL_TRACK
+    public enum LimelightPipelineType {
+        CONES(0),
+        CUBES(1),
+        RETROREFLECTION_TARGET(2),
+        APRILTAG_ESTIMATION(3);
+        private int pipelineID;
 
+        LimelightPipelineType(int pipelineNum) {
+            pipelineID = pipelineNum;
+        }
+
+        public int getPipelineId() {
+            return pipelineID;
+        }
+    }
+
+    public void primaryLimelightPipeline(){
+        // DriveControlMode is LIMELIGHT_PIPELINES
 
         // Pipeline in the Limelight's web interface is set to 0 or 1. 0 is for Red balls, 1 for Blue balls.
-        limelightBall.setPipeline(RobotContainer.getInstance().getDriverReadout().getTrackedBallColor() == BallColor.BLUE ? 1 : 0);
-
+        if(updateLimelightPipeline)
+        {
+            primaryLimelight.setPipeline(limelightPrimaryCurrPipeline.getPipelineId());
+            updateLimelightPipeline = false;
+        }
         primaryController.getLeftXAxis().setInverted(true);
         primaryController.getRightXAxis().setInverted(true);
 
         
         // Set the drive signal to a field-centric or robot-centric joystick-based input when we see a ball.
-        if(limelightBall.hasTarget()) {
-            ballTrackController.setSetpoint(Math.toRadians(-limelightBall.getFilteredTargetHorizOffset()) + getPose().rotation.toRadians());
+        if(primaryLimelight.hasTarget()) {
+            limelightController.setSetpoint(Math.toRadians(-limelightBall.getFilteredTargetHorizOffset()) + getPose().rotation.toRadians());
 
-            double rotationOutput = ballTrackController.calculate(getPose().rotation.toRadians());
+            double rotationOutput = limelightController.calculate(getPose().rotation.toRadians());
 
             // Last boolean in drive() is true for field-oriented or false for robot-centric left joystick
             drive(new Vector2(getDriveForwardAxis().get(true), getDriveStrafeAxis().get(true)), rotationOutput, true);
@@ -575,7 +572,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         // DriveControlMode is LIMELIGHT_SEARCH
 
         // Chassis must rotate to 'scan' for a limelight (goal) target
-        if(!limelightGoal.hasTarget()){
+        if(!primaryLimelight.hasTarget()){
 
             primaryController.getLeftXAxis().setInverted(true);
             primaryController.getRightXAxis().setInverted(true);
@@ -690,7 +687,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         // AprilTagDetector aprilTagDetector = new AprilTagDetector();
         // poseEstimator.
         // DriveControlMode is LIMELIGHT
-        targetAngle = getPoseAtTime(Timer.getFPGATimestamp() - limelightGoal.getPipelineLatency() / 1000.0).rotation.toRadians() - Math.toRadians(limelightGoal.getFilteredTargetHorizOffset());
+        targetAngle = getPoseAtTime(Timer.getFPGATimestamp() - primaryLimelight.getPipelineLatency() / 1000.0).rotation.toRadians() - Math.toRadians(primaryLimelight.getFilteredTargetHorizOffset());
 
         //targetAngle = Math.toRadians(-limelightGoal.getFilteredTargetHorizOffset()) + getPose().rotation.toRadians();
 
@@ -714,7 +711,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
         drive(new Vector2(getDriveForwardAxis().get(true), getDriveStrafeAxis().get(true)), rotationOutput, true);
 
-        if(Math.toDegrees(profiledLimelightController.getPositionError()) < 0.05 && limelightGoal.hasTarget()) {
+        if(Math.toDegrees(profiledLimelightController.getPositionError()) < 0.05 && primaryLimelight.hasTarget()) {
             setDriveControlMode(DriveControlMode.LIMELIGHT);
         }
     }
@@ -722,7 +719,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public void limelightLockedDrive(){
         // DriveControlMode is LIMELIGHT_LOCKED
 
-        limelightController.setSetpoint(Math.toRadians(-limelightGoal.getFilteredTargetHorizOffset()) + getPose().rotation.toRadians());
+        limelightController.setSetpoint(Math.toRadians(-primaryLimelight.getFilteredTargetHorizOffset()) + getPose().rotation.toRadians());
 
         primaryController.getLeftXAxis().setInverted(true);
         primaryController.getRightXAxis().setInverted(true);
@@ -783,14 +780,14 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         }
     }
 
-    public void setSide(SideMode side){
-        this.side = side;
-    }
-
     public void setSteerBrake(){
         for(SwerveModule i : modules){
             i.setSteerNeutralMode(NeutralMode.Brake);
         }
+    }
+
+    public void setSide(SideMode side){
+        this.side = side;
     }
 
     public void setSteerEncoderAutoResetIterations(int iterations) {
@@ -809,36 +806,36 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         }
     }
 
-    public void setRotationTarget(double goal){
-        rotationController.enableContinuousInput(0.0, Math.PI*2);
-        rotationController.reset(getPose().rotation.toRadians());
-        rotationController.setGoal(goal + getPose().rotation.toRadians());
-        rotationController.setTolerance(0.017);
-        setDriveControlMode(DriveControlMode.TURN_TO_GOAL);
-    }    
-    
-    public void setTurnToTarget(){
-        rotationController.enableContinuousInput(-Math.PI, Math.PI);
-        rotationController.reset(getPose().rotation.toRadians());
-        rotationController.setGoal(Math.toRadians(getRobotToGoalAngle()));
-        rotationController.setTolerance(0.017);
-        setDriveControlMode(DriveControlMode.TURN_TO_GOAL);
-    }
+    // public void setRotationTarget(double goal){
+    //     rotationController.enableContinuousInput(0.0, Math.PI*2);
+    //     rotationController.reset(getPose().rotation.toRadians());
+    //     rotationController.setGoal(goal + getPose().rotation.toRadians());
+    //     rotationController.setTolerance(0.017);
+    //     setDriveControlMode(DriveControlMode.TURN_TO_GOAL);
+    // }
 
-    public boolean atRotationTarget(){
+    // public void setTurnToTarget(){
+    //     rotationController.enableContinuousInput(-Math.PI, Math.PI);
+    //     rotationController.reset(getPose().rotation.toRadians());
+    //     rotationController.setGoal(Math.toRadians(getRobotToGoalAngle()));
+    //     rotationController.setTolerance(0.017);
+    //     setDriveControlMode(DriveControlMode.TURN_TO_GOAL);
+    // }
+
+    // public boolean atRotationTarget(){
         
-        if(rotationController.atGoal()){
-            //System.out.println("Reached target");
-        }
-        return rotationController.atGoal();
-    }
+    //     if(rotationController.atGoal()){
+    //         //System.out.println("Reached target");
+    //     }
+    //     return rotationController.atGoal();
+    // }
 
     public void setBalanceInitialPos(Vector2 initialPos) {
         if(!balanceInitialPos.equals(initialPos, 2)) {
             balanceInitialPos = initialPos;
         }
-    }
-
+    }    
+    
     public Vector2 getBalanceInitialPos() {
         return balanceInitialPos;
     }
@@ -867,19 +864,19 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     //     return Math.toDegrees(Math.atan((getVelocity().y * timeOfFlight)/distance));
     // }
 
-    public double getRobotToGoalAngle() {
-        rCurrPoseX = getPose().translation.x;
-        rCurrPoseY = getPose().translation.y;
-        double fieldAngle = Math.toDegrees(Math.atan2(rCurrPoseY + 162, rCurrPoseX - 325));
+    // public double getRobotToGoalAngle() {
+    //     rCurrPoseX = getPose().translation.x;
+    //     rCurrPoseY = getPose().translation.y;
+    //     double fieldAngle = Math.toDegrees(Math.atan2(rCurrPoseY + 162, rCurrPoseX - 325));
 
-        return fieldAngle;
-    }
+    //     return fieldAngle;
+    // }
 
-    public double getRobotToGoalDistance() {
-        rCurrPoseX = getPose().translation.x - 325;
-        rCurrPoseY = getPose().translation.y + 162;
-        return Math.sqrt(rCurrPoseX*rCurrPoseX + rCurrPoseY*rCurrPoseY);
-    }
+    // public double getRobotToGoalDistance() {
+    //     rCurrPoseX = getPose().translation.x - 325;
+    //     rCurrPoseY = getPose().translation.y + 162;
+    //     return Math.sqrt(rCurrPoseX*rCurrPoseX + rCurrPoseY*rCurrPoseY);
+    // }
 
     public double getAverageAbsoluteValueVelocity() {
         double averageVelocity = 0;
@@ -889,126 +886,15 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         return averageVelocity / 4;
     }
 
-    /**
-     * Must be implemented for <code>UpdateManager</code> (Updatable interface method)
-     * @param time - Time in seconds from Timer.getFPGATimeStamp() (robot runtime timer).
-     * @param dt - Time since update was last called
-     */
-    @Override
-    public void update(double time, double dt) {
-        updateOdometry(time, dt);
-
-        DriveControlMode i_controlMode = getDriveControlMode();
-
-        HolonomicDriveSignal currentDriveSignal = null;
-
-        //System.out.println("Control Mode: " + driveControlMode);
-
-        switch(i_controlMode){
-            case JOYSTICKS:
-                joystickDrive();
-                synchronized (stateLock) {
-                    currentDriveSignal = this.driveSignal;
-                }
-                break;
-            case LIMELIGHT_BROKEN:
-                joystickDrive();
-                synchronized (stateLock) {
-                    currentDriveSignal = this.driveSignal;
-                }
-                break;
-            case TURN_TO_GOAL:
-                rotationDrive();
-                synchronized (stateLock) {
-                    currentDriveSignal = this.driveSignal;
-                }
-                break;
-            case ROBOT_CENTRIC:
-                robotCentricDrive();
-                synchronized (stateLock) {
-                    currentDriveSignal = this.driveSignal;
-                }
-                break;
-            case BALL_TRACK:
-                ballTrackDrive();
-                synchronized (stateLock) {
-                    currentDriveSignal = this.driveSignal;
-                }
-                break;
-            case LIMELIGHT:
-                limelightDrive();
-                synchronized (stateLock) {
-                    currentDriveSignal = this.driveSignal;
-                }
-                break;
-            case LIMELIGHT_LOCKED:
-                limelightLockedDrive();
-                synchronized (stateLock) {
-                    currentDriveSignal = this.driveSignal;
-                }
-                break;
-            case LIMELIGHT_SEARCH:
-                limelightSearch();
-                synchronized (stateLock) {
-                    currentDriveSignal = this.driveSignal;
-                }
-                break;
-            case LIMELIGHT_PROFILED:
-                limelightProfiledDrive();
-                synchronized (stateLock) {
-                    currentDriveSignal = this.driveSignal;
-                }
-                break;
-            case TRAJECTORY:
-                Optional<HolonomicDriveSignal> trajectorySignal = follower.update(
-                        getPose(),
-                        getVelocity(),
-                        getAngularVelocity(),
-                        time,
-                        dt
-                );
-                if (trajectorySignal.isPresent()) {
-                    currentDriveSignal = trajectorySignal.get();
-                    currentDriveSignal = new HolonomicDriveSignal(
-                        currentDriveSignal.getTranslation().scale(1.0 / RobotController.getBatteryVoltage()),
-                        currentDriveSignal.getRotation() / RobotController.getBatteryVoltage(),
-                        currentDriveSignal.isFieldOriented()
-                    );
-                }
-                break;
-            case BALANCE:
-                balanceOutDrive();
-                synchronized (stateLock) {
-                    currentDriveSignal = this.driveSignal;
-                }
-                break;
-            case HOLD:
-                updateModulesHold();
-                break;
-            case ZERO:
-                setModulesAngle(0.0);
-                break;    
-        }
-
-        if(driveControlMode != DriveControlMode.BALL_TRACK) {
-            // Handle rumble runaway
-            primaryController.setRumble(RumbleType.kLeftRumble, 0);
-            primaryController.setRumble(RumbleType.kRightRumble, 0);
-        }
-
-        if(driveControlMode != DriveControlMode.HOLD) {
-            // Tell all swerve modules their new targets based on the kinematics.
-            updateModules(currentDriveSignal);
-        }
-    }
-
     public double getPitch(){
         return gyroscope.getPitch().toDegrees() - 2; // -2 for bias when level
     }
 
     public double getRoll(){
         return gyroscope.getRoll().toDegrees() + 0.3; // +0.3 for bias when level
-    }public double getYawDegreesTargetOffset() {
+    }
+
+    public double getYawDegreesTargetOffset() {
         double yaw = getPose().rotation.toDegrees();
         return getLeastAngleDifference(yaw, 0);
     }
@@ -1045,13 +931,102 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         }
         return diff;
     }
+    //#endregion
+
+    //#region Control Loop and Debugging Data
+
+    /**
+     * Must be implemented for <code>UpdateManager</code> (Updatable interface method)
+     * @param time - Time in seconds from Timer.getFPGATimeStamp() (robot runtime timer).
+     * @param dt - Time since update was last called
+     */
+    @Override
+    public void update(double time, double dt) {
+        updateOdometry(time, dt);
+
+        DriveControlMode i_controlMode = getDriveControlMode();
+
+        HolonomicDriveSignal currentDriveSignal = null;
+
+        //System.out.println("Control Mode: " + driveControlMode);
+
+        switch(i_controlMode){
+            case JOYSTICKS:
+                joystickDrive();
+                synchronized (stateLock) {
+                    currentDriveSignal = this.driveSignal;
+                }
+                break;
+            case LIMELIGHT_BROKEN:
+                joystickDrive();
+                synchronized (stateLock) {
+                    currentDriveSignal = this.driveSignal;
+                }
+                break;
+            case TURN_TO_GOAL:
+                rotationDrive();
+                synchronized (stateLock) {
+                    currentDriveSignal = this.driveSignal;
+                }
+                break;
+            case LIMELIGHT:
+                primaryLimelightPipeline();
+                synchronized (stateLock) {
+                    currentDriveSignal = this.driveSignal;
+                }
+                break;
+            case TRAJECTORY:
+                Optional<HolonomicDriveSignal> trajectorySignal = follower.update(
+                        getPose(),
+                        getVelocity(),
+                        getAngularVelocity(),
+                        time,
+                        dt
+                );
+                if (trajectorySignal.isPresent()) {
+                    currentDriveSignal = trajectorySignal.get();
+                    currentDriveSignal = new HolonomicDriveSignal(
+                        currentDriveSignal.getTranslation().scale(1.0 / RobotController.getBatteryVoltage()),
+                        currentDriveSignal.getRotation() / RobotController.getBatteryVoltage(),
+                        currentDriveSignal.isFieldOriented()
+                    );
+                }
+                break;
+            case BALANCE:
+                balanceOutDrive();
+                synchronized (stateLock) {
+                    currentDriveSignal = this.driveSignal;
+                }
+                break;
+            case HOLD:
+                updateModulesHold();
+                break;
+            case ZERO:
+                setModulesAngle(0.0);
+                break;
+            default:
+                break;
+        }
+
+        if(driveControlMode != DriveControlMode.LIMELIGHT) {
+            // Handle rumble runaway
+            primaryController.setRumble(RumbleType.kLeftRumble, 0);
+            primaryController.setRumble(RumbleType.kRightRumble, 0);
+        }
+
+        if(driveControlMode != DriveControlMode.HOLD) {
+            // Tell all swerve modules their new targets based on the kinematics.
+            updateModules(currentDriveSignal);
+        }
+    }
 
     private void updateOdometry(double time, double dt) {
         Vector2[] moduleVelocities = new Vector2[modules.length];
         for (int i = 0; i < modules.length; i++) {
             var module = modules[i];
 
-            moduleVelocities[i] = Vector2.fromAngle(Rotation2.fromRadians(module.getSteerAngle())).scale(module.getDriveVelocity() * 39.37008 * WHEEL_DIAMETER_INCHES / 4.0);
+            moduleVelocities[i] = Vector2.fromAngle(Rotation2.fromRadians(module.getSteerAngle()))
+                                        .scale(module.getDriveVelocity() * Constants.INCHES_PER_ONE_METER * WHEEL_DIAMETER_INCHES / 4.0);
         }
 
         Rotation2 angle;
@@ -1141,16 +1116,14 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             module.set(0, Math.toRadians(angle));
         }
     }
+
     //#endregion
 
     @Override
     public void periodic() {
         // Must update the Tx/Ty filter to provide it samples for calculation
-        limelightGoal.updateTxFilter();
-        limelightGoal.updateTyFilter();
-
-        limelightBall.updateTxFilter();
-        limelightBall.updateTyFilter();
+        primaryLimelight.updateTxFilter();
+        primaryLimelight.updateTyFilter();
 
         // Update SmartDashboard/Shuffleboard data
         RigidTransform2 pose = getPose();

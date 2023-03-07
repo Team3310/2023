@@ -1,7 +1,8 @@
 package org.frcteam2910.common.robot.input;
 
-import edu.wpi.first.wpilibj2.command.button.Button;
 import org.frcteam2910.common.robot.Utilities;
+
+import edu.wpi.first.wpilibj2.command.button.InternalButton;
 
 public abstract class Axis {
 	public static final double DEADBAND = 0.05;
@@ -59,8 +60,8 @@ public abstract class Axis {
 		return value;
 	}
 
-	public Button getButton(double tolerance) {
-		return new Button() {
+	public InternalButton getButton(double tolerance) {
+		return new InternalButton() {
 			@Override
 			public boolean getAsBoolean() {
 				return Math.abs(Axis.this.get()) > tolerance;
