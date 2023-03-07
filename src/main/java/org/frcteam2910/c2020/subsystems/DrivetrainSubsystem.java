@@ -916,14 +916,18 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
      */
     public static double getLeastAngleDifference(double currPoseAngle, double targetAngle){
         currPoseAngle %= 360;
+        targetAngle %= 360;
+        if(targetAngle < currPoseAngle) {
+            targetAngle += 360;
+        }
         double diff = currPoseAngle - targetAngle;
         if(diff < 0 && Math.abs(diff) >= 180) {
             // Negative diff needs to wrap to become a positive diff (currPose < targetAngle)
-            diff = -(360 + diff);
+            diff = diff + 360;
         }
         else if (diff > 180) {
             // Positive diff (currPose > targetAngle)
-            diff = -diff + 360;
+            diff = 360 - diff;
         }
         return diff;
     }
