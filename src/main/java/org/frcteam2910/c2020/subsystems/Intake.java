@@ -52,7 +52,7 @@ public class Intake implements Subsystem{
     }
     
     private Intake(){
-        intakeMotor = new TalonFX(Constants.INTAKE_MOTOR_PORT);
+        intakeMotor = new TalonFX(2);
         intakeMotor.setInverted(true);
         leftServo.setInverted(true);
 
@@ -92,7 +92,7 @@ public class Intake implements Subsystem{
             }
             else if(getLeftTriggerAxis().getButton(0.1).getAsBoolean()){
                 //intakeMotor.set(ControlMode.PercentOutput, getLeftTriggerAxis().get());
-                setRollerRPM(-getLeftTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
+                setRollerRPM(getLeftTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
                 hasSetIntakeZero = false;
                 setCubeIntake = false;
             }

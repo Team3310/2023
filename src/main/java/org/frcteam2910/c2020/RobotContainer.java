@@ -1,25 +1,9 @@
 package org.frcteam2910.c2020;
 
-import org.frcteam2910.c2020.commands.ArmRotationControlJoysticks;
-import org.frcteam2910.c2020.commands.ArmTranslationalControlJoysticks;
-import org.frcteam2910.c2020.commands.ChangeDriveMode;
-import org.frcteam2910.c2020.commands.DriveBalanceCommand;
-import org.frcteam2910.c2020.commands.VariableIntakeRPMCommand;
-import org.frcteam2910.c2020.commands.ZeroAll;
-import org.frcteam2910.c2020.commands.setArm;
-import org.frcteam2910.c2020.commands.ArmExtenderZero;
-import org.frcteam2910.c2020.subsystems.ArmExtender;
-import org.frcteam2910.c2020.subsystems.ArmRotator;
-import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
-import org.frcteam2910.c2020.subsystems.Intake;
-import org.frcteam2910.c2020.util.AutonomousChooser;
-import org.frcteam2910.c2020.util.AutonomousTrajectories;
-import org.frcteam2910.c2020.util.DriverReadout;
-import org.frcteam2910.c2020.util.GyroAutoChooser;
-import org.frcteam2910.c2020.util.SideChooser;
-import org.frcteam2910.common.robot.input.Axis;
-import org.frcteam2910.common.robot.input.DPadButton;
-import org.frcteam2910.common.robot.input.XboxController;
+import org.frcteam2910.c2020.commands.*;
+import org.frcteam2910.c2020.subsystems.*;
+import org.frcteam2910.c2020.util.*;
+import org.frcteam2910.common.robot.input.*;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -130,19 +114,19 @@ public class RobotContainer {
         );
 
         secondaryController.getBButton().onTrue(
-            new setArm(armExtender, armRotator, 22, 4.0)
+            new setArmSafe(armExtender, armRotator, 22, 4.0)
         );
 
         secondaryController.getAButton().onTrue(
-            new setArm(armExtender, armRotator, 0, 0)
+            new setArmSafe(armExtender, armRotator, 0, 0)
         );
 
         secondaryController.getXButton().onTrue(
-            new setArm(armExtender, armRotator, -87, 0)    
+            new setArmSafe(armExtender, armRotator, -87, 0)    
         );
 
         secondaryController.getYButton().onTrue(
-            new setArm(armExtender, armRotator, -105, 12)
+            new setArmSafe(armExtender, armRotator, -105, 12)
         );
 
         

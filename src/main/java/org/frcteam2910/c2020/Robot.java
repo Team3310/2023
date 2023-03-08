@@ -96,11 +96,11 @@ public class Robot extends TimedRobot {
     }
 
     public static boolean isCompetitionBot() {
-        return competitionBot;
+        return !competitionBot;
     }
 
     public static boolean isPracticeBot() {
-        return practiceBot;
+        return !practiceBot;
     }
 
     /**
