@@ -6,6 +6,7 @@ import org.frcteam2910.c2020.commands.ChangeDriveMode;
 import org.frcteam2910.c2020.commands.DriveBalanceCommand;
 import org.frcteam2910.c2020.commands.VariableIntakeRPMCommand;
 import org.frcteam2910.c2020.commands.ZeroAll;
+import org.frcteam2910.c2020.commands.setArm;
 import org.frcteam2910.c2020.commands.ArmExtenderZero;
 import org.frcteam2910.c2020.subsystems.ArmExtender;
 import org.frcteam2910.c2020.subsystems.ArmRotator;
@@ -60,8 +61,8 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(drivetrain);
         CommandScheduler.getInstance().registerSubsystem(intake);
         
-        CommandScheduler.getInstance().setDefaultCommand(armRotator, new ArmRotationControlJoysticks(armRotator, getArmRotationAxis()));
-        CommandScheduler.getInstance().setDefaultCommand(armExtender, new ArmTranslationalControlJoysticks(armExtender, getArmTranslationalAxis()));
+        CommandScheduler.getInstance().setDefaultCommand(armRotator, new ArmRotationControlJoysticks(armRotator, intake, getArmRotationAxis()));
+        CommandScheduler.getInstance().setDefaultCommand(armExtender, new ArmTranslationalControlJoysticks(armExtender, intake, getArmTranslationalAxis()));
 
         configureButtonBindings();
         
@@ -104,9 +105,6 @@ public class RobotContainer {
         primaryController.getBButton().whenPressed(
                 new InstantCommand(()->intake.setServoPosition(1))
         );
-        primaryController.getRightTriggerAxis().getButton(0.5).whenPressed(
-                new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.BALL_TRACK)
-        );
         primaryController.getRightTriggerAxis().getButton(0.5).whenReleased(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
@@ -131,25 +129,21 @@ public class RobotContainer {
                 new InstantCommand(()-> drivetrain.setLimelightOverride(false))
         );
 
-        secondaryController.getBButton().onTrue(new InstantCommand(() -> {
-            armRotator.setArmDegreesPositionAbsolute(30);
-            armExtender.setTargetArmInchesPositionAbsolute(3.5);
-        }));
+        secondaryController.getBButton().onTrue(
+            new setArm(armExtender, armRotator, 22, 4.0)
+        );
 
-        secondaryController.getAButton().onTrue(new InstantCommand(() -> {
-            armRotator.setArmDegreesPositionAbsolute(0);
-            armExtender.setTargetArmInchesPositionAbsolute(0);
-        }));
+        secondaryController.getAButton().onTrue(
+            new setArm(armExtender, armRotator, 0, 0)
+        );
 
-        secondaryController.getXButton().onTrue(new InstantCommand(() -> {
-            armRotator.setArmDegreesPositionAbsolute(-87);
-            armExtender.setTargetArmInchesPositionAbsolute(0);
-        }));
+        secondaryController.getXButton().onTrue(
+            new setArm(armExtender, armRotator, -87, 0)    
+        );
 
-        secondaryController.getYButton().onTrue(new InstantCommand(() -> {
-            armRotator.setArmDegreesPositionAbsolute(-105);
-            armExtender.setTargetArmInchesPositionAbsolute(12);
-        }));
+        secondaryController.getYButton().onTrue(
+            new setArm(armExtender, armRotator, -105, 12)
+        );
 
         
         secondaryController.getStartButton().onTrue(new ArmExtenderZero(armExtender));

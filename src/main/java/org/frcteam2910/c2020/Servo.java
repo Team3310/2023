@@ -11,7 +11,7 @@ public class Servo extends PWMMotorController {
   private static final double kMaxServoAngle = 130.0;
   private static final double kMinServoAngle = 0.0;
 
-  protected static final double kDefaultMaxServoPWM = 1.7;
+  protected static final double kDefaultMaxServoPWM = 2.2;
   protected static final double kDefaultMinServoPWM = 0.8;
 
   private boolean inverted;

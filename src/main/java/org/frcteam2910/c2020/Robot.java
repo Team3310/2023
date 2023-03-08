@@ -184,7 +184,7 @@ public class Robot extends TimedRobot {
         robotContainer.getArmRotator().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
 
         robotContainer.updateSide();
-        robotContainer.getDrivetrainSubsystem().setDriveBrake();
+        robotContainer.getDrivetrainSubsystem().setDriveCoast();
         robotContainer.getDrivetrainSubsystem().setSteerBrake();
         
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.JOYSTICKS);

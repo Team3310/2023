@@ -92,7 +92,7 @@ public class Constants {
     public static final double ARM_MAX_EXTEND_INCHES = 17.0;
 
     // Intake Motor Constants
-    public static final double INTAKE_COLLECT_RPM = 950.0;
+    public static final double INTAKE_COLLECT_RPM = 1500.0;
     public static final double INTAKE_SPIT_RPM = -300.0;
 
     public static final double INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 60.0 / 16.0;

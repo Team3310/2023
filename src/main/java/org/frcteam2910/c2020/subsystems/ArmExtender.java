@@ -60,9 +60,13 @@ public class ArmExtender implements Subsystem{
         statorCurrentConfigs.enable = true;
         armTranslationMotor.configStatorCurrentLimit(statorCurrentConfigs);
 
+        armTranslationMotor.configMotionCruiseVelocity(10000);
+        armTranslationMotor.configMotionAcceleration(28000);
+        armTranslationMotor.configMotionSCurveStrength(4);
+
         armTranslationMotor.config_kF(0, 0.0);
-        armTranslationMotor.config_kP(0, 0.05); //0.1
-        armTranslationMotor.config_kI(0, 0.0);
+        armTranslationMotor.config_kP(0, 0.06); //0.1
+        armTranslationMotor.config_kI(0, 0.0000001);
         armTranslationMotor.config_kD(0, 0.0);
         
     }

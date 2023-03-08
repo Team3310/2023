@@ -7,6 +7,8 @@ public interface SwerveModule {
 
     double getSteerAngle();
 
+    double getTargetSteerAngle();
+
     void set(double driveVoltage, double steerAngle);
 
     void setVoltageRamp(double rampTime);

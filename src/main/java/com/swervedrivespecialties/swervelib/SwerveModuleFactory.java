@@ -68,6 +68,11 @@ public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
         }
 
         @Override
+        public double getTargetSteerAngle(){
+            return Math.toDegrees(steerController.getReferenceAngle());
+        }
+
+        @Override
         public void resetAbsoluteSteerAngle() {
             steerController.resetAbsoluteSteerAngle();
         }

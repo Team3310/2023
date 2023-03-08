@@ -49,9 +49,11 @@ public class ArmRotator implements Subsystem{
         statorCurrentConfigs.enable = true;
         armRotationMotor.configStatorCurrentLimit(statorCurrentConfigs);
 
+        armRotationMotor.setNeutralMode(NeutralMode.Brake);
+
         armRotationMotor.config_kF(0, 0.0);
-        armRotationMotor.config_kP(0, 0.05);
-        armRotationMotor.config_kI(0, 0.0);
+        armRotationMotor.config_kP(0, 0.025);
+        armRotationMotor.config_kI(0, 0.0000001);
         armRotationMotor.config_kD(0, 0.0);
         
     }

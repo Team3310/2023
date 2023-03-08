@@ -13,10 +13,12 @@ import org.frcteam2910.common.robot.input.Axis;
 public class ArmTranslationalControlJoysticks extends CommandBase {
     private ArmExtender arm;
     private Axis YAxis;
+    private Intake intake;
 
 
-    public ArmTranslationalControlJoysticks(ArmExtender arm, Axis YAxis) {
+    public ArmTranslationalControlJoysticks(ArmExtender arm, Intake intake, Axis YAxis) {
         this.YAxis = YAxis;
+        this.intake = intake;
         this.arm = arm;
 
         addRequirements(arm);
@@ -24,11 +26,21 @@ public class ArmTranslationalControlJoysticks extends CommandBase {
 
     @Override
     public void execute() {
-        double speed = YAxis.get(true);
-        if (Math.abs(speed) > 0.1) {
-            arm.setTranslationalSpeed(speed*0.8);
-        } else {
-            arm.setTranslationalHold();
+        if(!intake.getSetConeIntake() && !intake.getSetCubeIntake()){
+            double speed = YAxis.get(true);
+            if (Math.abs(speed) > 0.1) {
+                arm.setTranslationalSpeed(speed*0.8);
+            } else {
+                arm.setTranslationalHold();
+            }
+        }
+        else{
+            if(intake.getSetConeIntake()){
+                //TODO set cone intake position
+            }
+            else if(intake.getSetCubeIntake()){
+                //TODO set cube intake position
+            }
         }
     }
 }
