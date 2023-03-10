@@ -3,6 +3,7 @@ package org.frcteam2910.c2020.subsystems;
 import org.frcteam2910.c2020.Constants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
@@ -72,6 +73,8 @@ public class ArmExtender implements Subsystem{
     //#endregion
     
     //#region Class Methods
+        //#region arm
+
     public void setTranslationalControlMode(ArmExtenderMode mode){
         controlMode = mode;
     }
@@ -102,20 +105,11 @@ public class ArmExtender implements Subsystem{
         return targetInches;
     }
 
-    public boolean getArmAtZero(){
-        return Math.abs(getArmInches()-Math.copySign(0.5, getArmInches()))<0.5;
-    }
-
-    public boolean getArmWithinTarget(double tolorance){
-        return Math.abs(getArmInches()-Math.abs(getTargetInches())) < tolorance;
-    }
-
     public void setTargetArmInchesPositionAbsolute(double targetInches) {
         controlMode = ArmExtenderMode.HOLD;
         this.targetInches = targetInches;
         targetInchesTicks = getArmInchesEncoderTicksAbsolute(targetInches);
-        //armTranslationMotor.set(TalonFXControlMode.Position, targetInchesTicks);
-        armTranslationMotor.set(TalonFXControlMode.MotionMagic, targetInchesTicks);
+        armTranslationMotor.set(TalonFXControlMode.Position, targetInchesTicks);
     }
 
     public double limitArmInches(double targetInches){
@@ -154,9 +148,17 @@ public class ArmExtender implements Subsystem{
         armTranslationMotor.set(ControlMode.PercentOutput, curSpeed);
     }
 
-    public void setExtenderHold(){
-        setTargetArmInchesPositionAbsolute(getArmInches());
+    public synchronized void setTranslationalHold(){
+        // if(firstHoldSet){
+        //     firstHoldSet = false;
+        //     setTargetTicks(armTranslationMotor.getSelectedSensorPosition());
+        // }
+        controlMode = ArmExtenderMode.HOLD;
+        armTranslationMotor.selectProfileSlot(0, 0);    
+
+        armTranslationMotor.set(ControlMode.Position, targetInchesTicks);
     }
+        //#endregion
         
     //#endregion
 
@@ -166,14 +168,17 @@ public class ArmExtender implements Subsystem{
             setTargetTicks(armTranslationMotor.getSelectedSensorPosition());
         SmartDashboard.putNumber("arm inches", getArmInches());
         SmartDashboard.putNumber("arm target inches", getTargetInches());
-        SmartDashboard.putBoolean("is at zero", getArmAtZero());
+        // SmartDashboard.putNumber("extender speed", manualTranslationSpeed);
         // SmartDashboard.putString("extender control mode", controlMode.toString());
+        // SmartDashboard.putNumber("commanded arm inches ticks", targetInchesTicks);
+        // SmartDashboard.putNumber("arm inches ticks", armTranslationMotor.getSelectedSensorPosition());
+        // SmartDashboard.putNumber("current",armTranslationMotor.getStatorCurrent());
         if (controlMode == ArmExtenderMode.MANUAL) {
-            if (getArmInches() < Constants.ARM_MIN_EXTEND_INCHES && manualTranslationSpeed < 0.0) {
-                setTargetArmInchesPositionAbsolute(getArmInches());
-            } else if (getArmInches() > Constants.ARM_MAX_EXTEND_INCHES && manualTranslationSpeed > 0.0) {
-                setTargetArmInchesPositionAbsolute(getArmInches());
-            }
+            // if (getArmInches() < Constants.ARM_MIN_EXTEND_INCHES && manualTranslationSpeed < 0.0) {
+            //     setTranslationalHold();
+            // } else if (getArmInches() > Constants.ARM_MAX_EXTEND_INCHES && manualTranslationSpeed > 0.0) {
+            //     setTranslationalHold();
+            // }
         } 
     }
 }
