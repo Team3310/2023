@@ -52,6 +52,6 @@ public class ArmExtenderZero extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         armExtender.setArmInchesZero(Constants.ARM_EXTEND_HOME_INCHES);
-        armExtender.setTranslationalHold();
+        armExtender.setExtenderHold();
     }
 }

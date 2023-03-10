@@ -31,7 +31,7 @@ public class ArmTranslationalControlJoysticks extends CommandBase {
             if (Math.abs(speed) > 0.1) {
                 arm.setTranslationalSpeed(speed*0.8);
             } else {
-                arm.setTranslationalHold();
+                arm.setExtenderHold();
             }
         }
         else{
