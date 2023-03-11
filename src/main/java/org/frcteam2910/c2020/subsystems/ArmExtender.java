@@ -53,7 +53,7 @@ public class ArmExtender implements Subsystem{
         configs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
         armTranslationMotor.configAllSettings(configs);
         armTranslationMotor.setNeutralMode(NeutralMode.Brake);
-        armTranslationMotor.setInverted(false);
+        armTranslationMotor.setInverted(true);
 
         final StatorCurrentLimitConfiguration statorCurrentConfigs = new StatorCurrentLimitConfiguration();
         statorCurrentConfigs.currentLimit = 30.0;
@@ -74,6 +74,9 @@ public class ArmExtender implements Subsystem{
     
     //#region Class Methods
         //#region arm
+    public boolean withinInches(double tolerance, double inches){
+        return Math.abs(getArmInches()-Math.copySign(inches, getArmInches())) < tolerance;
+    }    
 
     public void setTranslationalControlMode(ArmExtenderMode mode){
         controlMode = mode;

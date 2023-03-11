@@ -51,6 +51,10 @@ public class ArmRotator implements Subsystem{
 
         armRotationMotor.setNeutralMode(NeutralMode.Brake);
 
+        armRotationMotor.configMotionCruiseVelocity(10000);
+        armRotationMotor.configMotionAcceleration(28000);
+        armRotationMotor.configMotionSCurveStrength(4);
+
         armRotationMotor.config_kF(0, 0.0);
         armRotationMotor.config_kP(0, 0.025);
         armRotationMotor.config_kI(0, 0.000000001);
@@ -60,6 +64,12 @@ public class ArmRotator implements Subsystem{
     //#endregion
     
     //#region Arm Methods
+    public boolean withinAngle(double tolerance, double angle){
+        SmartDashboard.putNumber("angle checking", angle);
+        SmartDashboard.putNumber("result", Math.abs(getArmDegrees()-angle));
+        return Math.abs(getArmDegrees()-angle) < tolerance;
+    }
+
     public void setRotationControlMode(ArmRotationMode mode){
         controlMode = mode;
     }
@@ -93,7 +103,7 @@ public class ArmRotator implements Subsystem{
         armRotationMotor.selectProfileSlot(0, 0);
         targetDegreesTicks = getArmDegreesEncoderTicks(limitArmDegrees(degrees));
         // armRotationMotor.set(ControlMode.Position, targetDegreesTicks, DemandType.ArbitraryFeedForward, 0.03);
-        armRotationMotor.set(ControlMode.Position, targetDegreesTicks);
+        armRotationMotor.set(ControlMode.MotionMagic, targetDegreesTicks);
     }
 
     public synchronized void setRotationSpeed(double speed) {

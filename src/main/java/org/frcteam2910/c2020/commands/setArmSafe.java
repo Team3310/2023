@@ -10,27 +10,20 @@ public class setArmSafe extends CommandBase {
     private final ArmRotator rotator;
     private final double targetAngle;
     private final double targetInches;
+    private final double startAngle;
+    private boolean goesAcross;
     private boolean wentIn = false;
-    private boolean atTargetAngle = false;
-    private boolean atTargetInches = false;
-    private double degreesTravelled = 0.0;
-    private final double startDegrees;
-    private final double startInches;
-    private final boolean needsToCross;
+    private boolean withinAngleTarget = false;
+    private boolean withinTargetInches = false;
 
     public setArmSafe(ArmExtender extender, ArmRotator rotator, double targetAngle, double targetInches) {
         this.rotator = rotator;
         this.extender = extender;
         this.targetInches = targetInches;
         this.targetAngle = targetAngle;
-        this.startDegrees = rotator.getArmDegrees();
-        this.startInches = extender.getArmInches();
+        this.startAngle = rotator.getArmDegrees();
 
-        needsToCross = targetAngle>0?
-                        rotator.getArmDegrees()>0?false:true:
-                        rotator.getArmDegrees()<0?false:true;
-        SmartDashboard.putNumber("check needs to cross number", Math.pow(targetAngle, rotator.getArmDegrees()));
-        SmartDashboard.putBoolean("needs to cross", needsToCross);
+        goesAcross = (startAngle>0 && targetAngle<0) || (startAngle<0 && targetAngle>0);
 
         addRequirements(rotator);
         addRequirements(extender);
@@ -38,51 +31,53 @@ public class setArmSafe extends CommandBase {
 
     @Override
     public void initialize() {
-        if(needsToCross){
-            if(Math.abs(startDegrees)<20 && Math.abs(startDegrees) > 0.5){
-                if(startDegrees>0)
-                    rotator.setArmDegreesPositionAbsolute(rotator.getArmDegrees()+10.0);
-                else
-                    rotator.setArmDegreesPositionAbsolute(rotator.getArmDegrees()-10.0);    
-            }
-            if(startInches > 0.3){
-                extender.setTargetArmInchesPositionAbsolute(0.0);
-            } 
+        if(Math.abs(startAngle)<=20){
+            rotator.setArmDegreesPositionAbsolute(startAngle+Math.copySign(10,startAngle));
         }
-        else{
-            atTargetAngle = true;
-            extender.setTargetArmInchesPositionAbsolute(targetInches);
-            rotator.setArmDegreesPositionAbsolute(targetAngle);
-        }   
+        if(goesAcross){
+            extender.setTargetArmInchesPositionAbsolute(0.0);
+        }
+
+        if(withinAngleTarget){
+            SmartDashboard.putBoolean("within target angle start", withinAngleTarget);
+            withinAngleTarget = false;
+        }
+ 
     }
 
     @Override
     public void execute() {
-        if(true){
-            if(extender.getArmInches()>0.3){
-                extender.setTargetArmInchesPositionAbsolute(0.0);
-            }
-            else{
-                wentIn = true;
-            }
+        SmartDashboard.putBoolean("within target angle", withinAngleTarget);
+        SmartDashboard.putBoolean("went in", wentIn);
+        SmartDashboard.putBoolean("within target inches", withinTargetInches);
+        if(goesAcross){
+            wentIn = extender.getArmInches()<0.5;
             if(wentIn){
-                if(!atTargetAngle){
-                    rotator.setArmDegreesPositionAbsolute(targetAngle);
+                rotator.setArmDegreesPositionAbsolute(targetAngle);
+                if(!withinAngleTarget){
+                    withinAngleTarget = rotator.withinAngle(5.0, targetAngle);
                 }
-                else if(!atTargetInches){
-                    extender.setArmInchesZero(targetInches);
+                else{
+                    extender.setTargetArmInchesPositionAbsolute(targetInches);
+                    withinTargetInches = extender.withinInches(0.5, targetInches);
                 }
-                atTargetInches = Math.abs(extender.getArmInches()-targetInches) < 0.5;
-                atTargetAngle = Math.abs(Math.abs(rotator.getArmDegrees())-targetAngle) < 0.5;
             }
         }
-        SmartDashboard.putBoolean("at target inches", atTargetInches);
-        SmartDashboard.putBoolean("at target angle", atTargetAngle);
+        else{
+            rotator.setArmDegreesPositionAbsolute(targetAngle);
+            if(!withinAngleTarget){
+                withinAngleTarget = rotator.withinAngle(5.0, targetAngle);
+            }
+            else{
+                extender.setTargetArmInchesPositionAbsolute(targetInches);
+                withinTargetInches = extender.withinInches(0.5, targetInches);
+            }
+        }
     }
 
     @Override
     public boolean isFinished(){
-        return atTargetAngle && atTargetInches;
+        return withinTargetInches && withinAngleTarget;
     }
 
     @Override
