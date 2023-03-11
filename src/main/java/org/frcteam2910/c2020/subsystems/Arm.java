@@ -179,6 +179,7 @@ public class Arm implements Subsystem{
 
     public void setMotorNeutralMode(NeutralMode nm) {
         armRotationMotor.setNeutralMode(nm);
+        armTranslationMotor.setNeutralMode(nm);
     }
     //#endregion
 
@@ -273,6 +274,9 @@ public class Arm implements Subsystem{
     @Override
     public void periodic(){
         SmartDashboard.putString("score mode", scoreMode.name());
+
+        SmartDashboard.putNumber("arm degrees", getArmDegrees());
+        SmartDashboard.putNumber("arm inches", getArmInches());
 
         if(rotationControlMode == ArmControlMode.MANUAL)
             targetDegreesTicks = armRotationMotor.getSelectedSensorPosition();

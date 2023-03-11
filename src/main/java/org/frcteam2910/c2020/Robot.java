@@ -7,19 +7,15 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 
-import edu.wpi.first.net.PortForwarder;
-import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.c2020.subsystems.Arm.ArmControlMode;
+import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.AutonomousChooser.AutonomousMode;
 import org.frcteam2910.common.Logger;
-import org.frcteam2910.common.math.RigidTransform2;
-import org.frcteam2910.common.math.Rotation2;
 import org.frcteam2910.common.robot.UpdateManager;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -39,7 +35,8 @@ public class Robot extends TimedRobot {
     private static boolean competitionBot;
     private static boolean practiceBot;
     private static boolean teleopUsed = false;
-    private static boolean testUsed = false;
+    private static boolean setSteerMotorsCoast = false;
+    private static boolean setArmRotationMotorCoast = false;
 
     private RobotContainer robotContainer = new RobotContainer();
     private UpdateManager updateManager = new UpdateManager(
@@ -193,7 +190,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit(){
-        if(!testUsed) {
+        if(!setSteerMotorsCoast) {
             robotContainer.getDrivetrainSubsystem().setSteerBrake();
             robotContainer.getDrivetrainSubsystem().alignWheels();
         }
@@ -231,17 +228,24 @@ public class Robot extends TimedRobot {
         robotContainer.getDrivetrainSubsystem().alignWheels();
         robotContainer.getArm().setRotationControlMode(ArmControlMode.MANUAL);
         robotContainer.getArm().setMotorNeutralMode(NeutralMode.Coast);
-        if(!testUsed) {
+        if(!setSteerMotorsCoast) {
             if(robotContainer.getDrivetrainSubsystem().getPitchDegreesOffLevel() > 15
             || robotContainer.getDrivetrainSubsystem().getRollDegreesOffLevel() > 15){
                 robotContainer.getDrivetrainSubsystem().setSteerCoast();
-                testUsed = true;
+                setSteerMotorsCoast = true;
             }
         }
         else
         {
             robotContainer.getDrivetrainSubsystem().setSteerBrake();
-            testUsed = false;
+            setSteerMotorsCoast = false;
+        }
+
+        if(!setArmRotationMotorCoast) {
+
+        }
+        else {
+
         }
     }
 

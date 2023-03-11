@@ -9,14 +9,17 @@ import org.frcteam2910.c2020.util.ScoreMode;
 public class setArmSafe extends CommandBase {
     private final Arm arm;
     private final ScoreMode targetMode;
+    private final ScoreMode startMode;
     private boolean goesAcross = false;
     private boolean wentIn = false;
     private boolean withinAngleTarget = false;
     private boolean withinTargetInches = false;
+    private boolean wentOut = false;
 
     public setArmSafe(Arm arm, ScoreMode targetScoreMode) {
         this.arm = arm;
         this.targetMode = targetScoreMode;
+        this.startMode = arm.getScoreMode();
 
         wentIn = false;
         withinAngleTarget = false;
@@ -27,25 +30,33 @@ public class setArmSafe extends CommandBase {
 
     @Override
     public void initialize() {
-        switch(arm.getScoreMode()){
-            case HIGH : 
-                if(targetMode==ScoreMode.ZERO || targetMode==ScoreMode.INTAKE){
-                    arm.setTargetArmInchesPositionAbsolute(0.0);
-                    goesAcross = true;
-                } break;
-            case MID :
-                if(targetMode==ScoreMode.ZERO || targetMode==ScoreMode.INTAKE){
-                    arm.setTargetArmInchesPositionAbsolute(0.0);
-                    goesAcross = true;
-                } break;
-            case INTAKE : 
-                    arm.setArmDegreesPositionAbsolute(arm.getArmDegrees()+10);
+        if(arm.getScoreMode() != targetMode){
+            switch(arm.getScoreMode()){
+                case HIGH : 
+                    if(targetMode==ScoreMode.ZERO || targetMode==ScoreMode.CONE_INTAKE || targetMode==ScoreMode.CUBE_INTAKE){
+                        arm.setTargetArmInchesPositionAbsolute(0.0);
+                        goesAcross = true;
+                    } break;
+                case MID :
+                    if(targetMode==ScoreMode.ZERO || targetMode==ScoreMode.CONE_INTAKE || targetMode==ScoreMode.CUBE_INTAKE){
+                        arm.setTargetArmInchesPositionAbsolute(0.0);
+                        goesAcross = true;
+                    } break;
+                case CONE_INTAKE : 
+                    arm.setArmDegreesPositionAbsolute(45.0);
+                    while(!arm.withinAngle(5.0, 45.0)){}
                     arm.setTargetArmInchesPositionAbsolute(0.0);
                     goesAcross = true;
                     break;
-            case ZERO : goesAcross = false; break;       
+                case CUBE_INTAKE : 
+                    arm.setArmDegreesPositionAbsolute(45.0);
+                    arm.setTargetArmInchesPositionAbsolute(0.0);
+                    goesAcross = true;
+                    break;        
+                case ZERO : goesAcross = false; break;       
+            }
+            arm.setScoreMode(targetMode);
         }
-        arm.setScoreMode(targetMode);
     }
 
     @Override

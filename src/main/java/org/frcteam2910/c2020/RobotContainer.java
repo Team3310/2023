@@ -129,7 +129,7 @@ public class RobotContainer {
         );
 
         secondaryController.getBButton().onTrue(
-            new setArmSafe(arm, ScoreMode.INTAKE)
+            new setArmSafe(arm, ScoreMode.CONE_INTAKE)
         );
 
         secondaryController.getAButton().onTrue(
@@ -141,21 +141,21 @@ public class RobotContainer {
         );
 
         secondaryController.getYButton().onTrue(
-            new setArmSafe(arm, ScoreMode.HIGH)
+            new setArmSafe(arm, ScoreMode.CUBE_INTAKE)
         );
 
         secondaryController.getDPadButton(Direction.UP).onTrue(
             new InstantCommand(() -> arm.setArmDegreesZero(0))  
         );
 
-        secondaryController.getRightTriggerAxis().getButton(0.1).onTrue(
-            new InstantCommand(() -> System.out.println("ran cube intake command"))
-        ).onTrue(
-            new SequentialCommandGroup(
-                new InstantCommand(() -> intake.setServoPosition(-1.0)),
-                new setArmSafe(arm, ScoreMode.INTAKE)
-            )    
-        );
+        // secondaryController.getRightTriggerAxis().getButton(0.1).onTrue(
+        //     new InstantCommand(() -> System.out.println("ran cube intake command"))
+        // ).onTrue(
+        //     new SequentialCommandGroup(
+        //         new InstantCommand(() -> intake.setServoPosition(-1.0)),
+        //         new setArmSafe(arm, ScoreMode.CONE_INTAKE)
+        //     )    
+        // );
 
         // secondaryController.getRightTriggerAxis().getButton(0.1).onFalse(
         //     new SequentialCommandGroup(
@@ -164,17 +164,17 @@ public class RobotContainer {
         //    )    
         // );
 
-        secondaryController.getRightBumperButton().onTrue(
-            new SequentialCommandGroup(
-                new InstantCommand(() -> intake.setServoPosition(-1.0)),
-                new setArmSafe(arm, ScoreMode.INTAKE)
-            )    
-        );
+        // secondaryController.getRightBumperButton().onTrue(
+        //     new SequentialCommandGroup(
+        //         new InstantCommand(() -> intake.setServoPosition(-1.0)),
+        //         new setArmSafe(arm, ScoreMode.CONE_INTAKE)
+        //     )    
+        // );
 
         secondaryController.getRightBumperButton().onFalse(
             new SequentialCommandGroup(
-                new setArmSafe(arm, ScoreMode.ZERO),
-                new InstantCommand(() -> intake.setServoPosition(1.0))
+                new setArmSafe(arm, ScoreMode.ZERO)
+                //new InstantCommand(() -> intake.setServoPosition(1.0))
             )    
         );
 

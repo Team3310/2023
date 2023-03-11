@@ -4,7 +4,8 @@ public enum ScoreMode{
     ZERO(0, 0), 
     HIGH(-108, 12.875), 
     MID(-87, 0.875), 
-    INTAKE(22, 4.0);
+    CONE_INTAKE(15, 3.25),
+    CUBE_INTAKE(33, 9.5);
 
     ScoreMode(double angle, double inches){
         this.angle = angle;

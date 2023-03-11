@@ -97,24 +97,27 @@ public class Intake implements Subsystem{
         }
         
         public void variableIntakeRPM(){
-            if((Robot.isCompetitionBot() ? !cubeSensor.get() : cubeSensor.get())){
+            if(!cubeSensor.get()){
                 controlMode = IntakeControlMode.MANUAL;
                 hasSetIntakeZero = true;
                 if(getRightTriggerAxis().getButton(0.1).getAsBoolean()){
                     if(Robot.isCompetitionBot()) {
-                        if(Arm.getInstance().getScoreMode() != ScoreMode.INTAKE)
-                            RobotContainer.getInstance().runCommand(new SequentialCommandGroup(
-                                new InstantCommand(() -> setServoPosition(-1.0)),
-                                new setArmSafe(Arm.getInstance(), ScoreMode.INTAKE)
-                            ));
+                        // if(Arm.getInstance().getScoreMode() != ScoreMode.CONE_INTAKE)
+                        //     RobotContainer.getInstance().runCommand(new SequentialCommandGroup(
+                        //         new InstantCommand(() -> setServoPosition(-1.0)),
+                        //         new setArmSafe(Arm.getInstance(), ScoreMode.CUBE_INTAKE)
+                        //     )
+                        // );
                     }
                     
-                    setRollerRPM(-getRightTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
+                    //setRollerRPM(-getRightTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM * 2);
+                    setRollerSpeed(-1.0);
                     hasSetIntakeZero = false;
                     setCubeIntake = true;
                 }
                 else if(getLeftTriggerAxis().getButton(0.1).getAsBoolean()){
-                    setRollerRPM(getLeftTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
+                    //setRollerRPM(getLeftTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM * 2);
+                    setRollerSpeed(1.0);
                     hasSetIntakeZero = false;
                     setCubeIntake = false;
                 }
@@ -131,11 +134,11 @@ public class Intake implements Subsystem{
                 else{
                     if(hasSetIntakeZero){
                         if(Robot.isCompetitionBot()) {
-                            if(Arm.getInstance().getScoreMode() != ScoreMode.ZERO)
-                                RobotContainer.getInstance().runCommand(new SequentialCommandGroup(
-                                    new setArmSafe(Arm.getInstance(), ScoreMode.ZERO),
-                                    new InstantCommand(() -> setServoPosition(-1.0))
-                                ) );
+                            // if(Arm.getInstance().getScoreMode() != ScoreMode.ZERO)
+                            //     RobotContainer.getInstance().runCommand(new SequentialCommandGroup(
+                            //         new setArmSafe(Arm.getInstance(), ScoreMode.ZERO),
+                            //         new InstantCommand(() -> setServoPosition(-1.0))
+                            //     ) );
                         }
                         setRollerSpeed(0);
                         setConeIntake = false;
@@ -144,7 +147,12 @@ public class Intake implements Subsystem{
                 }
             }
             else{
-                if(controlMode != IntakeControlMode.HOLD){
+                if(getLeftTriggerAxis().getButton(0.1).getAsBoolean()){
+                    setRollerRPM(getLeftTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
+                    hasSetIntakeZero = false;
+                    setCubeIntake = false;
+                }
+                else if(controlMode != IntakeControlMode.HOLD){
                     setIntakeHold();
                 }    
             }
