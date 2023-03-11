@@ -467,42 +467,53 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         double rotationInput = getDriveRotationAxis().get(false);
         
         double rotationOutput = 0.0;
-        if(Math.abs(getDriveForwardAxis().get()) < 0.2 && Math.abs(getDriveStrafeAxis().get()) < 0.2 && Math.abs(rotationInput) <= Constants.DRIVE_ROTATION_JOYSTICK_DEADBAND){
-            // No joystick pressure applied - Auto gyro correction if no turning
-            if(RobotContainer.getInstance().getGyroAutoAdjustMode().getMode() == org.frcteam2910.c2020.util.GyroAutoChooser.Mode.On){
-                // Auto gyro correction if no turning
-                double deltaAngleCurrToTarget = getLeastAngleDifference(getPose().rotation.toDegrees(), commandedPoseAngleDeg);
-                SmartDashboard.putNumber("Delta Gyro To Cmd", deltaAngleCurrToTarget);
-                // Radians version: joystickRotateGyroController.setSetpoint(Math.toRadians(-commandedPoseAngle) + getPose().rotation.toRadians());
-                rotationOutput = joystickRotateGyroController.calculate(deltaAngleCurrToTarget, 0.02);
-                    
-                SmartDashboard.putNumber("Gyro Rotation Out", rotationOutput);
+        if(Math.abs(getDriveForwardAxis().get()) < 0.2 && Math.abs(getDriveStrafeAxis().get()) < 0.2){
+            // No correction when just driving/strafing
+            if(RobotContainer.getInstance().getGyroAutoAdjustMode().getMode() == org.frcteam2910.c2020.util.GyroAutoChooser.Mode.On)
+            {
+                commandedPoseAngleDeg = getPose().rotation.toDegrees();
+            }
+        }
+        else {
+            // Drive input
+            if(Math.abs(rotationInput) <= Constants.DRIVE_ROTATION_JOYSTICK_DEADBAND)
+            {
+                // No rotation input
+                if(RobotContainer.getInstance().getGyroAutoAdjustMode().getMode() == org.frcteam2910.c2020.util.GyroAutoChooser.Mode.On)
+                {
+                    // Auto gyro correction if no turning
+                    double deltaAngleCurrToTarget = getLeastAngleDifference(getPose().rotation.toDegrees(), commandedPoseAngleDeg);
+                    SmartDashboard.putNumber("Delta Gyro To Cmd", deltaAngleCurrToTarget);
+                    // Radians version: joystickRotateGyroController.setSetpoint(Math.toRadians(-commandedPoseAngle) + getPose().rotation.toRadians());
+                    rotationOutput = joystickRotateGyroController.calculate(deltaAngleCurrToTarget, 0.02);
+                        
+                    SmartDashboard.putNumber("Gyro Rotation Out", rotationOutput);
+                }
 
                 if(Math.abs(rotationOutput) > 0.5) {
                     rotationOutput = Math.copySign(0.5, rotationOutput);
                 }
-                // else if(Math.abs(rotationOutput) < 0.15) {
-                //     rotationOutput = Math.copySign(Math.min(0.5, rotationOutput * 4), -deltaAngleCurrToTarget);
-                // }
+                else if(Math.abs(rotationOutput) <= .15) {
+                    rotationOutput = 0.0;
+                }
             }
-            else
-            {
+            else {
                 // Follow the joystick's commands.
                 commandedPoseAngleDeg = getPose().rotation.toDegrees();
 
-                if(Math.abs(getDriveRotationAxis().get(true))<0.1)
+                if(Math.abs(rotationInput) < Constants.DRIVE_ROTATION_JOYSTICK_DEADBAND)
                     rotationOutput = 0.0;
                 else    
-                    rotationOutput = getDriveRotationAxis().get(true) * Constants.ROTATIONAL_SCALAR;    
+                    rotationOutput = getDriveRotationAxis().get(true) * Constants.ROTATIONAL_SCALAR;
             }
         }
 
-            //Set the drive signal to a field-centric (last boolean parameter is true) joystick-based input.
-            drive(new Vector2(
-                getDriveForwardAxis().get(true)*(turbo ? 1.0 : Constants.TRANSLATIONAL_SCALAR), // Left Joystick YAxis
-                getDriveStrafeAxis().get(true)*(turbo ? 1.0 : Constants.TRANSLATIONAL_SCALAR)),    // Left Joystick XAxis
-                rotationOutput,
-                true);  
+        //Set the drive signal to a field-centric (last boolean parameter is true) joystick-based input.
+        drive(new Vector2(
+            getDriveForwardAxis().get(true)*(turbo ? 1.0 : Constants.TRANSLATIONAL_SCALAR), // Left Joystick YAxis
+            getDriveStrafeAxis().get(true)*(turbo ? 1.0 : Constants.TRANSLATIONAL_SCALAR)),    // Left Joystick XAxis
+            rotationOutput,
+            true);  
         wasJustTurning = Math.abs(getDriveForwardAxis().get(true))<0.1 && Math.abs(getDriveStrafeAxis().get(true))<0.1 && Math.abs(getDriveRotationAxis().get(true))>0.1;                             
     }
 

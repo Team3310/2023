@@ -92,10 +92,10 @@ public class RobotContainer {
         primaryController.getRightTriggerAxis().getButton(0.5).whenReleased(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
-        primaryController.getLeftJoystickButton().whenPressed(
+        primaryController.getRightTriggerAxis().getButton(0.1).whenPressed(
             new InstantCommand(() -> drivetrain.setTurbo(true))
         );
-        primaryController.getLeftJoystickButton().whenReleased(
+        primaryController.getRightTriggerAxis().getButton(0.1).whenReleased(
             new InstantCommand(() -> drivetrain.setTurbo(false))
         );
 
