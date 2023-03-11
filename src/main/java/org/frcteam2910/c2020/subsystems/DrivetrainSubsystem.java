@@ -80,6 +80,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private boolean isLimelightOverride = false;
     private double commandedPoseAngleDeg = 0.0;
     private boolean wasJustTurning = false;
+    private boolean turbo = false;
 
     private Vector2 balanceInitialPos = Vector2.ZERO;
     private Timer balanceTimer = new Timer();
@@ -257,7 +258,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 .getEntry();
 
         for(SwerveModule i : modules){
-            i.setVoltageRamp(0.45);
+            i.setVoltageRamp(0.6);
         }
 
         limelightController.setTolerance(0.1);
@@ -466,17 +467,15 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         double rotationInput = getDriveRotationAxis().get(false);
         
         double rotationOutput = 0.0;
-        if(RobotContainer.getInstance().getGyroAutoAdjustMode().getMode() == org.frcteam2910.c2020.util.GyroAutoChooser.Mode.On)
-        {
+        if(Math.abs(getDriveForwardAxis().get()) < 0.2 && Math.abs(getDriveStrafeAxis().get()) < 0.2 && Math.abs(rotationInput) <= Constants.DRIVE_ROTATION_JOYSTICK_DEADBAND){
             // No joystick pressure applied - Auto gyro correction if no turning
-            if(rotationInput <= Constants.DRIVE_ROTATION_JOYSTICK_DEADBAND)
-            {
+            if(RobotContainer.getInstance().getGyroAutoAdjustMode().getMode() == org.frcteam2910.c2020.util.GyroAutoChooser.Mode.On){
                 // Auto gyro correction if no turning
                 double deltaAngleCurrToTarget = getLeastAngleDifference(getPose().rotation.toDegrees(), commandedPoseAngleDeg);
                 SmartDashboard.putNumber("Delta Gyro To Cmd", deltaAngleCurrToTarget);
                 // Radians version: joystickRotateGyroController.setSetpoint(Math.toRadians(-commandedPoseAngle) + getPose().rotation.toRadians());
                 rotationOutput = joystickRotateGyroController.calculate(deltaAngleCurrToTarget, 0.02);
-                
+                    
                 SmartDashboard.putNumber("Gyro Rotation Out", rotationOutput);
 
                 if(Math.abs(rotationOutput) > 0.5) {
@@ -486,22 +485,22 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 //     rotationOutput = Math.copySign(Math.min(0.5, rotationOutput * 4), -deltaAngleCurrToTarget);
                 // }
             }
-        }
-        else
-        {
-            // Follow the joystick's commands.
-            commandedPoseAngleDeg = getPose().rotation.toDegrees();
+            else
+            {
+                // Follow the joystick's commands.
+                commandedPoseAngleDeg = getPose().rotation.toDegrees();
 
-            if(Math.abs(getDriveRotationAxis().get(true))<0.1)
-                rotationOutput = 0.0;
-            else    
-                rotationOutput = getDriveRotationAxis().get(true) * Constants.ROTATIONAL_SCALAR;    
+                if(Math.abs(getDriveRotationAxis().get(true))<0.1)
+                    rotationOutput = 0.0;
+                else    
+                    rotationOutput = getDriveRotationAxis().get(true) * Constants.ROTATIONAL_SCALAR;    
+            }
         }
 
             //Set the drive signal to a field-centric (last boolean parameter is true) joystick-based input.
             drive(new Vector2(
-                getDriveForwardAxis().get(true)*Constants.TRANSLATIONAL_SCALAR, // Left Joystick YAxis
-                getDriveStrafeAxis().get(true)*Constants.TRANSLATIONAL_SCALAR),    // Left Joystick XAxis
+                getDriveForwardAxis().get(true)*(turbo ? 1.0 : Constants.TRANSLATIONAL_SCALAR), // Left Joystick YAxis
+                getDriveStrafeAxis().get(true)*(turbo ? 1.0 : Constants.TRANSLATIONAL_SCALAR)),    // Left Joystick XAxis
                 rotationOutput,
                 true);  
         wasJustTurning = Math.abs(getDriveForwardAxis().get(true))<0.1 && Math.abs(getDriveStrafeAxis().get(true))<0.1 && Math.abs(getDriveRotationAxis().get(true))>0.1;                             
@@ -968,6 +967,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             // Tell all swerve modules their new targets based on the kinematics.
             updateModules(currentDriveSignal);
         }
+    }
+
+    public void setTurbo(boolean turbo){
+        this.turbo = turbo;
     }
 
     public double getPitch(){

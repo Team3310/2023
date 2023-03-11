@@ -23,7 +23,11 @@ public class setArmSafe extends CommandBase {
         this.targetAngle = targetAngle;
         this.startAngle = rotator.getArmDegrees();
 
-        goesAcross = (startAngle>0 && targetAngle<0) || (startAngle<0 && targetAngle>0);
+        wentIn = false;
+        withinAngleTarget = false;
+        withinTargetInches = false;
+
+        goesAcross = (startAngle>=0 && targetAngle<0) || (startAngle<=0 && targetAngle>0) || targetAngle == 0;
 
         addRequirements(rotator);
         addRequirements(extender);
@@ -31,44 +35,39 @@ public class setArmSafe extends CommandBase {
 
     @Override
     public void initialize() {
+        SmartDashboard.putNumber("target angle from command", targetAngle);
         if(Math.abs(startAngle)<=20){
             rotator.setArmDegreesPositionAbsolute(startAngle+Math.copySign(10,startAngle));
         }
         if(goesAcross){
             extender.setTargetArmInchesPositionAbsolute(0.0);
         }
-
-        if(withinAngleTarget){
-            SmartDashboard.putBoolean("within target angle start", withinAngleTarget);
-            withinAngleTarget = false;
-        }
- 
     }
 
     @Override
     public void execute() {
+        SmartDashboard.putNumber("target angle from command2", targetAngle);
+        SmartDashboard.putBoolean("goes across", goesAcross);
         SmartDashboard.putBoolean("within target angle", withinAngleTarget);
         SmartDashboard.putBoolean("went in", wentIn);
         SmartDashboard.putBoolean("within target inches", withinTargetInches);
         if(goesAcross){
             wentIn = extender.getArmInches()<0.5;
+            withinAngleTarget = rotator.withinAngle(5.0, targetAngle);
             if(wentIn){
+                SmartDashboard.putNumber("targetAngle 6", targetAngle);
                 rotator.setArmDegreesPositionAbsolute(targetAngle);
-                if(!withinAngleTarget){
-                    withinAngleTarget = rotator.withinAngle(5.0, targetAngle);
-                }
-                else{
+                if(withinAngleTarget){
                     extender.setTargetArmInchesPositionAbsolute(targetInches);
                     withinTargetInches = extender.withinInches(0.5, targetInches);
                 }
             }
         }
         else{
+            SmartDashboard.putNumber("targetAngle 7", targetAngle);
             rotator.setArmDegreesPositionAbsolute(targetAngle);
-            if(!withinAngleTarget){
-                withinAngleTarget = rotator.withinAngle(5.0, targetAngle);
-            }
-            else{
+            withinAngleTarget = rotator.withinAngle(5.0, targetAngle);
+            if(withinAngleTarget){
                 extender.setTargetArmInchesPositionAbsolute(targetInches);
                 withinTargetInches = extender.withinInches(0.5, targetInches);
             }

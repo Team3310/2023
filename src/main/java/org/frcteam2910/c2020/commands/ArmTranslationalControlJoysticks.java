@@ -2,23 +2,16 @@ package org.frcteam2910.c2020.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.subsystems.ArmExtender;
-import org.frcteam2910.c2020.subsystems.ArmRotator;
-import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
-import org.frcteam2910.c2020.subsystems.Intake;
-import org.frcteam2910.common.math.Vector2;
 import org.frcteam2910.common.robot.input.Axis;
 
 public class ArmTranslationalControlJoysticks extends CommandBase {
     private ArmExtender arm;
     private Axis YAxis;
-    private Intake intake;
 
 
-    public ArmTranslationalControlJoysticks(ArmExtender arm, Intake intake, Axis YAxis) {
+    public ArmTranslationalControlJoysticks(ArmExtender arm, Axis YAxis) {
         this.YAxis = YAxis;
-        this.intake = intake;
         this.arm = arm;
 
         addRequirements(arm);
@@ -26,21 +19,11 @@ public class ArmTranslationalControlJoysticks extends CommandBase {
 
     @Override
     public void execute() {
-        if(!intake.getSetConeIntake() && !intake.getSetCubeIntake()){
-            double speed = YAxis.get(true);
-            if (Math.abs(speed) > 0.1) {
-                arm.setTranslationalSpeed(speed*0.8);
-            } else {
-                arm.setTranslationalHold();
-            }
-        }
-        else{
-            if(intake.getSetConeIntake()){
-                //TODO set cone intake position
-            }
-            else if(intake.getSetCubeIntake()){
-                //TODO set cube intake position
-            }
-        }
+        double speed = YAxis.get(true);
+        if (Math.abs(speed) > 0.1) {
+            arm.setTranslationalSpeed(speed*0.8);
+        } else {
+            arm.setTranslationalHold();
+        }  
     }
 }

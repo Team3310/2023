@@ -45,8 +45,8 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(drivetrain);
         CommandScheduler.getInstance().registerSubsystem(intake);
         
-        CommandScheduler.getInstance().setDefaultCommand(armRotator, new ArmRotationControlJoysticks(armRotator, intake, getArmRotationAxis()));
-        CommandScheduler.getInstance().setDefaultCommand(armExtender, new ArmTranslationalControlJoysticks(armExtender, intake, getArmTranslationalAxis()));
+        CommandScheduler.getInstance().setDefaultCommand(armRotator, new ArmRotationControlJoysticks(armRotator, getArmRotationAxis()));
+        CommandScheduler.getInstance().setDefaultCommand(armExtender, new ArmTranslationalControlJoysticks(armExtender, getArmTranslationalAxis()));
 
         configureButtonBindings();
         
@@ -92,6 +92,12 @@ public class RobotContainer {
         primaryController.getRightTriggerAxis().getButton(0.5).whenReleased(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
+        primaryController.getLeftJoystickButton().whenPressed(
+            new InstantCommand(() -> drivetrain.setTurbo(true))
+        );
+        primaryController.getLeftJoystickButton().whenReleased(
+            new InstantCommand(() -> drivetrain.setTurbo(false))
+        );
 
         primaryController.getAButton().whenPressed(
             //new DriveBalanceCommand(drivetrain, false,true)
@@ -127,6 +133,22 @@ public class RobotContainer {
 
         secondaryController.getYButton().onTrue(
             new setArmSafe(armExtender, armRotator, -105, 12)
+        );
+
+        secondaryController.getRightBumperButton().whenReleased(
+            new setArmSafe(armExtender, armRotator,0.0, 0.0)
+        );
+
+        secondaryController.getRightTriggerAxis().getButton(0.1).whenReleased(
+            new setArmSafe(armExtender, armRotator,0.0, 0.0)
+        );
+
+        secondaryController.getRightTriggerAxis().getButton(0.1).whenPressed(
+            new setArmSafe(armExtender, armRotator,22.0, 4.0)
+        );
+
+        secondaryController.getRightBumperButton().whenPressed(
+            new setArmSafe(armExtender, armRotator,22.0, 4.0)
         );
 
         
