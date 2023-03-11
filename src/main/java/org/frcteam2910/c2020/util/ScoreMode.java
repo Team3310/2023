@@ -11,6 +11,14 @@ public enum ScoreMode{
         this.inches = inches;
     }
 
+    public double getAngle(){
+        return angle;
+    }
+
+    public double getInches(){
+        return inches;
+    }
+
     double angle;
     double inches;
 }

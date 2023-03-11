@@ -1,6 +1,6 @@
 package org.frcteam2910.c2020.commands;
 import org.frcteam2910.c2020.Constants;
-import org.frcteam2910.c2020.subsystems.ArmExtender;
+import org.frcteam2910.c2020.subsystems.Arm;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -11,30 +11,30 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class ArmExtenderZero extends CommandBase {
     private double MIN_ARM_EXTEND_POSITION_CHANGE = 0.5;
     private Timer timer = new Timer();
-    private final ArmExtender armExtender;
+    private final Arm arm;
     private double lastPosition;
 
-    public ArmExtenderZero(ArmExtender armExtender) {
-        this.armExtender = armExtender;
+    public ArmExtenderZero(Arm arm) {
+        this.arm = arm;
         
-        addRequirements(armExtender);
+        addRequirements(arm);
     }
 
     @Override
     public void initialize() {
-        armExtender.setTranslationalSpeed(-Constants.ARM_EXTEND_ZEROING_SPEED, true);
+        arm.setTranslationalSpeed(-Constants.ARM_EXTEND_ZEROING_SPEED, true);
         lastPosition = Constants.ARM_MAX_EXTEND_INCHES;
         timer.start();
     }
 
     @Override
     public void execute() {
-        armExtender.setTranslationalSpeed(-Constants.ARM_EXTEND_ZEROING_SPEED, true);
+        arm.setTranslationalSpeed(-Constants.ARM_EXTEND_ZEROING_SPEED, true);
     }
 
     @Override
     public boolean isFinished() {
-        double currentPosition = armExtender.getArmInches();
+        double currentPosition = arm.getArmInches();
         double positionChange = currentPosition - lastPosition;
         lastPosition = currentPosition;
         boolean haveMoved = Math.abs(positionChange) >= MIN_ARM_EXTEND_POSITION_CHANGE;
@@ -51,7 +51,7 @@ public class ArmExtenderZero extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        armExtender.setArmInchesZero(Constants.ARM_EXTEND_HOME_INCHES);
-        armExtender.setTranslationalHold();
+        arm.setArmInchesZero(Constants.ARM_EXTEND_HOME_INCHES);
+        arm.setTranslationalHold();
     }
 }

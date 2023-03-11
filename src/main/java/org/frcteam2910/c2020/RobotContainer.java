@@ -19,8 +19,7 @@ public class RobotContainer {
 
     private final DrivetrainSubsystem drivetrain = DrivetrainSubsystem.getInstance();
     private final Intake intake = Intake.getInstance();
-    private final ArmRotator armRotator = ArmRotator.getInstance();
-    private final ArmExtender armExtender = ArmExtender.getInstance();
+    private final Arm arm = Arm.getInstance();
 
     
     private AutonomousTrajectories autonomousTrajectories;
@@ -45,9 +44,8 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(drivetrain);
         CommandScheduler.getInstance().registerSubsystem(intake);
         
-        CommandScheduler.getInstance().setDefaultCommand(armRotator, new ArmRotationControlJoysticks(armRotator, getArmRotationAxis()));
-        CommandScheduler.getInstance().setDefaultCommand(armExtender, new ArmTranslationalControlJoysticks(armExtender, getArmTranslationalAxis()));
-
+        CommandScheduler.getInstance().setDefaultCommand(arm, new ArmJoystickControl(arm, getArmExtenderAxis(), getArmRotationAxis()));
+        
         configureButtonBindings();
         
         instance = this;
@@ -120,48 +118,48 @@ public class RobotContainer {
         );
 
         secondaryController.getBButton().onTrue(
-            new setArmSafe(armExtender, armRotator, 22, 4.0)
+            new setArmSafe(arm, ScoreMode.INTAKE)
         );
 
         secondaryController.getAButton().onTrue(
-            new setArmSafe(armExtender, armRotator, 0, 0)
+            new setArmSafe(arm, ScoreMode.ZERO)
         );
 
         secondaryController.getXButton().onTrue(
-            new setArmSafe(armExtender, armRotator, -87, 0)    
+            new setArmSafe(arm, ScoreMode.MID)    
         );
 
         secondaryController.getYButton().onTrue(
-            new setArmSafe(armExtender, armRotator, -105, 12)
+            new setArmSafe(arm, ScoreMode.HIGH)
         );
 
         secondaryController.getRightBumperButton().whenReleased(
-            new setArmSafe(armExtender, armRotator,0.0, 0.0)
+            new setArmSafe(arm, ScoreMode.ZERO)
         );
 
         secondaryController.getRightTriggerAxis().getButton(0.1).whenReleased(
-            new setArmSafe(armExtender, armRotator,0.0, 0.0)
+            new setArmSafe(arm, ScoreMode.ZERO)
         );
 
         secondaryController.getRightTriggerAxis().getButton(0.1).whenPressed(
-            new setArmSafe(armExtender, armRotator,22.0, 4.0)
+            new setArmSafe(arm, ScoreMode.INTAKE)
         );
 
         secondaryController.getRightBumperButton().whenPressed(
-            new setArmSafe(armExtender, armRotator,22.0, 4.0)
+            new setArmSafe(arm, ScoreMode.INTAKE)
         );
 
         
-        secondaryController.getStartButton().onTrue(new ArmExtenderZero(armExtender));
+        secondaryController.getStartButton().onTrue(new ArmExtenderZero(arm));
             
         // SmartDashboard.putData("Turn to Goal", new InstantCommand(() -> drivetrain.setTurnToTarget()));
 
         // SmartDashboard.putData("Limelight broken", new InstantCommand(() -> drivetrain.setLimelightOverride(true)));
         // SmartDashboard.putData("Limelight working", new InstantCommand(() -> drivetrain.setLimelightOverride(false)));
-        SmartDashboard.putData("set arm to 30 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(30)));
-        SmartDashboard.putData("set arm to 60 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(60)));
-        SmartDashboard.putData("set arm to 90 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(90)));
-        SmartDashboard.putData("set arm to 0 degrees", new InstantCommand(() -> armRotator.setArmDegreesPositionAbsolute(0)));
+        SmartDashboard.putData("set arm to 30 degrees", new InstantCommand(() -> arm.setArmDegreesPositionAbsolute(30)));
+        SmartDashboard.putData("set arm to 60 degrees", new InstantCommand(() -> arm.setArmDegreesPositionAbsolute(60)));
+        SmartDashboard.putData("set arm to 90 degrees", new InstantCommand(() -> arm.setArmDegreesPositionAbsolute(90)));
+        SmartDashboard.putData("set arm to 0 degrees", new InstantCommand(() -> arm.setArmDegreesPositionAbsolute(0)));
     }
     public Command getAutonomousCommand() {
         return autonomousChooser.getCommand(this);
@@ -190,7 +188,7 @@ public class RobotContainer {
     private Axis getArmRotationAxis() {
         return secondaryController.getLeftYAxis();
     }
-    private Axis getArmTranslationalAxis() {
+    private Axis getArmExtenderAxis() {
         return secondaryController.getRightYAxis();
     }
     private Axis getIntakeAxis() {
@@ -212,12 +210,8 @@ public class RobotContainer {
         return intake;
     }
 
-    public ArmRotator getArmRotator(){
-        return armRotator;
-    }
-
-    public ArmExtender getArmExtender(){
-        return armExtender;
+    public Arm getArm(){
+        return arm;
     }
 
     public static RobotContainer getInstance() {

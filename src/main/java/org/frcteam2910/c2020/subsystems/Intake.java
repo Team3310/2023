@@ -3,19 +3,11 @@ package org.frcteam2910.c2020.subsystems;
 import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.RobotContainer;
 import org.frcteam2910.c2020.Servo;
-import org.frcteam2910.c2020.commands.setArm;
 import org.frcteam2910.common.robot.input.Axis;
 import org.frcteam2910.common.robot.input.Controller;
-import org.frcteam2910.common.robot.input.XboxController;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
@@ -52,7 +44,7 @@ public class Intake implements Subsystem{
     }
     
     private Intake(){
-        intakeMotor = new TalonFX(2);
+        intakeMotor = new TalonFX(Constants.INTAKE_MOTOR_PORT, "rio");
         intakeMotor.setInverted(true);
         leftServo.setInverted(true);
 
@@ -84,14 +76,11 @@ public class Intake implements Subsystem{
         public void variableIntakeRPM(){
             hasSetIntakeZero = true;
             if(getRightTriggerAxis().getButton(0.1).getAsBoolean()){
-                //intakeMotor.set(ControlMode.PercentOutput, getRightTriggerAxis().get());
                 setRollerRPM(-getRightTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
                 hasSetIntakeZero = false;
                 setCubeIntake = true;
-                //setServoPosition(-1.0);
             }
             else if(getLeftTriggerAxis().getButton(0.1).getAsBoolean()){
-                //intakeMotor.set(ControlMode.PercentOutput, getLeftTriggerAxis().get());
                 setRollerRPM(getLeftTriggerAxis().get(true) * Constants.INTAKE_COLLECT_RPM);
                 hasSetIntakeZero = false;
                 setCubeIntake = false;
@@ -105,29 +94,27 @@ public class Intake implements Subsystem{
                 setRollerRPM(Constants.INTAKE_COLLECT_RPM);
                 hasSetIntakeZero = false;
                 setConeIntake = true;
-                //setServoPosition(-1.0);
             }
             else{
-
+                hasSetIntakeZero = cubeSensor.get() || coneSensor.get();
                 if(hasSetIntakeZero){
                     setRollerSpeed(0);
-                    hasSetIntakeZero = true;
+                    setServoPosition(0.0);
                     setConeIntake = false;
                     setCubeIntake = false;
                 }
-                //setServoPosition(1.0);
+                else{
+                    setServoPosition(1.0);
+                }
             }
         }
 
         public void setRollerSpeed(double speed) {
             this.intakeMotor.set(ControlMode.PercentOutput, speed);
-            //System.out.println("Set Intake Speed = " + speed);
         }
         
         public void setRollerRPM(double rpm) {
-            this.intakeMotor.set(ControlMode.Velocity, this.RollerRPMToNativeUnits(rpm));
-            //System.out.println("Set Intake RPM = " + rpm);
-    
+            intakeMotor.set(ControlMode.Velocity, this.RollerRPMToNativeUnits(rpm));
         }
 
         public double RollerRPMToNativeUnits(double rpm) {
@@ -156,10 +143,6 @@ public class Intake implements Subsystem{
 
     @Override
     public void periodic(){
-        // SmartDashboard.putNumber("right trigger axis", getRightTriggerAxis().get());
-        // SmartDashboard.putNumber("left trigger axis", getLeftTriggerAxis().get());
-        // SmartDashboard.putNumber("rpm", ((60.0*(1000/100)*intakeMotor.getSelectedSensorVelocity())/2048));
-
         SmartDashboard.putBoolean("DIO Cone", coneSensor.get());
         SmartDashboard.putBoolean("DIO Cube", cubeSensor.get());
         SmartDashboard.putNumber("intake motor current", intakeMotor.getStatorCurrent());

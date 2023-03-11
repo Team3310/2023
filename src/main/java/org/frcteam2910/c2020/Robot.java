@@ -9,7 +9,7 @@ import java.util.List;
 
 import edu.wpi.first.net.PortForwarder;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
-import org.frcteam2910.c2020.subsystems.ArmRotator.ArmRotationMode;
+import org.frcteam2910.c2020.subsystems.Arm.ArmControlMode;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.AutonomousChooser.AutonomousMode;
 import org.frcteam2910.common.Logger;
@@ -29,10 +29,10 @@ public class Robot extends TimedRobot {
 
     private static final Logger LOGGER = new Logger(Robot.class);
 
-    private static final byte[] COMPETITION_BOT_MAC_ADDRESS = new byte[]{
+    private static final byte[] PRACTICE_BOT_MAC_ADDRESS = new byte[]{
             0x00, (byte) 0x80, 0x2f, 0x33, (byte) 0xc4, 0x68
     };
-    private static final byte[] PRACTICE_BOT_MAC_ADDRESS = new byte[]{
+    private static final byte[] COMPETITION_BOT_MAC_ADDRESS = new byte[]{
             0x00, (byte) 0x80, 0x2f, 0x33, (byte) 0xcf, (byte) 0x65
     };
 
@@ -180,8 +180,8 @@ public class Robot extends TimedRobot {
 
         // robotContainer.getDrivetrainSubsystem().alignWheels();
 
-        robotContainer.getArmExtender().setArmInchesZero(Constants.ARM_EXTEND_HOME_INCHES);
-        robotContainer.getArmRotator().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
+        robotContainer.getArm().setArmInchesZero(Constants.ARM_EXTEND_HOME_INCHES);
+        robotContainer.getArm().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
 
         robotContainer.updateSide();
         robotContainer.getDrivetrainSubsystem().setDriveCoast();
@@ -229,8 +229,8 @@ public class Robot extends TimedRobot {
         // Helpful development "unlock steer motors while tilted over" feature
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DriveControlMode.HOLD);
         robotContainer.getDrivetrainSubsystem().alignWheels();
-        robotContainer.getArmRotator().setRotationControlMode(ArmRotationMode.MANUAL);
-        robotContainer.getArmRotator().setMotorNeutralMode(NeutralMode.Coast);
+        robotContainer.getArm().setRotationControlMode(ArmControlMode.MANUAL);
+        robotContainer.getArm().setMotorNeutralMode(NeutralMode.Coast);
         if(!testUsed) {
             if(robotContainer.getDrivetrainSubsystem().getPitchDegreesOffLevel() > 15
             || robotContainer.getDrivetrainSubsystem().getRollDegreesOffLevel() > 15){
