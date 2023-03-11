@@ -63,8 +63,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
     private static DrivetrainSubsystem INSTANCE;
 
-    private static final double TRACKWIDTH = 0.502;
-    private static final double WHEELBASE = 0.502;
+    private static final double TRACKWIDTH = 0.59;
+    private static final double WHEELBASE = 0.514;
     private static final double WHEEL_DIAMETER_INCHES = 4.00;  // Actual is 3.89"
 
     private double frontLeftOffset = Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_COMP_OFFSET;
@@ -1140,6 +1140,13 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
     @Override
     public void periodic() {
+
+        if(primaryController.getRightTriggerAxis().getButton(0.1).getAsBoolean()){
+            setTurbo(true);
+        }
+        else{
+            setTurbo(false);
+        }
         // Must update the Tx/Ty filter to provide it samples for calculation
         limelightGoal.updateTxFilter();
         limelightGoal.updateTyFilter();

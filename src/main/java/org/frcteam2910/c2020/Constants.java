@@ -17,8 +17,8 @@ public class Constants {
     public static final int DRIVETRAIN_FRONT_LEFT_ENCODER_PORT = 3;
 
     /********************************************************************************************************************/
-    public static final double DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET = -Math.toRadians(347.78); //68.81 Practice robot settings
-    public static final double DRIVETRAIN_FRONT_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(3.34); //64.07 Comp settings
+    public static final double DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET = -Math.toRadians(347.780); //347.78 Practice robot settings
+    public static final double DRIVETRAIN_FRONT_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(3.947); //3.947 Comp settings
     /********************************************************************************************************************/
 
     public static final int DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR = 11;
@@ -26,8 +26,8 @@ public class Constants {
     public static final int DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT = 2;
 
     /********************************************************************************************************************/
-    public static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET = -Math.toRadians(35.77); //192.33 Practice robot settings
-    public static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(261.65); //152.49 Comp settings
+    public static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET = -Math.toRadians(35.77); //35.77 Practice robot settings
+    public static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(259.89); //259.89 Comp settings
     /********************************************************************************************************************/
 
     public static final int DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR = 0;
@@ -35,8 +35,8 @@ public class Constants {
     public static final int DRIVETRAIN_BACK_LEFT_ENCODER_PORT = 1;
 
     /********************************************************************************************************************/
-    public static final double DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET = -Math.toRadians(169.01); //314.73 Practice robot settings
-    public static final double DRIVETRAIN_BACK_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(163.125);//48.34 Comp settings
+    public static final double DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET = -Math.toRadians(169.01); //169.01 Practice robot settings
+    public static final double DRIVETRAIN_BACK_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(168.76);//168.76 Comp settings
     /********************************************************************************************************************/
 
     public static final int DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR = 19;
@@ -44,8 +44,8 @@ public class Constants {
     public static final int DRIVETRAIN_BACK_RIGHT_ENCODER_PORT = 0;
 
     /********************************************************************************************************************/
-    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET = -Math.toRadians(274.16); //192.91 Practice robot settings
-    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(204.17); //213.48 Comp settings
+    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET = -Math.toRadians(274.16); //274.16 Practice robot settings
+    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(204.52); //204.52 Comp settings
     /********************************************************************************************************************/
 
     public static final double ENCODER_TICKS_PER_MOTOR_REVOLUTION = 2048.0;
@@ -93,7 +93,7 @@ public class Constants {
 
     // Intake Motor Constants
     public static final double INTAKE_COLLECT_RPM = 1500.0;
-    public static final double INTAKE_SPIT_RPM = -600.0;
+    public static final double INTAKE_SPIT_RPM = -450.0;
 
     public static final double INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 60.0 / 16.0;
     public static final double INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * ENCODER_TICKS_PER_MOTOR_REVOLUTION;

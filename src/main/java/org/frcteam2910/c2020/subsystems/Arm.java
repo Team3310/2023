@@ -272,6 +272,8 @@ public class Arm implements Subsystem{
 
     @Override
     public void periodic(){
+        SmartDashboard.putString("score mode", scoreMode.name());
+
         if(rotationControlMode == ArmControlMode.MANUAL)
             targetDegreesTicks = armRotationMotor.getSelectedSensorPosition();
         

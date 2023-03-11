@@ -4,11 +4,13 @@ import org.frcteam2910.c2020.commands.*;
 import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.util.*;
 import org.frcteam2910.common.robot.input.*;
+import org.frcteam2910.common.robot.input.DPadButton.Direction;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 
 public class RobotContainer {
@@ -63,58 +65,67 @@ public class RobotContainer {
 
     private void configureButtonBindings() {
         
-        primaryController.getStartButton().whenPressed(
+        primaryController.getStartButton().onTrue(
                 new InstantCommand(()->drivetrain.resetSteerAbsoluteAngle())
         );
-        primaryController.getBackButton().whenPressed(
+        primaryController.getBackButton().onTrue(
                 new ZeroAll(drivetrain)
         );
-        primaryController.getRightBumperButton().whenPressed(
+        primaryController.getRightBumperButton().onTrue(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.ROBOT_CENTRIC)
         );
-        primaryController.getRightBumperButton().whenReleased(
+        primaryController.getRightBumperButton().onFalse(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
-        primaryController.getLeftBumperButton().whenPressed(
+        primaryController.getLeftBumperButton().onTrue(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.LIMELIGHT)
         );
-        primaryController.getLeftBumperButton().whenReleased(
+        primaryController.getLeftBumperButton().onFalse(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
-        primaryController.getYButton().whenPressed(
+        primaryController.getYButton().onTrue(
                 new InstantCommand(()->intake.setServoPosition(-1))
         );
-        primaryController.getBButton().whenPressed(
+        primaryController.getBButton().onTrue(
                 new InstantCommand(()->intake.setServoPosition(1))
         );
-        primaryController.getRightTriggerAxis().getButton(0.5).whenReleased(
+        primaryController.getRightTriggerAxis().getButton(0.5).onFalse(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
-        primaryController.getRightTriggerAxis().getButton(0.1).whenPressed(
+        primaryController.getRightTriggerAxis().getButton(0.1).onTrue(
             new InstantCommand(() -> drivetrain.setTurbo(true))
         );
-        primaryController.getRightTriggerAxis().getButton(0.1).whenReleased(
+        primaryController.getRightTriggerAxis().getButton(0.1).onFalse(
             new InstantCommand(() -> drivetrain.setTurbo(false))
         );
 
-        primaryController.getAButton().whenPressed(
+        primaryController.getAButton().onTrue(
             //new DriveBalanceCommand(drivetrain, false,true)
             new DriveBalanceCommand(drivetrain, false, true)
         );
 
-        // primaryController.getXButton().whenPressed(
+        // primaryController.getXButton().onTrue(
         //     new InstantCommand(()->drivetrain.setDriveControlMode(DriveControlMode.LIMELIGHT))
         // );
 
         //Misc
-        secondaryController.getDPadButton(DPadButton.Direction.RIGHT).whenPressed(
+        secondaryController.getDPadButton(DPadButton.Direction.RIGHT).onTrue(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
-        secondaryController.getLeftJoystickButton().whenPressed(
+        secondaryController.getLeftJoystickButton().onTrue(
                 new InstantCommand(()-> drivetrain.setLimelightOverride(true))
         );
-        secondaryController.getRightJoystickButton().whenPressed(
+        secondaryController.getRightJoystickButton().onTrue(
                 new InstantCommand(()-> drivetrain.setLimelightOverride(false))
+        );
+        secondaryController.getDPadButton(Direction.UP).onTrue(
+                new InstantCommand(()-> arm.setTargetArmInchesPositionAbsolute(arm.getArmInches()+0.25))
+        );
+        secondaryController.getDPadButton(Direction.DOWN).onTrue(
+                new InstantCommand(()-> arm.setTargetArmInchesPositionAbsolute(arm.getArmInches()-0.25))
+        );
+        secondaryController.getDPadButton(Direction.UP).onTrue(
+                new InstantCommand(()-> arm.setTargetArmInchesPositionAbsolute(arm.getArmInches()+0.25))
         );
 
         secondaryController.getBButton().onTrue(
@@ -133,33 +144,52 @@ public class RobotContainer {
             new setArmSafe(arm, ScoreMode.HIGH)
         );
 
-        secondaryController.getRightBumperButton().whenReleased(
-            new setArmSafe(arm, ScoreMode.ZERO)
+        secondaryController.getDPadButton(Direction.UP).onTrue(
+            new InstantCommand(() -> arm.setArmDegreesZero(0))  
         );
 
-        secondaryController.getRightTriggerAxis().getButton(0.1).whenReleased(
-            new setArmSafe(arm, ScoreMode.ZERO)
+        secondaryController.getRightTriggerAxis().getButton(0.1).onTrue(
+            new InstantCommand(() -> System.out.println("ran cube intake command"))
+        ).onTrue(
+            new SequentialCommandGroup(
+                new InstantCommand(() -> intake.setServoPosition(-1.0)),
+                new setArmSafe(arm, ScoreMode.INTAKE)
+            )    
         );
 
-        secondaryController.getRightTriggerAxis().getButton(0.1).whenPressed(
-            new setArmSafe(arm, ScoreMode.INTAKE)
+        // secondaryController.getRightTriggerAxis().getButton(0.1).onFalse(
+        //     new SequentialCommandGroup(
+        //     new setArmSafe(arm, ScoreMode.ZERO),
+        //     new InstantCommand(() -> intake.setServoPosition(1.0))
+        //    )    
+        // );
+
+        secondaryController.getRightBumperButton().onTrue(
+            new SequentialCommandGroup(
+                new InstantCommand(() -> intake.setServoPosition(-1.0)),
+                new setArmSafe(arm, ScoreMode.INTAKE)
+            )    
         );
 
-        secondaryController.getRightBumperButton().whenPressed(
-            new setArmSafe(arm, ScoreMode.INTAKE)
+        secondaryController.getRightBumperButton().onFalse(
+            new SequentialCommandGroup(
+                new setArmSafe(arm, ScoreMode.ZERO),
+                new InstantCommand(() -> intake.setServoPosition(1.0))
+            )    
         );
 
         
         secondaryController.getStartButton().onTrue(new ArmExtenderZero(arm));
+        secondaryController.getBackButton().onTrue(new InstantCommand(()->arm.setArmDegreesZero(0)));
             
         // SmartDashboard.putData("Turn to Goal", new InstantCommand(() -> drivetrain.setTurnToTarget()));
 
         // SmartDashboard.putData("Limelight broken", new InstantCommand(() -> drivetrain.setLimelightOverride(true)));
         // SmartDashboard.putData("Limelight working", new InstantCommand(() -> drivetrain.setLimelightOverride(false)));
-        SmartDashboard.putData("set arm to 30 degrees", new InstantCommand(() -> arm.setArmDegreesPositionAbsolute(30)));
-        SmartDashboard.putData("set arm to 60 degrees", new InstantCommand(() -> arm.setArmDegreesPositionAbsolute(60)));
-        SmartDashboard.putData("set arm to 90 degrees", new InstantCommand(() -> arm.setArmDegreesPositionAbsolute(90)));
-        SmartDashboard.putData("set arm to 0 degrees", new InstantCommand(() -> arm.setArmDegreesPositionAbsolute(0)));
+        // SmartDashboard.putData("set arm to 30 degrees", new InstantCommand(() -> arm.setArmDegreesPositionAbsolute(30)));
+        // SmartDashboard.putData("set arm to 60 degrees", new InstantCommand(() -> arm.setArmDegreesPositionAbsolute(60)));
+        // SmartDashboard.putData("set arm to 90 degrees", new InstantCommand(() -> arm.setArmDegreesPositionAbsolute(90)));
+        // SmartDashboard.putData("set arm to 0 degrees", new InstantCommand(() -> arm.setArmDegreesPositionAbsolute(0)));
     }
     public Command getAutonomousCommand() {
         return autonomousChooser.getCommand(this);
@@ -191,11 +221,15 @@ public class RobotContainer {
     private Axis getArmExtenderAxis() {
         return secondaryController.getRightYAxis();
     }
-    private Axis getIntakeAxis() {
+    public Axis getIntakeAxis() {
         return secondaryController.getRightTriggerAxis();
     }
-    private Axis getOuttakeAxis() {
+    public Axis getOuttakeAxis() {
         return secondaryController.getLeftTriggerAxis();
+    }
+
+    public void runCommand(Command command){
+        command.schedule();
     }
 
     public AutonomousChooser getAutonomousChooser() {
