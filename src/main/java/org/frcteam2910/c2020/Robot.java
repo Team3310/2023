@@ -172,6 +172,8 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         teleopUsed = true;
 
+        robotContainer.getArm().setMotorNeutralMode(NeutralMode.Brake);
+
         robotContainer.getDrivetrainSubsystem().resetSteerAbsoluteAngle();
         robotContainer.getDrivetrainSubsystem().resetGyroAngle(robotContainer.getDrivetrainSubsystem().getPose().rotation);
 

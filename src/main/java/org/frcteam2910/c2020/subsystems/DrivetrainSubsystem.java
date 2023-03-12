@@ -232,7 +232,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             gyroscope.setInverted(false);
         }
 
-        if(Robot.isPracticeBot()){
+        if(!Robot.isCompetitionBot()){
             frontLeftOffset = Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET;
             frontRightOffset = Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET;
             backLeftOffset = Constants.DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET;
@@ -1140,13 +1140,6 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
     @Override
     public void periodic() {
-
-        if(primaryController.getRightTriggerAxis().getButton(0.1).getAsBoolean()){
-            setTurbo(true);
-        }
-        else{
-            setTurbo(false);
-        }
         // Must update the Tx/Ty filter to provide it samples for calculation
         limelightGoal.updateTxFilter();
         limelightGoal.updateTyFilter();

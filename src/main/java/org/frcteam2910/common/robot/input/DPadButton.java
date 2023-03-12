@@ -47,6 +47,10 @@ public class DPadButton extends Button {
 		this(joystick, direction, 0);
 	}
 
+	public double get(){
+		return joystick.getPOV(pov);
+	}
+
 	@Override
 	public boolean getAsBoolean() {
 		return joystick.getPOV(pov) == direction.getAngle();

@@ -2,6 +2,7 @@ package org.frcteam2910.common.robot.input;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -30,10 +31,10 @@ public final class XboxController extends Controller {
 	private final Button leftStickButton;
 	private final Button rightStickButton;
 
-	private final Axis leftTriggerAxis;
+	private final Trigger leftTriggerAxis;
 	private final Axis leftXAxis;
 	private final Axis leftYAxis;
-	private final Axis rightTriggerAxis;
+	private final Trigger rightTriggerAxis;
 	private final Axis rightXAxis;
 	private final Axis rightYAxis;
 
@@ -57,11 +58,11 @@ public final class XboxController extends Controller {
 		leftStickButton = new JoystickButton(joystick, 9);
 		rightStickButton = new JoystickButton(joystick, 10);
 
-		leftTriggerAxis = new JoystickAxis(joystick, 2);
+		leftTriggerAxis = new Trigger(() -> joystick.getRawAxis(2) >= 0.5);
 		leftXAxis = new JoystickAxis(joystick, 0);
 		leftYAxis = new JoystickAxis(joystick, 1);
 		leftYAxis.setInverted(true);
-		rightTriggerAxis = new JoystickAxis(joystick, 3);
+		rightTriggerAxis = new Trigger(() -> joystick.getRawAxis(3) >= 0.5);
 		rightXAxis = new JoystickAxis(joystick, 4);
 		rightYAxis = new JoystickAxis(joystick, 5);
 		rightYAxis.setInverted(true);
@@ -73,8 +74,12 @@ public final class XboxController extends Controller {
 		}
 	}
 
+	public double getDPadPOV(int index){
+		return dpadButtons[index].get();
+	}
+
 	@Override
-	public Axis getLeftTriggerAxis() {
+	public Trigger getLeftTriggerAxis() {
 		return leftTriggerAxis;
 	}
 
@@ -89,7 +94,7 @@ public final class XboxController extends Controller {
 	}
 
 	@Override
-	public Axis getRightTriggerAxis() {
+	public Trigger getRightTriggerAxis() {
 		return rightTriggerAxis;
 	}
 

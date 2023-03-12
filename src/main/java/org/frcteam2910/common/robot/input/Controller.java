@@ -2,6 +2,7 @@ package org.frcteam2910.common.robot.input;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
  * <p>An interface for easily implementing gamepads as an input source.</p>
@@ -20,13 +21,13 @@ public abstract class Controller extends GenericHID {
 		super(port);
 	}
 
-	public abstract Axis getLeftTriggerAxis();
+	public abstract Trigger getLeftTriggerAxis();
 
 	public abstract Axis getLeftXAxis();
 
 	public abstract Axis getLeftYAxis();
 
-	public abstract Axis getRightTriggerAxis();
+	public abstract Trigger getRightTriggerAxis();
 
 	public abstract Axis getRightXAxis();
 

@@ -33,15 +33,20 @@ public class setArmSafe extends CommandBase {
         if(arm.getScoreMode() != targetMode){
             switch(arm.getScoreMode()){
                 case HIGH : 
-                    if(targetMode==ScoreMode.ZERO || targetMode==ScoreMode.CONE_INTAKE || targetMode==ScoreMode.CUBE_INTAKE){
+                    if(targetMode==ScoreMode.ZERO || targetMode==ScoreMode.CONE_INTAKE || targetMode==ScoreMode.CUBE_INTAKE || targetMode==ScoreMode.LOW){
                         arm.setTargetArmInchesPositionAbsolute(0.0);
                         goesAcross = true;
                     } break;
                 case MID :
-                    if(targetMode==ScoreMode.ZERO || targetMode==ScoreMode.CONE_INTAKE || targetMode==ScoreMode.CUBE_INTAKE){
+                    if(targetMode==ScoreMode.ZERO || targetMode==ScoreMode.CONE_INTAKE || targetMode==ScoreMode.CUBE_INTAKE || targetMode==ScoreMode.LOW){
                         arm.setTargetArmInchesPositionAbsolute(0.0);
                         goesAcross = true;
                     } break;
+                case LOW:
+                    if(targetMode==ScoreMode.ZERO || targetMode==ScoreMode.CUBE_INTAKE || targetMode==ScoreMode.CONE_INTAKE){
+                        arm.setTargetArmInchesPositionAbsolute(0.0);
+                        goesAcross = true;
+                    }     break;
                 case CONE_INTAKE : 
                     arm.setArmDegreesPositionAbsolute(45.0);
                     while(!arm.withinAngle(5.0, 45.0)){}

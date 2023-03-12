@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 
 public class RobotContainer {
@@ -39,7 +40,6 @@ public class RobotContainer {
         autonomousChooser = new AutonomousChooser(autonomousTrajectories);
 
         drivetrain.setController(primaryController);
-        intake.setController(secondaryController);
 
         driverReadout = new DriverReadout(this);
 
@@ -71,14 +71,8 @@ public class RobotContainer {
         primaryController.getBackButton().onTrue(
                 new ZeroAll(drivetrain)
         );
-        primaryController.getRightBumperButton().onTrue(
-                new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.ROBOT_CENTRIC)
-        );
-        primaryController.getRightBumperButton().onFalse(
-                new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
-        );
         primaryController.getLeftBumperButton().onTrue(
-                new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.LIMELIGHT)
+                new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.ROBOT_CENTRIC)
         );
         primaryController.getLeftBumperButton().onFalse(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
@@ -89,13 +83,13 @@ public class RobotContainer {
         primaryController.getBButton().onTrue(
                 new InstantCommand(()->intake.setServoPosition(1))
         );
-        primaryController.getRightTriggerAxis().getButton(0.5).onFalse(
+        primaryController.getRightTriggerAxis().onFalse(
                 new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
-        primaryController.getRightTriggerAxis().getButton(0.1).onTrue(
+        primaryController.getRightTriggerAxis().onTrue(
             new InstantCommand(() -> drivetrain.setTurbo(true))
         );
-        primaryController.getRightTriggerAxis().getButton(0.1).onFalse(
+        primaryController.getRightTriggerAxis().onFalse(
             new InstantCommand(() -> drivetrain.setTurbo(false))
         );
 
@@ -129,53 +123,67 @@ public class RobotContainer {
         );
 
         secondaryController.getBButton().onTrue(
-            new setArmSafe(arm, ScoreMode.CONE_INTAKE)
-        );
-
-        secondaryController.getAButton().onTrue(
             new setArmSafe(arm, ScoreMode.ZERO)
         );
 
+        secondaryController.getAButton().onTrue(
+            new setArmSafe(arm, ScoreMode.LOW)
+        );
+
         secondaryController.getXButton().onTrue(
-            new setArmSafe(arm, ScoreMode.MID)    
+            new setArmSafe(arm, ScoreMode.MID)
         );
 
         secondaryController.getYButton().onTrue(
-            new setArmSafe(arm, ScoreMode.CUBE_INTAKE)
+            new setArmSafe(arm, ScoreMode.HIGH)
         );
 
-        secondaryController.getDPadButton(Direction.UP).onTrue(
-            new InstantCommand(() -> arm.setArmDegreesZero(0))  
+        secondaryController.getRightTriggerAxis().onTrue(
+            new SequentialCommandGroup(
+                new InstantCommand(() -> intake.setRollerRPM(-Constants.INTAKE_COLLECT_RPM)),
+                new InstantCommand(() -> intake.setServoPosition(-1.0)),
+                new setArmSafe(arm, ScoreMode.CUBE_INTAKE)
+            )    
         );
 
-        // secondaryController.getRightTriggerAxis().getButton(0.1).onTrue(
-        //     new InstantCommand(() -> System.out.println("ran cube intake command"))
-        // ).onTrue(
-        //     new SequentialCommandGroup(
-        //         new InstantCommand(() -> intake.setServoPosition(-1.0)),
-        //         new setArmSafe(arm, ScoreMode.CONE_INTAKE)
-        //     )    
-        // );
+        secondaryController.getRightTriggerAxis().onFalse(
+            new SequentialCommandGroup(
+                new setArmSafe(arm, ScoreMode.ZERO),
+                new InstantCommand(() -> intake.setRollerRPM(0)),
+                new InstantCommand(() -> intake.setServoPosition(1.0))
+           )    
+        );
 
-        // secondaryController.getRightTriggerAxis().getButton(0.1).onFalse(
-        //     new SequentialCommandGroup(
-        //     new setArmSafe(arm, ScoreMode.ZERO),
-        //     new InstantCommand(() -> intake.setServoPosition(1.0))
-        //    )    
-        // );
-
-        // secondaryController.getRightBumperButton().onTrue(
-        //     new SequentialCommandGroup(
-        //         new InstantCommand(() -> intake.setServoPosition(-1.0)),
-        //         new setArmSafe(arm, ScoreMode.CONE_INTAKE)
-        //     )    
-        // );
+        secondaryController.getRightBumperButton().onTrue(
+            new SequentialCommandGroup(
+                new InstantCommand(() -> intake.setRollerRPM(Constants.INTAKE_COLLECT_RPM)),
+                new setArmSafe(arm, ScoreMode.CONE_INTAKE),
+                new InstantCommand(() -> intake.setServoPosition(-1.0))
+            )    
+        );
 
         secondaryController.getRightBumperButton().onFalse(
             new SequentialCommandGroup(
-                new setArmSafe(arm, ScoreMode.ZERO)
-                //new InstantCommand(() -> intake.setServoPosition(1.0))
+                new setArmSafe(arm, ScoreMode.ZERO),
+                new InstantCommand(() -> intake.setRollerRPM(0)),
+                new InstantCommand(() -> intake.setServoPosition(1.0))
             )    
+        );
+        
+        secondaryController.getLeftBumperButton().onTrue(
+            new InstantCommand(() -> intake.setRollerRPM(Constants.INTAKE_SPIT_RPM))
+        );
+
+        secondaryController.getLeftBumperButton().onFalse(
+            new PutIntakeZeroAfterOuttake(intake, arm)
+        );
+
+        secondaryController.getLeftTriggerAxis().onTrue(
+            new InstantCommand(() -> intake.setRollerRPM(-Constants.INTAKE_SPIT_RPM))
+        );
+
+        secondaryController.getLeftTriggerAxis().onFalse(
+            new PutIntakeZeroAfterOuttake(intake, arm)
         );
 
         
@@ -221,11 +229,11 @@ public class RobotContainer {
     private Axis getArmExtenderAxis() {
         return secondaryController.getRightYAxis();
     }
-    public Axis getIntakeAxis() {
-        return secondaryController.getRightTriggerAxis();
+    public Boolean getIntakeAxis() {
+        return secondaryController.getRightTriggerAxis().getAsBoolean();
     }
-    public Axis getOuttakeAxis() {
-        return secondaryController.getLeftTriggerAxis();
+    public Boolean getOuttakeAxis() {
+        return secondaryController.getLeftTriggerAxis().getAsBoolean();
     }
 
     public void runCommand(Command command){
