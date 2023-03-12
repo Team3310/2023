@@ -16,6 +16,8 @@ public class setArmSafe extends CommandBase {
     private boolean withinTargetInches = false;
     private boolean wentOut = false;
 
+    private final double armDegreesTolerance = 2.0;
+
     public setArmSafe(Arm arm, ScoreMode targetScoreMode) {
         this.arm = arm;
         this.targetMode = targetScoreMode;
@@ -49,7 +51,8 @@ public class setArmSafe extends CommandBase {
                     }     break;
                 case CONE_INTAKE : 
                     arm.setArmDegreesPositionAbsolute(45.0);
-                    while(!arm.withinAngle(5.0, 45.0)){}
+                    // TODO TODO TODO HACK remove ASAP
+                    while(!arm.withinAngle(armDegreesTolerance, 45.0)){}
                     arm.setTargetArmInchesPositionAbsolute(0.0);
                     goesAcross = true;
                     break;
@@ -69,7 +72,7 @@ public class setArmSafe extends CommandBase {
         if(goesAcross){
             wentIn = arm.withinInches(0.5, 0.0);
             withinTargetInches = arm.withinInches(0.5, targetMode.getInches());
-            withinAngleTarget = arm.withinAngle(5.0, targetMode.getAngle());
+            withinAngleTarget = arm.withinAngle(armDegreesTolerance, targetMode.getAngle());
 
             if(wentIn){
                 arm.setArmDegreesPositionAbsolute(targetMode.getAngle());
@@ -80,7 +83,7 @@ public class setArmSafe extends CommandBase {
         }
         else{
             withinTargetInches = arm.withinInches(0.5, targetMode.getInches());
-            withinAngleTarget = arm.withinAngle(5.0, targetMode.getAngle());
+            withinAngleTarget = arm.withinAngle(armDegreesTolerance, targetMode.getAngle());
 
             arm.setArmDegreesPositionAbsolute(targetMode.getAngle());
             if(withinAngleTarget){

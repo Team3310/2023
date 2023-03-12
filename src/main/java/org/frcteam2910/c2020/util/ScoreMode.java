@@ -2,10 +2,10 @@ package org.frcteam2910.c2020.util;
 
 public enum ScoreMode{
     ZERO(0, 0), 
-    CONE_INTAKE(15, 3.375),
-    MID(-87, 0.875),
-    HIGH(-108, 12.875),
-    LOW(-33, 3.375),
+    CONE_INTAKE(17, 3.375),
+    MID(87, 0.875),
+    HIGH(108, 12.875),
+    LOW(33, 3.375),
     CUBE_INTAKE(33, 9.5);
 
     ScoreMode(double angle, double inches){

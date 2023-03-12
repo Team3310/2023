@@ -233,6 +233,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         }
 
         if(!Robot.isCompetitionBot()){
+            // Defaulted to Comp Bot so now we choose practice bot constants
             frontLeftOffset = Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET;
             frontRightOffset = Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET;
             backLeftOffset = Constants.DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET;

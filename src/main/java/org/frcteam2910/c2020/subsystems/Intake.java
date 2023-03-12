@@ -3,6 +3,7 @@ package org.frcteam2910.c2020.subsystems;
 import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.Servo;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -49,6 +50,11 @@ public class Intake implements Subsystem{
         intakeMotor.setInverted(true);
         leftServo.setInverted(false);
         rightServo.setInverted(true);
+        
+        final StatorCurrentLimitConfiguration statorCurrentConfigs = new StatorCurrentLimitConfiguration();
+        statorCurrentConfigs.currentLimit = 80.0;
+        statorCurrentConfigs.enable = true;
+        intakeMotor.configStatorCurrentLimit(statorCurrentConfigs);        
 
         intakeMotor.config_kF(kIntakeVelocitySlot, 0.0);
         intakeMotor.config_kP(kIntakeVelocitySlot, 0.10);
