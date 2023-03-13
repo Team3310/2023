@@ -18,14 +18,14 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
-public class RightSideConeBalance extends AutonCommandBase {
-    public RightSideConeBalance(RobotContainer container, AutonomousTrajectories trajectories){
+public class RightSideTwoConeBalance extends AutonCommandBase {
+    public RightSideTwoConeBalance(RobotContainer container, AutonomousTrajectories trajectories){
         this(container, trajectories, container.getDrivetrainSubsystem(), container.getArm(), container.getIntake());
     }
 
-    public RightSideConeBalance(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
+    public RightSideTwoConeBalance(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
         this.addCommands(
-            new RightSideCone(container, trajectories),
+            new RightSideTwoCone(container, trajectories),
             new FollowTrajectoryCommand(drive, trajectories.getToBridge(drive.getPose().translation, drive.getPose().rotation)),
             new OnToBridge(container, trajectories)
         );

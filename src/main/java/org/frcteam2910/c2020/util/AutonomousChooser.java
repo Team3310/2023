@@ -28,6 +28,7 @@ public class AutonomousChooser {
         autonomousModeChooser.addOption("On To Bridge", AutonomousMode.TO_BRIDGE);
         autonomousModeChooser.addOption("Up Bridge", AutonomousMode.UP_BRIDGE);
         autonomousModeChooser.addOption("Bridge Balance", AutonomousMode.BALANCE);
+        autonomousModeChooser.addOption("One Object Bridge Balance", AutonomousMode.ONE_OBJECT_BALANCE);
         autonomousModeChooser.addOption("7 Feet", AutonomousMode.SEVEN_FEET);
         autonomousModeChooser.addOption("sCurve", AutonomousMode.S_CURVE);
     }
@@ -73,13 +74,15 @@ public class AutonomousChooser {
             case THREE_OBJECT_BRIDGE:
                 return new RightThreeObject(container, trajectories); 
             case CONE_BRIDGE:
-                return new RightSideCone(container, trajectories);
+                return new RightSideTwoCone(container, trajectories);
             case TO_BRIDGE:
                 return new OnToBridge(container, trajectories);
             case BALANCE:
                 return new DriveBalanceCommand(container.getDrivetrainSubsystem(), true, false);
             case THREE_OBJECT_CLOSE_BALANCE:
                 return new LeftTwoObjectBalance(container, trajectories);
+            case ONE_OBJECT_BALANCE:
+                return new OneObjectMidBalance(container, trajectories);    
             default:
                 return getSevenFeet(container);
         }
@@ -106,7 +109,8 @@ public class AutonomousChooser {
         TO_BRIDGE,
         UP_BRIDGE,
         BALANCE,
-        THREE_OBJECT_CLOSE_BALANCE
+        THREE_OBJECT_CLOSE_BALANCE,
+        ONE_OBJECT_BALANCE
         ;
     }
 }

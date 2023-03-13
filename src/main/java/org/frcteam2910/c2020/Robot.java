@@ -161,8 +161,8 @@ public class Robot extends TimedRobot {
 
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.TRAJECTORY);
 
-        //robotContainer.getArm().setArmInchesZero(Constants.ARM_HOME_INCHES);
-        //robotContainer.getArm().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
+        robotContainer.getArm().setArmInchesZero(0.25);
+        robotContainer.getArm().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
 
         robotContainer.updateTrajectoriesBasedOnSide();
         robotContainer.getAutonomousCommand().schedule();
@@ -172,15 +172,19 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         teleopUsed = true;
 
+        CommandScheduler.getInstance().cancelAll();
+
         robotContainer.getArm().setMotorNeutralMode(NeutralMode.Brake);
+        robotContainer.getArm().setRotationHold();
+        
 
         robotContainer.getDrivetrainSubsystem().resetSteerAbsoluteAngle();
         robotContainer.getDrivetrainSubsystem().resetGyroAngle(robotContainer.getDrivetrainSubsystem().getPose().rotation);
 
         // robotContainer.getDrivetrainSubsystem().alignWheels();
 
-        robotContainer.getArm().setArmInchesZero(Constants.ARM_EXTEND_HOME_INCHES);
-        robotContainer.getArm().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
+        // robotContainer.getArm().setArmInchesZero(Constants.ARM_EXTEND_HOME_INCHES);
+        // robotContainer.getArm().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
 
         robotContainer.updateSide();
         robotContainer.getDrivetrainSubsystem().setDriveCoast();

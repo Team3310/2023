@@ -21,7 +21,7 @@ public class LeftTwoObjectBalance extends AutonCommandBase {
         resetRobotPose(container, trajectories.getThreeObjectClosePart1());
         this.addCommands(
             new LeftTwoObjectClose(container, trajectories),
-            new FollowTrajectoryCommand(drive, trajectories.getUpBridge(drive.getPose().translation, drive.getPose().rotation)),
+            new FollowTrajectoryCommand(drive, trajectories.getUpBridge(drive.getPose().translation, drive.getPose().rotation, 10)),
             new DriveBalanceCommand(drive, true, false)
         );
     }

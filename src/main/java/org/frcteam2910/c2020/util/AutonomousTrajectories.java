@@ -53,6 +53,7 @@ public class AutonomousTrajectories {
     private Trajectory coneBridgefromPickUp2ToLoad;
 
     private Trajectory onToBridge;
+    private Trajectory goPastBridge;
 //#endregion
 
     private TrajectoryConstraint[] bridgeConstraints;
@@ -252,12 +253,19 @@ public class AutonomousTrajectories {
 //#endregion        
     
         onToBridge = new Trajectory(
-                new SimplePathBuilder(new Vector2(-252, 207), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(-173, 207), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(-176, 207), Rotation2.fromDegrees(180))
+                new SimplePathBuilder(new Vector2(-252, 207), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(-173, 207), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(-176, 207), Rotation2.fromDegrees(0))
                         .build(),
                 slowConstraints, SAMPLE_DISTANCE);
-        }
+
+        goPastBridge = new Trajectory(
+                new SimplePathBuilder(new Vector2(-176, 207), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(-156, 207), Rotation2.fromDegrees(0))
+                        .build(),
+                bridgeConstraints, SAMPLE_DISTANCE);
+
+        }        
 
     @SuppressWarnings("unused")
     private Path getPath(String name) throws IOException {
@@ -324,10 +332,12 @@ public class AutonomousTrajectories {
 
     public Trajectory getOnToBridge(){return onToBridge;}
 
-    public Trajectory getUpBridge(Vector2 start, Rotation2 rotation){
+    public Trajectory getPastBridge(){return goPastBridge;}
+
+    public Trajectory getUpBridge(Vector2 start, Rotation2 rotation, int movement){
         return new Trajectory(
-                new SimplePathBuilder(start, Rotation2.fromDegrees(rotation.toDegrees()))
-                        .lineTo(new Vector2(start.x+10, start.y), Rotation2.fromDegrees(rotation.toDegrees()))
+                new SimplePathBuilder(new Vector2(start.x, start.y), Rotation2.fromDegrees(rotation.toDegrees()))
+                        .lineTo(new Vector2(start.x+movement, start.y), Rotation2.fromDegrees(rotation.toDegrees()))
                         .build(),
                 bridgeConstraints, SAMPLE_DISTANCE);
     }

@@ -1119,14 +1119,9 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     }
 
     private void updateModulesHoldAngle() {
-        double[] moduleAngles = {modules[0].getSteerAngle(), 
-                                 modules[1].getSteerAngle(), 
-                                 modules[2].getSteerAngle(), 
-                                 modules[3].getSteerAngle()};
-
         for (int i = 0; i < modules.length; i++) {
             var module = modules[i];
-            module.set(0, moduleAngles[i]);
+            module.set(0, lastModuleAngle[i]);
         }
     }
 

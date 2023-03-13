@@ -5,6 +5,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 public interface SwerveModule {
     double getDriveVelocity();
 
+    double getTargetDriveVoltage();
+
     double getSteerAngle();
 
     double getTargetSteerAngle();

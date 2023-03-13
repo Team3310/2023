@@ -1,7 +1,9 @@
 package org.frcteam2910.c2020.commands;
 
 import org.frcteam2910.c2020.subsystems.Arm;
+import org.frcteam2910.c2020.util.ScoreMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class SetArmRotator extends CommandBase {
@@ -11,7 +13,7 @@ public class SetArmRotator extends CommandBase {
     private double startingDegrees = Double.MIN_VALUE;
     private double targetDegrees = Double.MIN_VALUE;
 
-    private final double ARM_DEGREES_TOLERANCE = 2.0;
+    private final double ARM_DEGREES_TOLERANCE = 5.0;
 
     public SetArmRotator(Arm arm, double targetDegrees) {
         this(arm, targetDegrees, true);
@@ -30,21 +32,22 @@ public class SetArmRotator extends CommandBase {
     @Override
     public void initialize() {
         arm.setArmDegreesPositionAbsolute(targetDegrees);
+        SmartDashboard.putBoolean("Finished Rot", false);
     }
 
     @Override
     public void execute() {
-        if(!withinToleranceOfTarget) {
-            withinToleranceOfTarget = arm.withinAngle(ARM_DEGREES_TOLERANCE, targetDegrees);
-        }
     }
 
     @Override
     public boolean isFinished(){
-        return (!waitUntilReachedTarget) || withinToleranceOfTarget;
+        if((!waitUntilReachedTarget) || arm.withinAngle(ARM_DEGREES_TOLERANCE, targetDegrees))
+            arm.setScoreMode(ScoreMode.getClosestMode(arm.getArmDegrees()));
+        return (!waitUntilReachedTarget) || arm.withinAngle(ARM_DEGREES_TOLERANCE, targetDegrees);
     }
 
     @Override
     public void end(boolean interrupted) {
+        SmartDashboard.putBoolean("Finished Rot", true);
     }
 }

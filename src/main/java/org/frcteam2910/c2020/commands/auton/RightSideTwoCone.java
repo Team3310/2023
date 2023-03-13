@@ -18,17 +18,17 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
-public class RightSideCone extends AutonCommandBase {
-    public RightSideCone(RobotContainer container, AutonomousTrajectories trajectories){
+public class RightSideTwoCone extends AutonCommandBase {
+    public RightSideTwoCone(RobotContainer container, AutonomousTrajectories trajectories){
         this(container, trajectories, container.getDrivetrainSubsystem(), container.getArm(), container.getIntake());
     }
 
-    public RightSideCone(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
+    public RightSideTwoCone(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
         this.addCommands(
             new RightSideOneCone(container, trajectories),
             new ParallelDeadlineGroup(     
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgeLoadToPickup2()),
-                new setArmSafe(arm, ScoreMode.CONE_INTAKE),
+                new setArmSafe(ScoreMode.CONE_INTAKE, false),
                 new InstantCommand(()->{
                     intake.setRollerRPM(Constants.INTAKE_COLLECT_RPM); 
                     intake.setServoPosition(-1.0);
@@ -47,7 +47,7 @@ public class RightSideCone extends AutonCommandBase {
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromPickUp2ToLoad()),
                 new SequentialCommandGroup(
-                    new setArmSafe(arm, ScoreMode.ZERO),
+                    new setArmSafe(ScoreMode.ZERO, false),
                     new InstantCommand(()->{
                         intake.setRollerSpeed(0);
                         intake.setServoPosition(1.0);
@@ -56,7 +56,7 @@ public class RightSideCone extends AutonCommandBase {
             ),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromLoadtoPlace()),
-                new setArmSafe(arm, ScoreMode.HIGH)
+                new setArmSafe(ScoreMode.HIGH, false)
             ),
             new ParallelDeadlineGroup(  
                 new ParallelRaceGroup( 

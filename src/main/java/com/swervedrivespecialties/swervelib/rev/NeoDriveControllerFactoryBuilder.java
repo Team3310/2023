@@ -97,5 +97,10 @@ public final class NeoDriveControllerFactoryBuilder {
         public double getStateVelocity() {
             return encoder.getVelocity();
         }
+
+        @Override
+        public double getReferenceVoltage() {
+            return motor.getBusVoltage();
+        }
     }
 }

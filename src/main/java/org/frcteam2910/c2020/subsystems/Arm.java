@@ -103,11 +103,11 @@ public class Arm implements Subsystem{
     }
 
     public ScoreMode getScoreMode(){
-        return scoreMode;
+        return this.scoreMode;
     }
 
-    public void setScoreMode(ScoreMode scoreMode){
-        this.scoreMode = scoreMode;
+    public void setScoreMode(ScoreMode sm){
+        this.scoreMode = sm;
     }
 
     public double getArmDegrees(){
@@ -136,10 +136,8 @@ public class Arm implements Subsystem{
 
     public synchronized void setArmDegreesPositionAbsolute(double degrees) {
         rotationControlMode = ArmControlMode.HOLD;
-        SmartDashboard.putNumber("target degrees 3", degrees);
         armRotationMotor.selectProfileSlot(0, 0);
         targetDegreesTicks = getArmDegreesEncoderTicks(limitArmDegrees(degrees));
-        SmartDashboard.putNumber("target degrees 4", targetDegreesTicks / Constants.ARM_DEGREES_TO_ENCODER_TICKS);
         // armRotationMotor.set(ControlMode.Position, targetDegreesTicks, DemandType.ArbitraryFeedForward, 0.03);
         armRotationMotor.set(ControlMode.MotionMagic, targetDegreesTicks);
     }
@@ -184,7 +182,7 @@ public class Arm implements Subsystem{
 
     //#region arm
     public boolean withinInches(double tolerance, double inches){
-        return Math.abs(getArmInches()-Math.copySign(inches, getArmInches())) < tolerance;
+        return Math.abs(getArmInches()-inches) < tolerance;
     }    
 
     public void setExtenderControlMode(ArmControlMode mode){
@@ -217,7 +215,7 @@ public class Arm implements Subsystem{
         return targetInches;
     }
 
-    public void setTargetArmInchesPositionAbsolute(double targetInches) {
+    public synchronized void setTargetArmInchesPositionAbsolute(double targetInches) {
         extenderControlMode = ArmControlMode.HOLD;
         this.targetInches = targetInches;
         targetInchesTicks = getArmInchesEncoderTicksAbsolute(targetInches);
@@ -273,13 +271,16 @@ public class Arm implements Subsystem{
     @Override
     public void periodic(){
         SmartDashboard.putString("score mode", scoreMode.name());
+        SmartDashboard.putString("closest score mode", ScoreMode.getClosestMode(getArmDegrees()).name());
 
         SmartDashboard.putNumber("arm degrees", getArmDegrees());
         SmartDashboard.putNumber("arm inches", getArmInches());
 
-        if(rotationControlMode == ArmControlMode.MANUAL)
+        if(rotationControlMode == ArmControlMode.MANUAL){
             targetDegreesTicks = armRotationMotor.getSelectedSensorPosition();
-        
+            setScoreMode(ScoreMode.getClosestMode(getArmDegrees()));
+        }
+
         if (rotationControlMode == ArmControlMode.MANUAL){
             if (getArmDegrees() < Constants.ARM_MIN_ROTATION_DEGREES && manualRotationSpeed < 0.0) {
                 setRotationHold();
@@ -292,11 +293,11 @@ public class Arm implements Subsystem{
             setTargetTicks(armTranslationMotor.getSelectedSensorPosition());
         
         if (extenderControlMode == ArmControlMode.MANUAL) {
-            // if (getArmInches() < Constants.ARM_MIN_EXTEND_INCHES && manualTranslationSpeed < 0.0) {
-            //     setTranslationalHold();
-            // } else if (getArmInches() > Constants.ARM_MAX_EXTEND_INCHES && manualTranslationSpeed > 0.0) {
-            //     setTranslationalHold();
-            // }
+            if (getArmInches() < Constants.ARM_MIN_EXTEND_INCHES && manualTranslationSpeed < 0.0) {
+                setTranslationalHold();
+            } else if (getArmInches() > Constants.ARM_MAX_EXTEND_INCHES && manualTranslationSpeed > 0.0) {
+                setTranslationalHold();
+            }
         } 
     }
 }

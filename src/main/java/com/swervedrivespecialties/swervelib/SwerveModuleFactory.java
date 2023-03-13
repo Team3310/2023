@@ -63,6 +63,11 @@ public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
         }
 
         @Override
+        public double getTargetDriveVoltage() {
+            return driveController.getReferenceVoltage();
+        }
+
+        @Override
         public double getSteerAngle() {
             return steerController.getStateAngle();
         }

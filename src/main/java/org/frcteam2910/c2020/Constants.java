@@ -18,7 +18,7 @@ public class Constants {
 
     /********************************************************************************************************************/
     public static final double DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET = -Math.toRadians(347.780); //347.78 Practice robot settings
-    public static final double DRIVETRAIN_FRONT_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(3.947); //3.947 Comp settings
+    public static final double DRIVETRAIN_FRONT_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(-0.53); //3.947 Comp settings
     /********************************************************************************************************************/
 
     public static final int DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR = 11;
@@ -27,7 +27,7 @@ public class Constants {
 
     /********************************************************************************************************************/
     public static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET = -Math.toRadians(35.77); //35.77 Practice robot settings
-    public static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(259.89); //259.89 Comp settings
+    public static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(167.87); //259.89 Comp settings
     /********************************************************************************************************************/
 
     public static final int DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR = 0;
@@ -36,7 +36,7 @@ public class Constants {
 
     /********************************************************************************************************************/
     public static final double DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET = -Math.toRadians(169.01); //169.01 Practice robot settings
-    public static final double DRIVETRAIN_BACK_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(168.76);//168.76 Comp settings
+    public static final double DRIVETRAIN_BACK_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(262.35);//168.76 Comp settings
     /********************************************************************************************************************/
 
     public static final int DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR = 19;
@@ -45,7 +45,7 @@ public class Constants {
 
     /********************************************************************************************************************/
     public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET = -Math.toRadians(274.16); //274.16 Practice robot settings
-    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(204.52); //204.52 Comp settings
+    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(204.17); //204.52 Comp settings
     /********************************************************************************************************************/
 
     public static final double ENCODER_TICKS_PER_MOTOR_REVOLUTION = 2048.0;
@@ -89,11 +89,11 @@ public class Constants {
     public static final double ARM_MAX_ROTATION_DEGREES = 110.0;
     
     public static final double ARM_MIN_EXTEND_INCHES = 0.0;
-    public static final double ARM_MAX_EXTEND_INCHES = 17.0;
+    public static final double ARM_MAX_EXTEND_INCHES = 14.0;
 
     // Intake Motor Constants
     public static final double INTAKE_COLLECT_RPM = 1500.0;
-    public static final double INTAKE_SPIT_RPM = -450.0;
+    public static final double INTAKE_SPIT_RPM = -900.0;
 
     public static final double INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 60.0 / 16.0;
     public static final double INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * ENCODER_TICKS_PER_MOTOR_REVOLUTION;
