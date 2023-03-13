@@ -1,13 +1,11 @@
 package org.frcteam2910.c2020.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.frcteam2910.c2020.subsystems.Arm;
+import org.frcteam2910.c2020.subsystems.Intake;
+import org.frcteam2910.c2020.util.ScoreMode;
+
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
-import java.time.Instant;
-
-import org.frcteam2910.c2020.subsystems.*;
-import org.frcteam2910.c2020.util.ScoreMode;
 
 public class PutIntakeZeroAfterOuttake extends SequentialCommandGroup {
     private final Intake intake;
@@ -21,6 +19,7 @@ public class PutIntakeZeroAfterOuttake extends SequentialCommandGroup {
         addRequirements(arm);
         
         if(!intake.getConeSensor().get() && !intake.getCubeSensor().get()){
+            // We no longer possess an object (and are likely in a LOW/MID/HIGH ScoreMode), return to zero
             this.addCommands(new setArmSafe(arm, ScoreMode.ZERO));
         }
         this.addCommands(new InstantCommand(()->intake.setRollerSpeed(0)));

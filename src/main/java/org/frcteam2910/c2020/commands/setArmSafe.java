@@ -1,103 +1,60 @@
 package org.frcteam2910.c2020.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-import org.frcteam2910.c2020.subsystems.*;
+import org.frcteam2910.c2020.subsystems.Arm;
 import org.frcteam2910.c2020.util.ScoreMode;
 
-public class setArmSafe extends CommandBase {
+public class setArmSafe extends SequentialCommandGroup {
     private final Arm arm;
     private final ScoreMode targetMode;
     private final ScoreMode startMode;
-    private boolean goesAcross = false;
-    private boolean wentIn = false;
-    private boolean withinAngleTarget = false;
-    private boolean withinTargetInches = false;
-    private boolean wentOut = false;
-
-    private final double armDegreesTolerance = 2.0;
+    private boolean wasUnsafeManeuver = false;
 
     public setArmSafe(Arm arm, ScoreMode targetScoreMode) {
         this.arm = arm;
         this.targetMode = targetScoreMode;
         this.startMode = arm.getScoreMode();
-
-        wentIn = false;
-        withinAngleTarget = false;
-        withinTargetInches = false;
+        wasUnsafeManeuver = true;
 
         addRequirements(arm);
-    }
 
-    @Override
-    public void initialize() {
-        if(arm.getScoreMode() != targetMode){
-            switch(arm.getScoreMode()){
-                case HIGH : 
-                    if(targetMode==ScoreMode.ZERO || targetMode==ScoreMode.CONE_INTAKE || targetMode==ScoreMode.CUBE_INTAKE || targetMode==ScoreMode.LOW){
-                        arm.setTargetArmInchesPositionAbsolute(0.0);
-                        goesAcross = true;
-                    } break;
+        if(startMode != targetMode){
+            switch(startMode){
+                case HIGH :
                 case MID :
+                    // We check the targetMode == LOW here because we could hit the high/mid scoring positions with the extension if we don't.
                     if(targetMode==ScoreMode.ZERO || targetMode==ScoreMode.CONE_INTAKE || targetMode==ScoreMode.CUBE_INTAKE || targetMode==ScoreMode.LOW){
-                        arm.setTargetArmInchesPositionAbsolute(0.0);
-                        goesAcross = true;
+                        // We must SAFELY move to the above positions -- to do this we must retract
+                        this.addCommands(new SetArmExtender(arm, 0.0, true));
+                        wasUnsafeManeuver = true;
                     } break;
-                case LOW:
+                case LOW :
                     if(targetMode==ScoreMode.ZERO || targetMode==ScoreMode.CUBE_INTAKE || targetMode==ScoreMode.CONE_INTAKE){
-                        arm.setTargetArmInchesPositionAbsolute(0.0);
-                        goesAcross = true;
-                    }     break;
+                        // We must SAFELY move to the above positions -- to do this we must retract
+                        this.addCommands(new SetArmExtender(arm, 0.0, true));
+                        wasUnsafeManeuver = true;
+                    } break;
                 case CONE_INTAKE : 
-                    arm.setArmDegreesPositionAbsolute(45.0);
-                    // TODO TODO TODO HACK remove ASAP
-                    while(!arm.withinAngle(armDegreesTolerance, 45.0)){}
-                    arm.setTargetArmInchesPositionAbsolute(0.0);
-                    goesAcross = true;
-                    break;
                 case CUBE_INTAKE : 
-                    arm.setArmDegreesPositionAbsolute(45.0);
-                    arm.setTargetArmInchesPositionAbsolute(0.0);
-                    goesAcross = true;
-                    break;        
-                case ZERO : goesAcross = false; break;       
+                    if(targetMode == ScoreMode.ZERO) {
+                        // If going to Zero position after intaking from the front, bring the object up then in
+                        this.addCommands(new SetArmRotator(arm, 45.0, true));
+                        this.addCommands(new SetArmExtender(arm, 0.0, true));
+                        wasUnsafeManeuver = false;
+                    } break;
+                case ZERO : 
+                    // We started from zero; the assumption here is that we're fully retracted and have properly zeroed the rotator.
+                    wasUnsafeManeuver = false;
+                    break;       
             }
             arm.setScoreMode(targetMode);
         }
-    }
 
-    @Override
-    public void execute() {
-        if(goesAcross){
-            wentIn = arm.withinInches(0.5, 0.0);
-            withinTargetInches = arm.withinInches(0.5, targetMode.getInches());
-            withinAngleTarget = arm.withinAngle(armDegreesTolerance, targetMode.getAngle());
-
-            if(wentIn){
-                arm.setArmDegreesPositionAbsolute(targetMode.getAngle());
-                if(withinAngleTarget){
-                    arm.setTargetArmInchesPositionAbsolute(targetMode.getInches());
-                }
-            }
-        }
-        else{
-            withinTargetInches = arm.withinInches(0.5, targetMode.getInches());
-            withinAngleTarget = arm.withinAngle(armDegreesTolerance, targetMode.getAngle());
-
-            arm.setArmDegreesPositionAbsolute(targetMode.getAngle());
-            if(withinAngleTarget){
-                arm.setTargetArmInchesPositionAbsolute(targetMode.getInches());
-            }
-        }
-    }
-
-    @Override
-    public boolean isFinished(){
-        return withinTargetInches && withinAngleTarget;
-    }
-
-    @Override
-    public void end(boolean interrupted) {
+        SmartDashboard.putBoolean("SetArm Retract?", wasUnsafeManeuver);
+        // Tell the arm to sequentially move to the target angle, then extend
+        this.addCommands(new SetArmRotator(arm, targetMode.getAngle(), true));
+        this.addCommands(new SetArmExtender(arm, targetMode.getInches(), true));
     }
 }

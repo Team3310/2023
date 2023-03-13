@@ -2,14 +2,13 @@ package org.frcteam2910.c2020.commands;
 import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.subsystems.Arm;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 
 public class ArmExtenderZero extends CommandBase {
-    private double MIN_ARM_EXTEND_POSITION_CHANGE = 0.5;
+    private double MIN_ARM_EXTEND_POSITION_CHANGE = 0.2;
     private Timer timer = new Timer();
     private final Arm arm;
     private double lastPosition;

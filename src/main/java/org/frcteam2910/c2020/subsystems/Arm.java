@@ -4,7 +4,6 @@ import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.util.ScoreMode;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
@@ -173,7 +172,7 @@ public class Arm implements Subsystem{
         armRotationMotor.set(ControlMode.Position, targetDegreesTicks);
     }
 
-    private double getTargetDegrees(){
+    public double getTargetDegrees(){
         return targetDegreesTicks/Constants.ARM_DEGREES_TO_ENCODER_TICKS;
     }   
 
