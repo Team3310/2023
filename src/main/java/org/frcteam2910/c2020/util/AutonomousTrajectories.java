@@ -324,10 +324,18 @@ public class AutonomousTrajectories {
 
     public Trajectory getOnToBridge(){return onToBridge;}
 
-    public Trajectory getUpBirdge(Vector2 start, Rotation2 rotation){
+    public Trajectory getUpBridge(Vector2 start, Rotation2 rotation){
         return new Trajectory(
                 new SimplePathBuilder(start, Rotation2.fromDegrees(rotation.toDegrees()))
                         .lineTo(new Vector2(start.x+10, start.y), Rotation2.fromDegrees(rotation.toDegrees()))
+                        .build(),
+                bridgeConstraints, SAMPLE_DISTANCE);
+    }
+
+    public Trajectory getToBridge(Vector2 start, Rotation2 rotation){
+        return new Trajectory(
+                new SimplePathBuilder(start, Rotation2.fromDegrees(rotation.toDegrees()))
+                        .lineTo(new Vector2(-252, 207), Rotation2.fromDegrees(180))
                         .build(),
                 bridgeConstraints, SAMPLE_DISTANCE);
     }

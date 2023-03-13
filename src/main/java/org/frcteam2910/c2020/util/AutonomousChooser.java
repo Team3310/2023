@@ -73,7 +73,7 @@ public class AutonomousChooser {
             case THREE_OBJECT_BRIDGE:
                 return new RightThreeObject(container, trajectories); 
             case CONE_BRIDGE:
-                return new RightSidecone(container, trajectories);
+                return new RightSideCone(container, trajectories);
             case TO_BRIDGE:
                 return new OnToBridge(container, trajectories);
             case BALANCE:
