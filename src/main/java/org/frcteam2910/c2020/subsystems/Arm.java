@@ -80,8 +80,8 @@ public class Arm implements Subsystem{
         armTranslationMotor.configMotionSCurveStrength(4);
 
         armRotationMotor.config_kF(0, 0.0);
-        armRotationMotor.config_kP(0, 0.025);
-        armRotationMotor.config_kI(0, 0.000000001);
+        armRotationMotor.config_kP(0, 0.0375);
+        armRotationMotor.config_kI(0, 0.00000001);
         armRotationMotor.config_kD(0, 0.0);
 
         armTranslationMotor.config_kF(0, 0.0);

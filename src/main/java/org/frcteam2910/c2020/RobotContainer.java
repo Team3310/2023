@@ -2,10 +2,12 @@ package org.frcteam2910.c2020;
 
 import org.frcteam2910.c2020.commands.*;
 import org.frcteam2910.c2020.subsystems.*;
+import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.*;
 import org.frcteam2910.common.robot.input.*;
 import org.frcteam2910.common.robot.input.DPadButton.Direction;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -81,6 +83,7 @@ public class RobotContainer {
                 new InstantCommand(()->Intake.getInstance().setServoPosition(-1))
         );
 
+
         
         primaryController.getLeftBumperButton().onTrue(
                 new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.ROBOT_CENTRIC)
@@ -89,16 +92,24 @@ public class RobotContainer {
                 new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
 
+        primaryController.getRightBumperButton().onTrue(
+            new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(true))
+        );
+
+        primaryController.getRightBumperButton().onFalse(
+            new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(false))
+        );
+
 
         primaryController.getRightTriggerAxis().onFalse(
                 new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
-        primaryController.getRightTriggerAxis().onTrue(
-            new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(true))
-        );
-        primaryController.getRightTriggerAxis().onFalse(
-            new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(false))
-        );
+        // primaryController.getRightTriggerAxis().onTrue(
+        //     new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(true))
+        // );
+        // primaryController.getRightTriggerAxis().onFalse(
+        //     new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(false))
+        // );
 
 
         // primaryController.getXButton().onTrue(
@@ -128,10 +139,10 @@ public class RobotContainer {
 
 
         secondaryController.getBButton().onTrue(
-            new setArmSafe( ScoreMode.CONE_INTAKE)
+            new setArmSafe( ScoreMode.ZERO)
         );
         secondaryController.getAButton().onTrue(
-            new setArmSafe( ScoreMode.ZERO)
+            new setArmSafe( ScoreMode.LOW)
         );
         secondaryController.getXButton().onTrue(
             new setArmSafe( ScoreMode.MID)
@@ -152,8 +163,8 @@ public class RobotContainer {
         secondaryController.getRightTriggerAxis().onFalse(
             // If we grabbed a cube, we want to continue intaking until we're back at ZERO
             new SequentialCommandGroup(
+                new InstantCommand(()->intake.setIntakeHold()),
                 new setArmSafe(true),
-                new SetIntakeRPM(Intake.getInstance(), 0),
                 new SetServosIn(Intake.getInstance())
            )    
         );
@@ -161,7 +172,7 @@ public class RobotContainer {
         secondaryController.getRightBumperButton().onTrue(
             new SequentialCommandGroup(
                 new SetServosOut(Intake.getInstance()),
-                new SetIntakeRPM(Intake.getInstance(), -Constants.INTAKE_COLLECT_RPM),
+                new SetIntakeRPM(Intake.getInstance(), Constants.INTAKE_COLLECT_RPM),
                 new setArmSafe( ScoreMode.CONE_INTAKE)
             )    
         );
@@ -199,7 +210,7 @@ public class RobotContainer {
         //#endregion
 
         // SmartDashboard.putData("Turn to Goal", new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurnToTarget()));
-
+        SmartDashboard.putData("set drive control mode voltage", new InstantCommand(() -> {drivetrain.setBridgeDriveVoltage(1.0); drivetrain.setDriveControlMode(DriveControlMode.BRIDGE_VOLTAGE);}));
         // SmartDashboard.putData("Limelight broken", new InstantCommand(() -> DrivetrainSubsystem.getInstance().setLimelightOverride(true)));
         // SmartDashboard.putData("Limelight working", new InstantCommand(() -> DrivetrainSubsystem.getInstance().setLimelightOverride(false)));
         // SmartDashboard.putData("set Arm.getInstance() to 30 degrees", new InstantCommand(() -> Arm.getInstance().setArmDegreesPositionAbsolute(30)));

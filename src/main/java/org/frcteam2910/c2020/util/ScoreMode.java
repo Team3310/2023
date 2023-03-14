@@ -1,12 +1,12 @@
 package org.frcteam2910.c2020.util;
 
 public enum ScoreMode{
-    ZERO(0.001, 0.1), 
-    CONE_INTAKE(17, 3.375),
-    MID(-87, 0.875),
-    HIGH(-100, 12.875), // "money" - paul
-    LOW(- 33, 3.375),
-    CUBE_INTAKE(33, 9.5);
+    ZERO(0.001, 0.25), 
+    CONE_INTAKE(17, 3.375), //17, 3.375 practice : 15 , 0.1
+    MID(87, 0.875),
+    HIGH(103, 12.875), // "money" - paul
+    LOW(33, 3.375),
+    CUBE_INTAKE(33, 9.5); //33, 9.5 practice : 24.5, 4.25
 
     ScoreMode(double angle, double inches){
         this.angle = angle;
@@ -35,7 +35,20 @@ public enum ScoreMode{
     }
 
     public double getAngle(){
-        return angle;
+        return getAngle(false);
+    }
+
+    public double getAngle(boolean negative){
+        return (negative?-1:1)*angle;
+    }
+
+    public double getAutonAngle(){
+        if(this == CUBE_INTAKE || this == CONE_INTAKE){
+            return angle;
+        }
+        else{
+            return -1*angle;
+        }
     }
 
     public double getInches(){

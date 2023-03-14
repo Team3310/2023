@@ -11,22 +11,22 @@ import org.frcteam2910.c2020.subsystems.Arm;
 import org.frcteam2910.c2020.subsystems.Intake;
 import org.frcteam2910.c2020.util.ScoreMode;
 
-public class setArmSafe extends SequentialCommandGroup {
+public class setArmSafeAuton extends SequentialCommandGroup {
 
     private Arm arm;
     // private final ScoreMode targetScoreMode;
     private final ScoreMode startMode;
     private boolean wasUnsafeManeuver = false;
 
-    public setArmSafe(ScoreMode targetScoreMode){
+    public setArmSafeAuton(ScoreMode targetScoreMode){
         this(targetScoreMode, false);
     }
 
-    public setArmSafe(boolean afterIntake){
+    public setArmSafeAuton(boolean afterIntake){
         this(afterIntake?null:ScoreMode.ZERO, afterIntake);
     }
 
-    public setArmSafe(ScoreMode targetScoreMode, boolean afterIntake) {
+    public setArmSafeAuton(ScoreMode targetScoreMode, boolean afterIntake) {
 
         // SmartDashboard.putString("target score mode", targetScoreMode.name());
         // SmartDashboard.putString("new score mode", arm.getScoreMode().name());
@@ -54,61 +54,52 @@ public class setArmSafe extends SequentialCommandGroup {
                     }
                     
                 }),
-                new SetArmRotator(arm, targetScoreMode.getAngle(), true),
+                new SetArmRotator(arm, targetScoreMode.getAutonAngle(), true),
                 new WaitUntilCommand(new BooleanSupplier() {
 
                     @Override
                     public boolean getAsBoolean() {
-                        return arm.withinAngle(5.0, targetScoreMode.getAngle());
+                        return arm.withinAngle(5.0, targetScoreMode.getAngle(true));
                     }
 
                 }),
                 new SetArmExtender(arm, targetScoreMode.getInches(), true)
             );
         }else{
-            // if(Intake.getInstance().getConeSensor().get()){
-            //     this.addCommands(
-            //         new SetArmExtender(arm, 4.5, true),
-            //         new WaitUntilCommand(new BooleanSupplier() {
-
-            //             @Override
-            //             public boolean getAsBoolean() {
-            //                 return arm.withinInches(0.5, 4.5);
-            //             }
-                        
-            //         }),
-            //         new SetArmRotator(arm, 45.0, true),
-            //         new WaitUntilCommand(new BooleanSupplier() {
-
-            //             @Override
-            //             public boolean getAsBoolean() {
-            //                 return arm.withinAngle(5.0, 45);
-            //             }
-
-            //         }),
-            //         new SetArmExtender(arm, 0, true),
-            //         new WaitUntilCommand(new BooleanSupplier() {
-
-            //             @Override
-            //             public boolean getAsBoolean() {
-            //                 return arm.getArmInches()<0.5;
-            //             }
-                        
-            //         }),
-            //         new SetArmRotator(arm, 0, true)    
-            //     );
-            // }
-            // else{
+            if(Intake.getInstance().getConeSensor().get()){
                 this.addCommands(
-                    new SetArmRotator(arm, 45),
+                    new SetArmExtender(arm, 4.5, true),
                     new WaitUntilCommand(new BooleanSupplier() {
 
                         @Override
                         public boolean getAsBoolean() {
-                            return arm.withinAngle(5,45);
+                            return arm.withinInches(0.5, 4.5);
                         }
                         
                     }),
+                    new SetArmRotator(arm, 45.0, true),
+                    new WaitUntilCommand(new BooleanSupplier() {
+
+                        @Override
+                        public boolean getAsBoolean() {
+                            return arm.withinAngle(5.0, 45);
+                        }
+
+                    }),
+                    new SetArmExtender(arm, 0, true),
+                    new WaitUntilCommand(new BooleanSupplier() {
+
+                        @Override
+                        public boolean getAsBoolean() {
+                            return arm.getArmInches()<0.5;
+                        }
+                        
+                    }),
+                    new SetArmRotator(arm, 0, true)    
+                );
+            }
+            else{
+                this.addCommands(
                     new SetArmExtender(arm, 0, true),
                     new WaitUntilCommand(new BooleanSupplier() {
 
@@ -120,7 +111,7 @@ public class setArmSafe extends SequentialCommandGroup {
                     }),
                     new SetArmRotator(arm, 0, true)  
                 );
-            // }
+            }
         }
 
         // if(startMode != targetScoreMode || (!arm.withinAngle(5.0, targetScoreMode.getAngle()) || !arm.withinInches(0.5, targetScoreMode.getInches()))){

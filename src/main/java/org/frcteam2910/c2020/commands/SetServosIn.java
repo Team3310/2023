@@ -24,6 +24,5 @@ public class SetServosIn extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        intake.setServoPosition(0.0);
     }
 }

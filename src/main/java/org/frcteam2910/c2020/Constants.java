@@ -44,7 +44,7 @@ public class Constants {
     public static final int DRIVETRAIN_BACK_RIGHT_ENCODER_PORT = 0;
 
     /********************************************************************************************************************/
-    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET = -Math.toRadians(274.16); //274.16 Practice robot settings
+    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET = -Math.toRadians(297.86-180); //297.86 Practice robot settings
     public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(204.17); //204.52 Comp settings
     /********************************************************************************************************************/
 
@@ -93,7 +93,7 @@ public class Constants {
 
     // Intake Motor Constants
     public static final double INTAKE_COLLECT_RPM = 1500.0;
-    public static final double INTAKE_SPIT_RPM = -900.0;
+    public static final double INTAKE_SPIT_RPM = -1300.0;
 
     public static final double INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 60.0 / 16.0;
     public static final double INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * ENCODER_TICKS_PER_MOTOR_REVOLUTION;
