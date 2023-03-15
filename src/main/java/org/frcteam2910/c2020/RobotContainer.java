@@ -11,7 +11,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 
 public class RobotContainer {
@@ -139,16 +143,16 @@ public class RobotContainer {
 
 
         secondaryController.getBButton().onTrue(
-            new setArmSafe( ScoreMode.ZERO)
+            new SetArmSafe( ScoreMode.ZERO)
         );
         secondaryController.getAButton().onTrue(
-            new setArmSafe( ScoreMode.LOW)
+            new SetArmSafe( ScoreMode.LOW)
         );
         secondaryController.getXButton().onTrue(
-            new setArmSafe( ScoreMode.MID)
+            new SetArmSafe( ScoreMode.MID)
         );
         secondaryController.getYButton().onTrue(
-            new setArmSafe( ScoreMode.HIGH)
+            new SetArmSafe( ScoreMode.HIGH)
         );
 
 
@@ -156,7 +160,15 @@ public class RobotContainer {
             new SequentialCommandGroup(
                 new SetServosOut(Intake.getInstance()),
                 new SetIntakeRPM(Intake.getInstance(), -Constants.INTAKE_COLLECT_RPM),
-                new setArmSafe( ScoreMode.CUBE_INTAKE)
+                new SetArmSafe(ScoreMode.CUBE_INTAKE)
+                // Hasn't been tested, but an idea: need to stop intaking when intake.getCubeSensor().get() is true
+                // new SequentialCommandGroup(
+                //     new ParallelRaceGroup(
+                //         new WaitCommand(5.0), // Ya got 5 seconds to intake that cube, man.
+                //         new WaitUntilCommand(() -> intake.getCubeSensor().get())
+                //     ),
+                //     new InstantCommand(()->intake.setIntakeHold()),
+                // )
             )    
         );
 
@@ -164,23 +176,23 @@ public class RobotContainer {
             // If we grabbed a cube, we want to continue intaking until we're back at ZERO
             new SequentialCommandGroup(
                 new InstantCommand(()->intake.setIntakeHold()),
-                new setArmSafe(true),
+                new SetArmSafe(true),
                 new SetServosIn(Intake.getInstance())
-           )    
+           )
         );
 
         secondaryController.getRightBumperButton().onTrue(
             new SequentialCommandGroup(
                 new SetServosOut(Intake.getInstance()),
                 new SetIntakeRPM(Intake.getInstance(), Constants.INTAKE_COLLECT_RPM),
-                new setArmSafe( ScoreMode.CONE_INTAKE)
+                new SetArmSafe( ScoreMode.CONE_INTAKE)
             )    
         );
 
         secondaryController.getRightBumperButton().onFalse(
             // If we grabbed a cone, we want to continue intaking until we're back at ZERO
             new SequentialCommandGroup(
-                new setArmSafe(true),
+                new SetArmSafe(true),
                 new SetIntakeRPM(Intake.getInstance(), 0),
                 new SetServosIn(Intake.getInstance())
             )    

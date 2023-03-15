@@ -8,10 +8,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class SetArmExtender extends CommandBase {
     private final Arm arm;
     private boolean waitUntilReachedTarget = false;
-    private boolean withinToleranceOfTarget = false;
     private double targetInches = Double.MIN_VALUE;
 
-    private final double ARM_INCHES_TOLERANCE = 0.5;
+    private final double ARM_INCHES_TOLERANCE = 1.5;
 
     public SetArmExtender(Arm arm, double targetInches) {
         this(arm, targetInches, true);
@@ -20,7 +19,6 @@ public class SetArmExtender extends CommandBase {
     public SetArmExtender(Arm arm, double targetInches, boolean waitToFinishUntilTargetReached) {
         this.arm = arm;
         this.waitUntilReachedTarget = waitToFinishUntilTargetReached;
-        this.withinToleranceOfTarget = false;
         this.targetInches = targetInches;
 
         addRequirements(arm);
@@ -29,7 +27,7 @@ public class SetArmExtender extends CommandBase {
     @Override
     public void initialize() {
         arm.setTargetArmInchesPositionAbsolute(targetInches);
-        SmartDashboard.putBoolean("Finished Rot", false);
+        SmartDashboard.putBoolean("Finished Ext", false);
     }
 
     @Override

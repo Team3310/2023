@@ -28,6 +28,7 @@ public class AutonomousChooser {
         autonomousModeChooser.addOption("On To Bridge", AutonomousMode.TO_BRIDGE);
         autonomousModeChooser.addOption("Up Bridge", AutonomousMode.UP_BRIDGE);
         autonomousModeChooser.addOption("Bridge Balance", AutonomousMode.BALANCE);
+        autonomousModeChooser.addOption("Right Two Object", AutonomousMode.RIGHT_TWO_OBJECT);
         autonomousModeChooser.addOption("Two Object Bridge Balance", AutonomousMode.TWO_OBJECT_BALANCE);
         autonomousModeChooser.addOption("One Object Bridge Balance", AutonomousMode.ONE_OBJECT_BALANCE);
         autonomousModeChooser.addOption("7 Feet", AutonomousMode.SEVEN_FEET);
@@ -75,7 +76,7 @@ public class AutonomousChooser {
             case THREE_OBJECT_BRIDGE:
                 return new RightThreeObject(container, trajectories); 
             case CONE_BRIDGE:
-                return new RightSideTwoCone(container, trajectories);
+                return new RightSideOneCone(container, trajectories);
             case TO_BRIDGE:
                 return new OnToBridge(container, trajectories);
             case BALANCE:
@@ -85,7 +86,9 @@ public class AutonomousChooser {
             case ONE_OBJECT_BALANCE:
                 return new OneObjectMidBalance(container, trajectories);   
             case TWO_OBJECT_BALANCE:
-                return new OneObjectMidBalance(container, trajectories);       
+                return new TwoObjectMidBalance(container, trajectories); 
+            case RIGHT_TWO_OBJECT:
+                return new RightSideOneCone(container, trajectories);          
             default:
                 return getSevenFeet(container);
         }
@@ -112,6 +115,7 @@ public class AutonomousChooser {
         TO_BRIDGE,
         UP_BRIDGE,
         BALANCE,
+        RIGHT_TWO_OBJECT,
         THREE_OBJECT_CLOSE_BALANCE,
         ONE_OBJECT_BALANCE,
         TWO_OBJECT_BALANCE,

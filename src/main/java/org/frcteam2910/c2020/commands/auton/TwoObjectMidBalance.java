@@ -12,7 +12,11 @@ import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import org.frcteam2910.c2020.util.ScoreMode;
+import org.frcteam2910.common.math.RigidTransform2;
+import org.frcteam2910.common.math.Rotation2;
+import org.frcteam2910.common.math.Vector2;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -34,23 +38,8 @@ public class TwoObjectMidBalance extends AutonCommandBase {
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
-            new WaitCommand(0.3),
-            new ParallelCommandGroup(
-                new InstantCommand(()->drive.setBridgeDriveVoltage(2)),
-                new setArmSafeAuton(ScoreMode.CONE_INTAKE),
-                new SetIntakeRPM(intake, Constants.INTAKE_COLLECT_RPM)
-            ),
-            new ParallelRaceGroup(
-                new WaitUntilCommand(()->intake.getConeSensor().get()),
-                new WaitCommand(2.0)
-            ),    
-            new ParallelCommandGroup(
-                new InstantCommand(()->drive.setBridgeDriveVoltage(-4)),
-                new setArmSafeAuton(true),
-                new SetIntakeRPM(intake, 0)
-            ),
-            new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
-            new ChangeDriveMode(drive, DriveControlMode.BALANCE)
+            new ChangeDriveMode(drive, DriveControlMode.TRAJECTORY),
+            new TwoObjectMidBalancePart2(container, trajectories)
             // new FollowTrajectoryCommand(drive, trajectories.getOnToBridge()),
             // new WaitCommand(2.0),
             // new FollowTrajectoryCommand(drive, trajectories.getPastBridge())
@@ -58,4 +47,38 @@ public class TwoObjectMidBalance extends AutonCommandBase {
             // // new DriveBalanceCommand(drive, true, false)
         );
     }
+
+    private class TwoObjectMidBalancePart2 extends AutonCommandBase{
+        public TwoObjectMidBalancePart2(RobotContainer container, AutonomousTrajectories trajectories){
+            this(container, trajectories, container.getDrivetrainSubsystem(), container.getArm(), container.getIntake());
+        }
+
+        public TwoObjectMidBalancePart2(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
+            resetRobotPose(container, trajectories.getFromOverBridgeToCone());
+            this.addCommands(
+                new ParallelDeadlineGroup(
+                    new FollowTrajectoryCommand(drive, trajectories.getFromOverBridgeToCone()),
+                    new SetIntakeRPM(intake, Constants.INTAKE_COLLECT_RPM),
+                    new SetServosOut(intake),
+                    new SetArmSafeAuton(ScoreMode.CONE_INTAKE)
+                ),
+                new ParallelRaceGroup(
+                    new WaitUntilCommand(()->intake.getConeSensor().get()),
+                    new WaitCommand(1.0)
+                ),
+                new ParallelDeadlineGroup(
+                    new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
+                    new InstantCommand(()->drive.setBridgeDriveVoltage(-5)), // set voltage first in case of any previous value
+                    new ChangeDriveMode(drive, DriveControlMode.BRIDGE_VOLTAGE),
+                    new SetIntakeRPM(intake, 0),
+                    new SequentialCommandGroup(
+                        new SetArmSafeAuton(true),
+                        new SetServosIn(intake)
+                    )
+                ),
+                new ChangeDriveMode(drive, DriveControlMode.BALANCE)
+            );
+        }
+    }
 }
+

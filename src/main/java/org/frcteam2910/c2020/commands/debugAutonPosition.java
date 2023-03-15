@@ -12,7 +12,7 @@ public class debugAutonPosition extends CommandBase {
     public debugAutonPosition(DrivetrainSubsystem drivetrain, String part) {
         this.drivetrain = drivetrain;
         this.part = part;
-        addRequirements(drivetrain);
+        // addRequirements(drivetrain);
     }
 
     @Override

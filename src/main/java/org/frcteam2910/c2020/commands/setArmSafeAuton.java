@@ -11,22 +11,22 @@ import org.frcteam2910.c2020.subsystems.Arm;
 import org.frcteam2910.c2020.subsystems.Intake;
 import org.frcteam2910.c2020.util.ScoreMode;
 
-public class setArmSafeAuton extends SequentialCommandGroup {
+public class SetArmSafeAuton extends SequentialCommandGroup {
 
     private Arm arm;
     // private final ScoreMode targetScoreMode;
     private final ScoreMode startMode;
     private boolean wasUnsafeManeuver = false;
 
-    public setArmSafeAuton(ScoreMode targetScoreMode){
+    public SetArmSafeAuton(ScoreMode targetScoreMode){
         this(targetScoreMode, false);
     }
 
-    public setArmSafeAuton(boolean afterIntake){
+    public SetArmSafeAuton(boolean afterIntake){
         this(afterIntake?null:ScoreMode.ZERO, afterIntake);
     }
 
-    public setArmSafeAuton(ScoreMode targetScoreMode, boolean afterIntake) {
+    public SetArmSafeAuton(ScoreMode targetScoreMode, boolean afterIntake) {
 
         // SmartDashboard.putString("target score mode", targetScoreMode.name());
         // SmartDashboard.putString("new score mode", arm.getScoreMode().name());
@@ -59,7 +59,7 @@ public class setArmSafeAuton extends SequentialCommandGroup {
 
                     @Override
                     public boolean getAsBoolean() {
-                        return arm.withinAngle(5.0, targetScoreMode.getAngle(true));
+                        return arm.withinAngle(5.0, targetScoreMode.getAutonAngle());
                     }
 
                 }),

@@ -27,15 +27,10 @@ public class OneObjectMidBalance extends AutonCommandBase {
     public OneObjectMidBalance(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
         this.addCommands(
             new OneObjectMid(container, trajectories),
-            new ChangeDriveMode(drive, DriveControlMode.BRIDGE_VOLTAGE),
             new InstantCommand(()->drive.setBridgeDriveVoltage(5)),
+            new InstantCommand(()->drive.setBridgeDriveAngle(Math.toRadians(5))),
+            new ChangeDriveMode(drive, DriveControlMode.BRIDGE_VOLTAGE),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
-            new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
-            new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
-            new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
-            new WaitCommand(0.3),
-            new InstantCommand(()->drive.setBridgeDriveVoltage(-5)),
-            new WaitUntilCommand(()->drive.getRollDegreesOffLevel()>15),
             new ChangeDriveMode(drive, DriveControlMode.BALANCE)
             // new FollowTrajectoryCommand(drive, trajectories.getOnToBridge()),
             // new WaitCommand(2.0),

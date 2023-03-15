@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class SetArmRotator extends CommandBase {
     private final Arm arm;
     private boolean waitUntilReachedTarget = false;
-    private boolean withinToleranceOfTarget = false;
     private double startingDegrees = Double.MIN_VALUE;
     private double targetDegrees = Double.MIN_VALUE;
 
@@ -22,7 +21,6 @@ public class SetArmRotator extends CommandBase {
     public SetArmRotator(Arm arm, double targetDegrees, boolean waitToFinishUntilTargetReached) {
         this.arm = arm;
         this.waitUntilReachedTarget = waitToFinishUntilTargetReached;
-        this.withinToleranceOfTarget = false;
         this.startingDegrees = arm.getArmDegrees();
         this.targetDegrees = targetDegrees;
 

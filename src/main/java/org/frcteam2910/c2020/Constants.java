@@ -95,7 +95,7 @@ public class Constants {
     public static final double INTAKE_COLLECT_RPM = 1500.0;
     public static final double INTAKE_SPIT_RPM = -1300.0;
 
-    public static final double INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 60.0 / 16.0;
+    public static final double INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 50.0 / 12.0;
     public static final double INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * ENCODER_TICKS_PER_MOTOR_REVOLUTION;
     //#endregion
 }

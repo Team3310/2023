@@ -54,6 +54,7 @@ public class AutonomousTrajectories {
 
     private Trajectory onToBridge;
     private Trajectory goPastBridge;
+    private Trajectory getToConePastBridge;
 //#endregion
 
     private TrajectoryConstraint[] bridgeConstraints;
@@ -265,6 +266,11 @@ public class AutonomousTrajectories {
                         .build(),
                 bridgeConstraints, SAMPLE_DISTANCE);
 
+        getToConePastBridge = new Trajectory(
+                new SimplePathBuilder(new Vector2(-95, 218), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(-45, 231), Rotation2.fromDegrees(0))
+                        .build(),
+                bridgeConstraints, SAMPLE_DISTANCE);
         }        
 
     @SuppressWarnings("unused")
@@ -350,4 +356,8 @@ public class AutonomousTrajectories {
                 bridgeConstraints, SAMPLE_DISTANCE);
     }
 //#endregion
+
+public Trajectory getFromOverBridgeToCone() {
+        return getToConePastBridge;
+}
 }

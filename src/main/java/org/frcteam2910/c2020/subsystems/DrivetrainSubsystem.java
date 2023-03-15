@@ -83,6 +83,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private boolean wasJustTurning = false;
     private boolean turbo = false;
     private double voltageOutput;
+    private double voltageSteerAngle;
 
     private Vector2 balanceInitialPos = Vector2.ZERO;
     private Timer balanceTimer = new Timer();
@@ -530,7 +531,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
     public void voltageDrive(){
         for(int i = 0; i < modules.length; i++){
-            modules[i].set(voltageOutput, 0);
+            modules[i].set(voltageOutput, voltageSteerAngle);
         }  
     }
 
@@ -829,6 +830,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
     public void setBridgeDriveVoltage(double voltage){
         this.voltageOutput = voltage;
+    }
+
+    public void setBridgeDriveAngle(double angle){
+        this.voltageSteerAngle = angle;
     }
 
     public void setSteerEncoderAutoResetIterations(int iterations) {

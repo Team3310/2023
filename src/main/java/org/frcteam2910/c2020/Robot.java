@@ -157,7 +157,7 @@ public class Robot extends TimedRobot {
         teleopUsed = false;
         robotContainer.getDrivetrainSubsystem().setDriveBrake();
         robotContainer.getDrivetrainSubsystem().setSteerBrake();
-        robotContainer.getDrivetrainSubsystem().setLimelightOverride(false);
+        // robotContainer.getDrivetrainSubsystem().setLimelightOverride(false);
 
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.TRAJECTORY);
 
@@ -229,14 +229,13 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
+        boolean tilted = robotContainer.getDrivetrainSubsystem().getPitchDegreesOffLevel() > 15
+                        || robotContainer.getDrivetrainSubsystem().getRollDegreesOffLevel() > 15;
         // Helpful development "unlock steer motors while tilted over" feature
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DriveControlMode.HOLD);
         robotContainer.getDrivetrainSubsystem().alignWheels();
-        robotContainer.getArm().setRotationControlMode(ArmControlMode.MANUAL);
-        robotContainer.getArm().setMotorNeutralMode(NeutralMode.Coast);
         if(!setSteerMotorsCoast) {
-            if(robotContainer.getDrivetrainSubsystem().getPitchDegreesOffLevel() > 15
-            || robotContainer.getDrivetrainSubsystem().getRollDegreesOffLevel() > 15){
+            if(tilted){
                 robotContainer.getDrivetrainSubsystem().setSteerCoast();
                 setSteerMotorsCoast = true;
             }
@@ -247,11 +246,16 @@ public class Robot extends TimedRobot {
             setSteerMotorsCoast = false;
         }
 
-        if(!setArmRotationMotorCoast) {
-
+        if(!setArmRotationMotorCoast && !tilted)
+        {
+            // We're upright, it's okay to set the arm to coast
+            robotContainer.getArm().setRotationControlMode(ArmControlMode.MANUAL);
+            robotContainer.getArm().setMotorNeutralMode(NeutralMode.Coast);
+            setArmRotationMotorCoast = true;
         }
         else {
-
+            robotContainer.getArm().setMotorNeutralMode(NeutralMode.Brake);
+            setArmRotationMotorCoast = false;
         }
     }
 
