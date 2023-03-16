@@ -18,15 +18,19 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
     private final ScoreMode startMode;
     private boolean wasUnsafeManeuver = false;
 
+    public SetArmSafelyAuton(ScoreMode targetScoreMode, boolean isCube){
+        this(targetScoreMode, false, isCube);
+    }
+
     public SetArmSafelyAuton(ScoreMode targetScoreMode){
-        this(targetScoreMode, false);
+        this(targetScoreMode, false, false);
     }
 
     public SetArmSafelyAuton(boolean afterIntake){
-        this(afterIntake?null:ScoreMode.ZERO, afterIntake);
+        this(afterIntake?null:ScoreMode.ZERO, afterIntake, false);
     }
 
-    public SetArmSafelyAuton(ScoreMode targetScoreMode, boolean afterIntake) {
+    public SetArmSafelyAuton(ScoreMode targetScoreMode, boolean afterIntake, boolean isCube) {
 
         // SmartDashboard.putString("target score mode", targetScoreMode.name());
         // SmartDashboard.putString("new score mode", arm.getScoreMode().name());
@@ -41,7 +45,7 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
         addRequirements(arm);
 
         // this.addCommands(new PutString(startMode.name(), "start mode 1"));
-        // this.addCommands(new PutString(targetScoreMode.name(), "target mode "));
+        this.addCommands(new PutString(targetScoreMode.name(), "started"));
 
         if(!afterIntake){
             this.addCommands(
@@ -54,12 +58,12 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
                     }
                     
                 }),
-                new SetArmRotator(arm, targetScoreMode.getAutonAngle(), true),
+                new SetArmRotator(arm, targetScoreMode.getAutonAngle(isCube), true),
                 new WaitUntilCommand(new BooleanSupplier() {
 
                     @Override
                     public boolean getAsBoolean() {
-                        return arm.withinAngle(5.0, targetScoreMode.getAutonAngle());
+                        return arm.withinAngle(5.0, targetScoreMode.getAutonAngle(isCube));
                     }
 
                 }),

@@ -17,15 +17,16 @@ public class RightThreeObject extends AutonCommandBase {
     }
 
     public RightThreeObject(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive) {
-        resetRobotPose(container, trajectories.getThreeObjectBridgePart1());
+        boolean isBlue = getSide(container);
+        resetRobotPose(container, trajectories.getThreeObjectBridgePart1(isBlue));
         this.addCommands(
-            new FollowTrajectoryCommand(drive, trajectories.getThreeObjectBridgePart1()),
+            new FollowTrajectoryCommand(drive, trajectories.getThreeObjectBridgePart1(isBlue)),
             new WaitCommand(0.5),
-            new FollowTrajectoryCommand(drive, trajectories.getThreeObjectBridgePart2()),
+            new FollowTrajectoryCommand(drive, trajectories.getThreeObjectBridgePart2(isBlue)),
             new WaitCommand(0.5),
-            new FollowTrajectoryCommand(drive, trajectories.getThreeObjectBridgePart3()),
+            new FollowTrajectoryCommand(drive, trajectories.getThreeObjectBridgePart3(isBlue)),
             new WaitCommand(0.5),
-            new FollowTrajectoryCommand(drive, trajectories.getThreeObjectBridgePart4())
+            new FollowTrajectoryCommand(drive, trajectories.getThreeObjectBridgePart4(isBlue))
         );
     }
 }

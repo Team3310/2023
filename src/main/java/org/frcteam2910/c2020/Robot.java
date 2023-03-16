@@ -40,9 +40,9 @@ public class Robot extends TimedRobot {
     private static boolean setSteerMotorsCoast = false;
     private static boolean setArmRotationMotorCoast = false;
 
-    private static AutonomousMode cachedAutonCommandMode;
-    private static Command cachedAutonCommand;
-    private static SideMode cachedTrajectoriesSide;
+    // private static AutonomousMode cachedAutonCommandMode;
+    // private static Command cachedAutonCommand;
+    // private static SideMode cachedTrajectoriesSide;
 
     private RobotContainer robotContainer = new RobotContainer();
     private UpdateManager updateManager = new UpdateManager(
@@ -164,15 +164,15 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        teleopUsed = false;
+        // teleopUsed = false;
         // robotContainer.getDrivetrainSubsystem().setLimelightOverride(false);
 
-        robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.TRAJECTORY);
+        // robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.TRAJECTORY);
 
         // Would it be better for these to be in robotInit? Probably, once we get the lightgate to zero the arm.
         robotContainer.getArm().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
 
-        cachedAutonCommand.schedule();
+        robotContainer.getAutonomousCommand().schedule();
     }
 
     @Override
@@ -234,18 +234,16 @@ public class Robot extends TimedRobot {
         //robotContainer.getVisionSubsystem().setLedMode(Limelight.LedMode.OFF);
 
         // Update the side, which should then prompt a re-cache of auton command with the new side.
-        if(robotContainer.getSideChooser().getSendableChooser().getSelected() != cachedTrajectoriesSide) {
-            robotContainer.updateSide();
-            robotContainer.recreateTrajectoriesBasedOnSide();
-            cachedTrajectoriesSide = robotContainer.getSideChooser().getSendableChooser().getSelected();
-            cachedAutonCommand = robotContainer.getAutonomousCommand();
-        }
+        // if(robotContainer.getSideChooser().getSendableChooser().getSelected() != cachedTrajectoriesSide) {
+        //     robotContainer.updateSide();
+        //     robotContainer.recreateTrajectoriesBasedOnSide();
+        //     cachedAutonCommand = robotContainer.getAutonomousCommand();
+        // }
 
-        // Update the auton command without updating the trajectories
-        if(robotContainer.getAutonomousChooser().getAutonomousModeChooser().getSelected() != cachedAutonCommandMode) {
-            cachedAutonCommand = robotContainer.getAutonomousCommand();
-            cachedAutonCommandMode = robotContainer.getAutonomousChooser().getAutonomousModeChooser().getSelected();
-        }
+        // // Update the auton command without updating the trajectories
+        // if(robotContainer.getAutonomousChooser().getAutonomousModeChooser().getSelected() != cachedAutonCommandMode) {
+        //     cachedAutonCommand = robotContainer.getAutonomousCommand();
+        // }
     }
 
     @Override

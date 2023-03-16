@@ -43,15 +43,27 @@ public enum ScoreMode{
         return (negative?-1:1)*angle;
     }
 
-    public double getAutonAngle(){
-        switch(this){
-            case CUBE_INTAKE:
-            case CONE_INTAKE:
-                return this.getAngle();
-            case HIGH : return -102.4;
-            case MID : return -85;
-            case LOW : return -40;
-            default : return this.getAngle();
+    public double getAutonAngle(boolean isCube){
+        if(this == CUBE_INTAKE || this == CONE_INTAKE){
+            return angle;
+        }
+        else{
+            if(isCube){
+                switch(this){
+                    case HIGH : return -100;
+                    case MID : return -85.5;
+                    case LOW : return -40;
+                    default : return this.getAngle();
+                }
+            }
+            else{
+                switch(this){
+                    case HIGH : return -100;
+                    case MID : return -80;
+                    case LOW : return -40;
+                    default : return this.getAngle();
+                }
+            }
         }
     }
 

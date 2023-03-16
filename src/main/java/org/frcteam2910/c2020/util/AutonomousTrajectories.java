@@ -57,6 +57,31 @@ public class AutonomousTrajectories {
     private Trajectory onToBridge;
     private Trajectory goPastBridge;
     private Trajectory getToConePastBridge;
+
+    private Trajectory ThreeObjectFarPart1Blue;
+    private Trajectory ThreeObjectFarPart2Blue;
+    private Trajectory ThreeObjectFarPart3Blue;
+    private Trajectory ThreeObjectFarPart4Blue;
+    private Trajectory ThreeObjectFarPart5Blue;
+
+    private Trajectory threeObjectClosePart1Blue;
+    private Trajectory threeObjectClosePart2Blue;
+    private Trajectory threeObjectClosePart3Blue;
+    private Trajectory threeObjectClosePart4Blue;
+    private Trajectory threeObjectCloseEnd1Blue;
+    private Trajectory threeObjectCloseEnd2Blue;
+
+    private Trajectory threeObjectBridgePart1Blue;
+    private Trajectory threeObjectBridgePart2Blue;
+    private Trajectory threeObjectBridgePart3Blue;
+    private Trajectory threeObjectBridgePart4Blue;
+
+    private Trajectory coneBridgefromPlaceToLoadBlue;
+    private Trajectory coneBridgefromLoadtoPlaceBlue;
+    private Trajectory coneBridgefromLoadtoPickUp1Blue;
+    private Trajectory coneBridgefromLoadtoPickUp2Blue;
+    private Trajectory coneBridgefromPickUp1ToLoadBlue;
+    private Trajectory coneBridgefromPickUp2ToLoadBlue;
 //#endregion
 
     private TrajectoryConstraint[] bridgeConstraints;
@@ -133,6 +158,41 @@ public class AutonomousTrajectories {
                         .build(),
                 slowConstraints, SAMPLE_DISTANCE
         );
+
+        ThreeObjectFarPart1Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*156.5,298), Rotation2.fromDegrees(0+angleOffset))
+                        .lineTo(new Vector2(xReflect*254.5, 298))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+        ThreeObjectFarPart2Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*255.5,298), Rotation2.fromDegrees(0+angleOffset))//71,298 non spit
+                        .lineTo(new Vector2(xReflect*67.5, 276))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+        ThreeObjectFarPart3Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*67.5, 278), Rotation2.fromDegrees(0+angleOffset))
+                        .lineTo(new Vector2(xReflect*254.5, 268))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+        ThreeObjectFarPart4Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*254.5, 268), Rotation2.fromDegrees(0+angleOffset))
+                        .lineTo(new Vector2(xReflect*122.5, 273))
+                        //.lineTo(new Vector2(259, 228))
+                        .arcTo(new Vector2(xReflect*67.5, 228), new Vector2(xReflect*122.5, 217.5))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+        ThreeObjectFarPart5Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*67.5, 228), Rotation2.fromDegrees(0+angleOffset))
+                        .arcTo(new Vector2(xReflect*122.5, 273), new Vector2(xReflect*122.5, 217.6))
+                        .lineTo(new Vector2(xReflect*220.5, 273))
+                        .arcTo(new Vector2(xReflect*252.5, 228), new Vector2(xReflect*121, 230))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
 //#endregion
 //#region Three Object Close
         threeObjectClosePart1 = new Trajectory(
@@ -166,13 +226,57 @@ public class AutonomousTrajectories {
                 slowConstraints, SAMPLE_DISTANCE
         );
 
-        threeObjectCloseEnd1 = new Trajectory(
+        threeObjectCloseEnd1Blue = new Trajectory(
                 new SimplePathBuilder(new Vector2(xReflect*259.5, 297.5), Rotation2.fromDegrees(0+angleOffset))
                         .lineTo(new Vector2(xReflect*237.9, 230))
                         .build(),
                 slowConstraints, SAMPLE_DISTANCE
         );
-        threeObjectCloseEnd2 = new Trajectory(
+        threeObjectCloseEnd2Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*258, 260), Rotation2.fromDegrees(0+angleOffset))
+                        .lineTo(new Vector2(xReflect*237.9, 230))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+
+        threeObjectClosePart1Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*259.5, 297.5), Rotation2.fromDegrees(0+angleOffset))
+                        .lineTo(new Vector2(xReflect*58.75, 279))
+                        .build(),
+                bumpConstraints, SAMPLE_DISTANCE
+        );
+
+        threeObjectClosePart2Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*68.75, 279), Rotation2.fromDegrees(0+angleOffset))
+                        .lineTo(new Vector2(xReflect*259.5, 297.5))
+                        .build(),
+                bumpConstraints, SAMPLE_DISTANCE
+        );
+
+        threeObjectClosePart3Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*259.5, 297.5), Rotation2.fromDegrees(0+angleOffset))
+                        .lineTo(new Vector2(xReflect*135, 286))
+                        .lineTo(new Vector2(xReflect*58.5, 230.5))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+
+        threeObjectClosePart4Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*58.5, 230.5), Rotation2.fromDegrees(0+angleOffset))
+                        .lineTo(new Vector2(xReflect*135, 286))
+                        .lineTo(new Vector2(xReflect*227.6, 279))
+                        .lineTo(new Vector2(xReflect*258, 250))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+
+        threeObjectCloseEnd1Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*259.5, 297.5), Rotation2.fromDegrees(0+angleOffset))
+                        .lineTo(new Vector2(xReflect*237.9, 230))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+        threeObjectCloseEnd2Blue = new Trajectory(
                 new SimplePathBuilder(new Vector2(xReflect*258, 260), Rotation2.fromDegrees(0+angleOffset))
                         .lineTo(new Vector2(xReflect*237.9, 230))
                         .build(),
@@ -204,6 +308,37 @@ public class AutonomousTrajectories {
         );
 
         threeObjectBridgePart4 = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*56.5, 182), Rotation2.fromDegrees(0+angleOffset))
+                        .arcTo(new Vector2(xReflect*129.5, 131), new Vector2(xReflect*135.5, 201.5))
+                        .lineTo(new Vector2(xReflect*251.5, 126))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+
+        threeObjectBridgePart1Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*254.5, 161.5), Rotation2.fromDegrees(0+angleOffset))
+                        .arcTo(new Vector2(xReflect*238.5, 128), new Vector2(xReflect*235.5, 158))
+                        .lineTo(new Vector2(xReflect*66, 128))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+
+        threeObjectBridgePart2Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*66, 128), Rotation2.fromDegrees(0+angleOffset))
+                        .lineTo(new Vector2(xReflect*251.5, 138))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+
+        threeObjectBridgePart3Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*251.5, 138), Rotation2.fromDegrees(0+angleOffset))
+                        .lineTo(new Vector2(xReflect*126.5, 130))
+                        .arcTo(new Vector2(xReflect*56.5, 182), new Vector2(xReflect*126.5, 201))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+
+        threeObjectBridgePart4Blue = new Trajectory(
                 new SimplePathBuilder(new Vector2(xReflect*56.5, 182), Rotation2.fromDegrees(0+angleOffset))
                         .arcTo(new Vector2(xReflect*129.5, 131), new Vector2(xReflect*135.5, 201.5))
                         .lineTo(new Vector2(xReflect*251.5, 126))
@@ -247,7 +382,49 @@ public class AutonomousTrajectories {
                 slowConstraints, SAMPLE_DISTANCE
         );
 
-        coneBridgefromPickUp1ToLoad = new Trajectory(
+        coneBridgefromPickUp1ToLoadBlue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*58.1, 130.5), Rotation2.fromDegrees(0+angleOffset))
+                        .lineTo(new Vector2(xReflect*137.5, 125)/*, new Vector2(196, 180)*/)
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+
+        coneBridgefromPlaceToLoadBlue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*250, 119), Rotation2.fromDegrees(0.0+angleOffset))
+                        .lineTo(new Vector2(xReflect*137.5, 125))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+
+        coneBridgefromLoadtoPlaceBlue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*137.5, 125), Rotation2.fromDegrees(0+angleOffset))
+                        .lineTo(new Vector2(xReflect*250, 119))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+
+        coneBridgefromLoadtoPickUp2Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*137.5, 125), Rotation2.fromDegrees(0+angleOffset))
+                        .arcTo(new Vector2(xReflect*58.5, 183), new Vector2(xReflect*141.7, 213.4))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+
+        coneBridgefromPickUp2ToLoadBlue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*58.5, 183), Rotation2.fromDegrees(0+angleOffset))
+                        .arcTo(new Vector2(xReflect*137.5, 125), new Vector2(xReflect*141.7, 213.4))
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+
+        coneBridgefromLoadtoPickUp1Blue = new Trajectory(
+                new SimplePathBuilder(new Vector2(xReflect*137.5, 125), Rotation2.fromDegrees(0+angleOffset))
+                        .lineTo(new Vector2(xReflect*58.1, 130.5)/*, new Vector2(196, 237.5)*/)
+                        .build(),
+                slowConstraints, SAMPLE_DISTANCE
+        );
+
+        coneBridgefromPickUp1ToLoadBlue = new Trajectory(
                 new SimplePathBuilder(new Vector2(xReflect*58.1, 130.5), Rotation2.fromDegrees(0+angleOffset))
                         .lineTo(new Vector2(xReflect*137.5, 125)/*, new Vector2(196, 180)*/)
                         .build(),
@@ -296,47 +473,47 @@ public class AutonomousTrajectories {
             return sCurve;
     }
 
-    public Trajectory getThreeObjectFarPart1(){return ThreeObjectFarPart1;}
+    public Trajectory getThreeObjectFarPart1(boolean isBlue){return isBlue?ThreeObjectFarPart1Blue:ThreeObjectFarPart1;}
 
-    public Trajectory getThreeObjectFarPart2(){return ThreeObjectFarPart2;}
+    public Trajectory getThreeObjectFarPart2(boolean isBlue){return isBlue?ThreeObjectFarPart2Blue:ThreeObjectFarPart2;}
 
-    public Trajectory getThreeObjectFarPart3(){return ThreeObjectFarPart3;}
+    public Trajectory getThreeObjectFarPart3(boolean isBlue){return isBlue?ThreeObjectFarPart3Blue:ThreeObjectFarPart3;}
 
-    public Trajectory getThreeObjectFarPart4(){return ThreeObjectFarPart4;}
+    public Trajectory getThreeObjectFarPart4(boolean isBlue){return isBlue?ThreeObjectFarPart4Blue:ThreeObjectFarPart4;}
 
-    public Trajectory getThreeObjectFarPart5(){return ThreeObjectFarPart5;}
+    public Trajectory getThreeObjectFarPart5(boolean isBlue){return isBlue?ThreeObjectFarPart5Blue:ThreeObjectFarPart5;}
 
-    public Trajectory getThreeObjectClosePart1(){return threeObjectClosePart1;}
+    public Trajectory getThreeObjectClosePart1(boolean isBlue){return isBlue?threeObjectClosePart1Blue:threeObjectClosePart1;}
 
-    public Trajectory getThreeObjectClosePart2(){return threeObjectClosePart2;}
+    public Trajectory getThreeObjectClosePart2(boolean isBlue){return isBlue?threeObjectClosePart2Blue:threeObjectClosePart2;}
 
-    public Trajectory getThreeObjectClosePart3(){return threeObjectClosePart3;}
+    public Trajectory getThreeObjectClosePart3(boolean isBlue){return isBlue?threeObjectClosePart3Blue:threeObjectClosePart3;}
 
-    public Trajectory getThreeObjectClosePart4(){return threeObjectClosePart4;}
+    public Trajectory getThreeObjectClosePart4(boolean isBlue){return isBlue?threeObjectClosePart4Blue:threeObjectClosePart4;}
 
-    public Trajectory getThreeObjectBridgePart1(){return threeObjectBridgePart1;}
+    public Trajectory getThreeObjectBridgePart1(boolean isBlue){return isBlue?threeObjectBridgePart1Blue:threeObjectBridgePart1;}
 
-    public Trajectory getThreeObjectBridgePart2(){return threeObjectBridgePart2;}
+    public Trajectory getThreeObjectBridgePart2(boolean isBlue){return isBlue?threeObjectBridgePart2Blue:threeObjectBridgePart2;}
 
-    public Trajectory getThreeObjectBridgePart3(){return threeObjectBridgePart3;}
+    public Trajectory getThreeObjectBridgePart3(boolean isBlue){return isBlue?threeObjectBridgePart3Blue:threeObjectBridgePart3;}
 
-    public Trajectory getThreeObjectBridgePart4(){return threeObjectBridgePart4;}
+    public Trajectory getThreeObjectBridgePart4(boolean isBlue){return isBlue?threeObjectBridgePart4Blue:threeObjectBridgePart4;}
 
-    public Trajectory getConeBridgefromPickUp1ToLoad(){return coneBridgefromPickUp1ToLoad;}
+    public Trajectory getConeBridgefromPickUp1ToLoad(boolean isBlue){return isBlue?coneBridgefromPickUp1ToLoadBlue:coneBridgefromPickUp1ToLoad;}
 
-    public Trajectory getConeBridgefromPickUp2ToLoad(){return coneBridgefromPickUp2ToLoad;}
+    public Trajectory getConeBridgefromPickUp2ToLoad(boolean isBlue){return isBlue?coneBridgefromPickUp2ToLoadBlue:coneBridgefromPickUp2ToLoad;}
 
-    public Trajectory getConeBridgefromLoadtoPlace(){return coneBridgefromLoadtoPlace;}
+    public Trajectory getConeBridgefromLoadtoPlace(boolean isBlue){return isBlue?coneBridgefromLoadtoPlaceBlue:coneBridgefromLoadtoPlace;}
 
-    public Trajectory getConeBridgefromPlaceToLoad(){return coneBridgefromPlaceToLoad;}
+    public Trajectory getConeBridgefromPlaceToLoad(boolean isBlue){return isBlue?coneBridgefromPlaceToLoadBlue:coneBridgefromPlaceToLoad;}
 
-    public Trajectory getConeBridgeLoadTOPickup1(){return coneBridgefromLoadtoPickUp1;}
+    public Trajectory getConeBridgeLoadTOPickup1(boolean isBlue){return isBlue?coneBridgefromLoadtoPickUp1Blue:coneBridgefromLoadtoPickUp1;}
 
-    public Trajectory getConeBridgeLoadToPickup2(){return coneBridgefromLoadtoPickUp2;}
+    public Trajectory getConeBridgeLoadToPickup2(boolean isBlue){return isBlue?coneBridgefromLoadtoPickUp2Blue:coneBridgefromLoadtoPickUp2;}
 
-    public Trajectory geTthreeObjectCloseEnd1(){return threeObjectCloseEnd1;}
+    public Trajectory geTthreeObjectCloseEnd1(boolean isBlue){return isBlue?threeObjectCloseEnd1Blue:threeObjectCloseEnd1;}
 
-    public Trajectory geTthreeObjectCloseEnd2(){return threeObjectCloseEnd2;}
+    public Trajectory geTthreeObjectCloseEnd2(boolean isBlue){return isBlue?threeObjectCloseEnd2Blue:threeObjectCloseEnd2;}
 
     public Trajectory getOnToBridge(){return onToBridge;}
 

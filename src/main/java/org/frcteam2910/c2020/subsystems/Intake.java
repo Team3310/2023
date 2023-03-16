@@ -48,7 +48,7 @@ public class Intake implements Subsystem{
     
     private Intake(){
         intakeMotor = new TalonFX(Constants.INTAKE_MOTOR_PORT, "rio");
-        intakeMotor.setInverted(true);
+        intakeMotor.setInverted(false);
         leftServo.setInverted(false);
         rightServo.setInverted(true);
         

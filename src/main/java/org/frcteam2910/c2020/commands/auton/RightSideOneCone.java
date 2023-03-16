@@ -25,7 +25,8 @@ public class RightSideOneCone extends AutonCommandBase {
     }
 
     public RightSideOneCone(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
-        resetRobotPose(container, trajectories.getConeBridgefromPlaceToLoad());
+        boolean isBlue = getSide(container);
+        resetRobotPose(container, trajectories.getConeBridgefromPlaceToLoad(isBlue));
         this.addCommands(
             new SetArmSafelyAuton(ScoreMode.HIGH),
             new SetIntakeRPM(intake, Constants.INTAKE_SPIT_RPM),
@@ -37,12 +38,12 @@ public class RightSideOneCone extends AutonCommandBase {
                 new WaitCommand(1.0)
             ),
             new ParallelDeadlineGroup(
-                new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromPlaceToLoad()),
+                new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromPlaceToLoad(isBlue)),
                 new SetIntakeRPM(intake, 0),
                 new SetArmSafelyAuton(ScoreMode.ZERO)
             ),
             new ParallelDeadlineGroup(
-                new FollowTrajectoryCommand(drive, trajectories.getConeBridgeLoadTOPickup1()),
+                new FollowTrajectoryCommand(drive, trajectories.getConeBridgeLoadTOPickup1(isBlue)),
                 new SetArmSafelyAuton(ScoreMode.CONE_INTAKE),
                 new SetIntakeRPM(intake, Constants.INTAKE_COLLECT_RPM),
                 new SetServosOut(intake)
@@ -53,13 +54,13 @@ public class RightSideOneCone extends AutonCommandBase {
                 new WaitCommand(0.75)
             ),
             new ParallelDeadlineGroup(
-                new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromPickUp1ToLoad()),
+                new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromPickUp1ToLoad(isBlue)),
                 new SetArmSafely(ScoreMode.ZERO),
                 new SetIntakeRPM(intake, 0),
                 new SetServosIn(intake)
             ),  
             new ParallelDeadlineGroup(  
-                new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromLoadtoPlace()),
+                new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromLoadtoPlace(isBlue)),
                 new SetArmSafelyAuton(ScoreMode.MID)
             ),    
             new ParallelDeadlineGroup(  

@@ -1,6 +1,7 @@
 package org.frcteam2910.c2020;
 
 import org.frcteam2910.c2020.commands.*;
+import org.frcteam2910.c2020.commands.auton.OneObjectMid;
 import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.*;
@@ -228,7 +229,7 @@ public class RobotContainer {
         // SmartDashboard.putData("set Arm.getInstance() to 0 degrees", new InstantCommand(() -> Arm.getInstance().setArmDegreesPositionAbsolute(0)));
     }
     public Command getAutonomousCommand() {
-        return autonomousChooser.getCommand(this);
+        return new OneObjectMid(this, autonomousTrajectories);
     }
 
     public DrivetrainSubsystem getDrivetrainSubsystem() {
