@@ -89,7 +89,7 @@ public class Constants {
     public static final double ARM_MAX_ROTATION_DEGREES = 110.0;
     
     public static final double ARM_MIN_EXTEND_INCHES = 0.0;
-    public static final double ARM_MAX_EXTEND_INCHES = 14.0;
+    public static final double ARM_MAX_EXTEND_INCHES = 15.0;
 
     // Intake Motor Constants
     public static final double INTAKE_COLLECT_RPM = 1500.0;

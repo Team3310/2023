@@ -4,10 +4,10 @@ public enum ScoreMode{
     ZERO(0.001, 0.25), 
     CONE_INTAKE(15, 0.1), //17, 3.375 practice : 15 , 0.1
     
-    MID(85.5, 0.875),
+    MID(80, 0.875),
     HIGH(105, 13.5), // "money" - paul
     LOW(40, 0.1),
-    CUBE_INTAKE(24.5, 4.25); //33, 9.5 practice : 24.5, 4.25
+    CUBE_INTAKE(24.5, 5.25); //33, 9.5 practice : 24.5, 4.25
 
     ScoreMode(double angle, double inches){
         this.angle = angle;
@@ -48,7 +48,27 @@ public enum ScoreMode{
             return angle;
         }
         else{
-            return -1*angle;
+            if(this == CUBE_INTAKE || this == CONE_INTAKE){
+                return angle;
+            }
+            else{
+                if(false){
+                    switch(this){
+                        case HIGH : return -100;
+                        case MID : return -80.0;
+                        case LOW : return -40;
+                        default : return this.getAngle();
+                    }
+                }
+                else{
+                    switch(this){
+                        case HIGH : return -100;
+                        case MID : return -80;
+                        case LOW : return -40;
+                        default : return this.getAngle();
+                    }
+                }
+            }
         }
     }
 

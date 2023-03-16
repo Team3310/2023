@@ -57,7 +57,7 @@ public class RobotContainer {
         instance = this;
     }
 
-    public void updateTrajectoriesBasedOnSide(){
+    public void recreateTrajectoriesBasedOnSide(){
         autonomousTrajectories = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, sideChooser.getSide());
         autonomousChooser.updateTrajectories(autonomousTrajectories);
         // SmartDashboard.putString("Side", sideChooser.getSide().toString());
@@ -158,8 +158,7 @@ public class RobotContainer {
 
         secondaryController.getRightTriggerAxis().onTrue(
             new SequentialCommandGroup(
-                new SetServosOut(Intake.getInstance()),
-                new SetIntakeRPM(Intake.getInstance(), -Constants.INTAKE_COLLECT_RPM),
+                new SetIntakeRPM(Intake.getInstance(), Constants.INTAKE_COLLECT_RPM),
                 new SetArmSafe(ScoreMode.CUBE_INTAKE)
                 // Hasn't been tested, but an idea: need to stop intaking when intake.getCubeSensor().get() is true
                 // new SequentialCommandGroup(
@@ -176,23 +175,22 @@ public class RobotContainer {
             // If we grabbed a cube, we want to continue intaking until we're back at ZERO
             new SequentialCommandGroup(
                 new InstantCommand(()->intake.setIntakeHold()),
-                new SetArmSafe(true),
-                new SetServosIn(Intake.getInstance())
+                new SetArmSafe(true, false)
            )
         );
 
         secondaryController.getRightBumperButton().onTrue(
             new SequentialCommandGroup(
                 new SetServosOut(Intake.getInstance()),
-                new SetIntakeRPM(Intake.getInstance(), Constants.INTAKE_COLLECT_RPM),
-                new SetArmSafe( ScoreMode.CONE_INTAKE)
+                new SetIntakeRPM(Intake.getInstance(), -1*Constants.INTAKE_COLLECT_RPM),
+                new SetArmSafe(ScoreMode.CONE_INTAKE)
             )    
         );
 
         secondaryController.getRightBumperButton().onFalse(
             // If we grabbed a cone, we want to continue intaking until we're back at ZERO
             new SequentialCommandGroup(
-                new SetArmSafe(true),
+                new SetArmSafe(true, true),
                 new SetIntakeRPM(Intake.getInstance(), 0),
                 new SetServosIn(Intake.getInstance())
             )    
@@ -200,7 +198,7 @@ public class RobotContainer {
         
         secondaryController.getLeftBumperButton().onTrue(
             // Outtake Cone
-            new SetIntakeRPM(Intake.getInstance(), Constants.INTAKE_SPIT_RPM)
+            new SetIntakeRPM(Intake.getInstance(), -1*Constants.INTAKE_SPIT_RPM)
         );
 
         secondaryController.getLeftBumperButton().onFalse(
@@ -209,7 +207,7 @@ public class RobotContainer {
 
         secondaryController.getLeftTriggerAxis().onTrue(
             // Outtake Cube
-            new SetIntakeRPM(Intake.getInstance(), -Constants.INTAKE_SPIT_RPM)
+            new SetIntakeRPM(Intake.getInstance(), Constants.INTAKE_SPIT_RPM)
         );
 
         secondaryController.getLeftTriggerAxis().onFalse(

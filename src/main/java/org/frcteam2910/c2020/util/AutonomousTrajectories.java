@@ -17,6 +17,8 @@ import org.frcteam2910.common.io.PathReader;
 import org.frcteam2910.common.math.Rotation2;
 import org.frcteam2910.common.math.Vector2;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public class AutonomousTrajectories {
 
     private static final double SAMPLE_DISTANCE = 0.1;
@@ -354,6 +356,15 @@ public class AutonomousTrajectories {
                         .lineTo(new Vector2(-252, 207), Rotation2.fromDegrees(180))
                         .build(),
                 bridgeConstraints, SAMPLE_DISTANCE);
+    }
+
+    public Trajectory placeAndLeave(){
+        return new Trajectory(
+                new SimplePathBuilder(new Vector2(0, 0), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(15*12, 0), Rotation2.fromDegrees(0))
+                        .build(),
+                        slowConstraints, SAMPLE_DISTANCE
+        );
     }
 //#endregion
 

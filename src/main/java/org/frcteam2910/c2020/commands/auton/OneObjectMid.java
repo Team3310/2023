@@ -26,8 +26,9 @@ public class OneObjectMid extends AutonCommandBase {
     public OneObjectMid(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
         resetRobotPose(container, trajectories.getOnToBridge());
         this.addCommands(
+            new ArmExtenderZero(Arm.getInstance()),
             new SetArmSafeAuton(ScoreMode.HIGH),
-            new SetIntakeRPM(intake, Constants.INTAKE_SPIT_RPM),
+            new SetIntakeRPM(intake, -1*Constants.INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
                     new WaitUntilCommand(new BooleanSupplier() {

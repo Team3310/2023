@@ -21,18 +21,20 @@ public class AutonomousChooser {
         this.trajectories = trajectories;
 
         autonomousModeChooser.setDefaultOption("Left Three Object Far Spit", AutonomousMode.THREE_OBJECT_FAR);
-        autonomousModeChooser.addOption("Left Two Object Close", AutonomousMode.THREE_OBJECT_CLOSE);
-        autonomousModeChooser.addOption("Left Two Object Close Balance", AutonomousMode.THREE_OBJECT_CLOSE_BALANCE);
-        autonomousModeChooser.addOption("Right Three Object", AutonomousMode.THREE_OBJECT_BRIDGE);
-        autonomousModeChooser.addOption("Right 3 Cone", AutonomousMode.CONE_BRIDGE);
-        autonomousModeChooser.addOption("On To Bridge", AutonomousMode.TO_BRIDGE);
-        autonomousModeChooser.addOption("Up Bridge", AutonomousMode.UP_BRIDGE);
-        autonomousModeChooser.addOption("Bridge Balance", AutonomousMode.BALANCE);
-        autonomousModeChooser.addOption("Right Two Object", AutonomousMode.RIGHT_TWO_OBJECT);
-        autonomousModeChooser.addOption("Two Object Bridge Balance", AutonomousMode.TWO_OBJECT_BALANCE);
+        // autonomousModeChooser.addOption("Left Two Object Close", AutonomousMode.THREE_OBJECT_CLOSE);
+        // autonomousModeChooser.addOption("Left Two Object Close Balance", AutonomousMode.THREE_OBJECT_CLOSE_BALANCE);
+        // autonomousModeChooser.addOption("Right Three Object", AutonomousMode.THREE_OBJECT_BRIDGE);
+        // autonomousModeChooser.addOption("Right 3 Cone", AutonomousMode.CONE_BRIDGE);
+        // autonomousModeChooser.addOption("On To Bridge", AutonomousMode.TO_BRIDGE);
+        // autonomousModeChooser.addOption("Up Bridge", AutonomousMode.UP_BRIDGE);
+        // autonomousModeChooser.addOption("Bridge Balance", AutonomousMode.BALANCE);
+        // autonomousModeChooser.addOption("Right Two Object", AutonomousMode.RIGHT_TWO_OBJECT);
+        // autonomousModeChooser.addOption("Two Object Bridge Balance", AutonomousMode.TWO_OBJECT_BALANCE);
         autonomousModeChooser.addOption("One Object Bridge Balance", AutonomousMode.ONE_OBJECT_BALANCE);
-        autonomousModeChooser.addOption("7 Feet", AutonomousMode.SEVEN_FEET);
-        autonomousModeChooser.addOption("sCurve", AutonomousMode.S_CURVE);
+        autonomousModeChooser.addOption("One Object Drive Away", AutonomousMode.ONE_OBJECT_DRIVE_AWAY);
+  
+        // autonomousModeChooser.addOption("7 Feet", AutonomousMode.SEVEN_FEET);
+        // autonomousModeChooser.addOption("sCurve", AutonomousMode.S_CURVE);
     }
 
     public SendableChooser<AutonomousMode> getAutonomousModeChooser() {
@@ -88,7 +90,9 @@ public class AutonomousChooser {
             case TWO_OBJECT_BALANCE:
                 return new TwoObjectMidBalance(container, trajectories); 
             case RIGHT_TWO_OBJECT:
-                return new RightSideOneCone(container, trajectories);          
+                return new RightSideOneCone(container, trajectories);
+            case ONE_OBJECT_DRIVE_AWAY:
+                return new PlaceConeAndLeave(container, trajectories); 
             default:
                 return getSevenFeet(container);
         }
@@ -119,6 +123,7 @@ public class AutonomousChooser {
         THREE_OBJECT_CLOSE_BALANCE,
         ONE_OBJECT_BALANCE,
         TWO_OBJECT_BALANCE,
+        ONE_OBJECT_DRIVE_AWAY
         ;
     }
 }

@@ -11,6 +11,7 @@ import org.frcteam2910.c2020.subsystems.Arm.ArmControlMode;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.AutonomousChooser.AutonomousMode;
+import org.frcteam2910.c2020.util.SideChooser.SideMode;
 import org.frcteam2910.common.Logger;
 import org.frcteam2910.common.robot.UpdateManager;
 
@@ -18,6 +19,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
@@ -37,6 +39,10 @@ public class Robot extends TimedRobot {
     private static boolean teleopUsed = false;
     private static boolean setSteerMotorsCoast = false;
     private static boolean setArmRotationMotorCoast = false;
+
+    private static AutonomousMode cachedAutonCommandMode;
+    private static Command cachedAutonCommand;
+    private static SideMode cachedTrajectoriesSide;
 
     private RobotContainer robotContainer = new RobotContainer();
     private UpdateManager updateManager = new UpdateManager(
@@ -139,6 +145,9 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         updateManager.startLoop(0.02);
+        robotContainer.getDrivetrainSubsystem().setDriveBrake();
+        robotContainer.getDrivetrainSubsystem().setSteerBrake();
+        robotContainer.getArm().setArmInchesZero(1.875);
 //        PortForwarder.add(5800, "limelight.local", 5800);
 //        PortForwarder.add(5801, "limelight.local", 5801);
 //        PortForwarder.add(5802, "limelight.local", 5802);
@@ -155,17 +164,14 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         teleopUsed = false;
-        robotContainer.getDrivetrainSubsystem().setDriveBrake();
-        robotContainer.getDrivetrainSubsystem().setSteerBrake();
         // robotContainer.getDrivetrainSubsystem().setLimelightOverride(false);
 
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.TRAJECTORY);
 
-        robotContainer.getArm().setArmInchesZero(0.25);
+        // Would it be better for these to be in robotInit? Probably, once we get the lightgate to zero the arm.
         robotContainer.getArm().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
 
-        robotContainer.updateTrajectoriesBasedOnSide();
-        robotContainer.getAutonomousCommand().schedule();
+        cachedAutonCommand.schedule();
     }
 
     @Override
@@ -198,8 +204,8 @@ public class Robot extends TimedRobot {
     public void disabledInit(){
         if(!setSteerMotorsCoast) {
             robotContainer.getDrivetrainSubsystem().setSteerBrake();
-            robotContainer.getDrivetrainSubsystem().alignWheels();
         }
+        robotContainer.getDrivetrainSubsystem().alignWheels();
         
         // Safety disable
         List<AutonomousMode> vetted = new ArrayList<AutonomousMode>(
@@ -225,6 +231,18 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledPeriodic() {
         //robotContainer.getVisionSubsystem().setLedMode(Limelight.LedMode.OFF);
+
+        // Update the side, which should then prompt a re-cache of auton command with the new side.
+        if(robotContainer.getSideChooser().getSendableChooser().getSelected() != cachedTrajectoriesSide) {
+            robotContainer.updateSide();
+            robotContainer.recreateTrajectoriesBasedOnSide();
+            cachedAutonCommand = robotContainer.getAutonomousCommand();
+        }
+
+        // Update the auton command without updating the trajectories
+        if(robotContainer.getAutonomousChooser().getAutonomousModeChooser().getSelected() != cachedAutonCommandMode) {
+            cachedAutonCommand = robotContainer.getAutonomousCommand();
+        }
     }
 
     @Override
@@ -233,7 +251,8 @@ public class Robot extends TimedRobot {
                         || robotContainer.getDrivetrainSubsystem().getRollDegreesOffLevel() > 15;
         // Helpful development "unlock steer motors while tilted over" feature
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DriveControlMode.HOLD);
-        robotContainer.getDrivetrainSubsystem().alignWheels();
+        robotContainer.getArm().setRotationControlMode(ArmControlMode.MANUAL);
+        
         if(!setSteerMotorsCoast) {
             if(tilted){
                 robotContainer.getDrivetrainSubsystem().setSteerCoast();
@@ -249,7 +268,6 @@ public class Robot extends TimedRobot {
         if(!setArmRotationMotorCoast && !tilted)
         {
             // We're upright, it's okay to set the arm to coast
-            robotContainer.getArm().setRotationControlMode(ArmControlMode.MANUAL);
             robotContainer.getArm().setMotorNeutralMode(NeutralMode.Coast);
             setArmRotationMotorCoast = true;
         }

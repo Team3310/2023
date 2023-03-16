@@ -19,14 +19,18 @@ public class SetArmSafe extends SequentialCommandGroup {
     private boolean wasUnsafeManeuver = false;
 
     public SetArmSafe(ScoreMode targetScoreMode){
-        this(targetScoreMode, false);
+        this(targetScoreMode, false, false);
     }
 
-    public SetArmSafe(boolean afterIntake){
-        this(afterIntake?null:ScoreMode.ZERO, afterIntake);
+    public SetArmSafe(ScoreMode targetScoreMode, boolean afterIntake){
+        this(targetScoreMode, afterIntake, false);
     }
 
-    public SetArmSafe(ScoreMode targetScoreMode, boolean afterIntake) {
+    public SetArmSafe(boolean afterIntake, boolean isCone){
+        this(afterIntake?null:ScoreMode.ZERO, afterIntake, isCone);
+    }
+
+    public SetArmSafe(ScoreMode targetScoreMode, boolean afterIntake, boolean isCone) {
 
         // SmartDashboard.putString("target score mode", targetScoreMode.name());
         // SmartDashboard.putString("new score mode", arm.getScoreMode().name());
@@ -66,7 +70,7 @@ public class SetArmSafe extends SequentialCommandGroup {
                 new SetArmExtender(arm, targetScoreMode.getInches(), true)
             );
         }else{
-            if(Intake.getInstance().getConeSensor().get()){
+            if(isCone){
                 this.addCommands(
                     new SetArmExtender(arm, 4.5, true),
                     new WaitUntilCommand(()->arm.withinInches(0.5, 4.5)),
