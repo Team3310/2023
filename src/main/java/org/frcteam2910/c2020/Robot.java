@@ -236,12 +236,14 @@ public class Robot extends TimedRobot {
         if(robotContainer.getSideChooser().getSendableChooser().getSelected() != cachedTrajectoriesSide) {
             robotContainer.updateSide();
             robotContainer.recreateTrajectoriesBasedOnSide();
+            cachedTrajectoriesSide = robotContainer.getSideChooser().getSendableChooser().getSelected();
             cachedAutonCommand = robotContainer.getAutonomousCommand();
         }
 
         // Update the auton command without updating the trajectories
         if(robotContainer.getAutonomousChooser().getAutonomousModeChooser().getSelected() != cachedAutonCommandMode) {
             cachedAutonCommand = robotContainer.getAutonomousCommand();
+            cachedAutonCommandMode = robotContainer.getAutonomousChooser().getAutonomousModeChooser().getSelected();
         }
     }
 
