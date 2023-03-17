@@ -194,7 +194,7 @@ public class Arm implements Subsystem{
     }
 
     public double getArmInches(){
-        return (armTranslationMotor.getSelectedSensorPosition() / ARM_INCHES_TO_ENCODER_TICKS)+inchesOffset;
+        return (armTranslationMotor.getSelectedSensorPosition() / ARM_INCHES_TO_ENCODER_TICKS);
     }
 
     public double getArmInchesEncoderTicksAbsolute(double inches){
@@ -203,7 +203,7 @@ public class Arm implements Subsystem{
 
     public void setArmInchesZero(double inchesOffset){
         this.inchesOffset = inchesOffset;
-        armTranslationMotor.setSelectedSensorPosition(0);
+        armTranslationMotor.setSelectedSensorPosition(0+getArmInchesEncoderTicksAbsolute(inchesOffset));
         targetInchesTicks = 0;
     }
 
