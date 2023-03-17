@@ -90,7 +90,7 @@ public class RobotContainer {
 
         
         primaryController.getLeftBumperButton().onTrue(
-                new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.ROBOT_CENTRIC)
+                new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
         );
         primaryController.getLeftBumperButton().onFalse(
                 new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
@@ -116,15 +116,15 @@ public class RobotContainer {
         // );
 
 
-        // primaryController.getXButton().onTrue(
-        //     new InstantCommand(()->DrivetrainSubsystem.getInstance().setDriveControlMode(DriveControlMode.LIMELIGHT))
-        // );
+        primaryController.getXButton().onTrue(
+            new ChangeDriveMode(drivetrain, DriveControlMode.HOLD)
+        );
         //#endregion
 
         //#region Second/Operator Controller
-        secondaryController.getDPadButton(DPadButton.Direction.RIGHT).onTrue(
-                new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
-        );
+        // secondaryController.getDPadButton(DPadButton.Direction.RIGHT).onTrue(
+        //         new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
+        //);
         // secondaryController.getLeftJoystickButton().onTrue(
         //         new InstantCommand(()-> DrivetrainSubsystem.getInstance().setLimelightOverride(true))
         // );
