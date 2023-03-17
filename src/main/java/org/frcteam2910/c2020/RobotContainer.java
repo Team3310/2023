@@ -159,7 +159,9 @@ public class RobotContainer {
         secondaryController.getRightTriggerAxis().onTrue(
             new SequentialCommandGroup(
                 new SetIntakeRPM(Intake.getInstance(), Constants.INTAKE_COLLECT_RPM),
-                new SetArmSafe(ScoreMode.CUBE_INTAKE)
+                new SetArmSafe(ScoreMode.CUBE_INTAKE),
+                new WaitUntilCommand(() -> intake.getCubeSensor().get()),
+                new InstantCommand(() -> intake.setIntakeHold())
                 // Hasn't been tested, but an idea: need to stop intaking when intake.getCubeSensor().get() is true
                 // new SequentialCommandGroup(
                 //     new ParallelRaceGroup(
