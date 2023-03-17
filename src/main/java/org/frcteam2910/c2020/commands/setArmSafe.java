@@ -49,24 +49,10 @@ public class SetArmSafe extends SequentialCommandGroup {
 
         if(!afterIntake){
             this.addCommands(
-                new SetArmExtender(arm, 0.001, true),
-                new WaitUntilCommand(new BooleanSupplier() {
-
-                    @Override
-                    public boolean getAsBoolean() {
-                        return arm.getArmInches()<0.5;
-                    }
-                    
-                }),
+                new SetArmExtender(arm, 0.0, true),
+                new WaitUntilCommand(()->arm.getArmInches()<0.5),
                 new SetArmRotator(arm, targetScoreMode.getAngle(), true),
-                new WaitUntilCommand(new BooleanSupplier() {
-
-                    @Override
-                    public boolean getAsBoolean() {
-                        return arm.withinAngle(5.0, targetScoreMode.getAngle());
-                    }
-
-                }),
+                new WaitUntilCommand(()->arm.withinAngle(5.0, targetScoreMode.getAngle())),
                 new SetArmExtender(arm, targetScoreMode.getInches(), true)
             );
         }else{

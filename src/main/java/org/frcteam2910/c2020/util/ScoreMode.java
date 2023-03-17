@@ -62,7 +62,7 @@ public enum ScoreMode{
                 }
                 else{
                     switch(this){
-                        case HIGH : return -103.4;
+                        case HIGH : return -102.4;
                         case MID : return -85;
                         case LOW : return -40;
                         default : return this.getAngle();

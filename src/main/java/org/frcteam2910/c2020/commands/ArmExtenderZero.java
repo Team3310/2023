@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 
 public class ArmExtenderZero extends CommandBase {
-    private double MIN_ARM_EXTEND_POSITION_CHANGE = 0.2;
+    private double MIN_ARM_EXTEND_POSITION_CHANGE = 0.05;
     private Timer timer = new Timer();
     private final Arm arm;
     private double lastPosition;
@@ -37,7 +37,7 @@ public class ArmExtenderZero extends CommandBase {
         double positionChange = currentPosition - lastPosition;
         lastPosition = currentPosition;
         boolean haveMoved = Math.abs(positionChange) >= MIN_ARM_EXTEND_POSITION_CHANGE;
-        SmartDashboard.putBoolean("Done", timer.hasElapsed(1));
+        SmartDashboard.putBoolean("Done", timer.hasElapsed(0.25));
         SmartDashboard.putNumber("Change", positionChange);
         SmartDashboard.putNumber("Timer", timer.get());
         if(haveMoved) {
@@ -45,7 +45,7 @@ public class ArmExtenderZero extends CommandBase {
             timer.reset();
             timer.start();
         }
-        return timer.hasElapsed(1.0);
+        return timer.hasElapsed(0.25);
     }
 
     @Override
