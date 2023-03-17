@@ -143,23 +143,23 @@ public class RobotContainer {
 
 
         secondaryController.getBButton().onTrue(
-            new SetArmSafe( ScoreMode.ZERO)
+            new SetArmSafely( ScoreMode.ZERO)
         );
         secondaryController.getAButton().onTrue(
-            new SetArmSafe( ScoreMode.LOW)
+            new SetArmSafely( ScoreMode.LOW)
         );
         secondaryController.getXButton().onTrue(
-            new SetArmSafe( ScoreMode.MID)
+            new SetArmSafely( ScoreMode.MID)
         );
         secondaryController.getYButton().onTrue(
-            new SetArmSafe( ScoreMode.HIGH)
+            new SetArmSafely( ScoreMode.HIGH)
         );
 
 
         secondaryController.getRightTriggerAxis().onTrue(
             new SequentialCommandGroup(
                 new SetIntakeRPM(Intake.getInstance(), Constants.INTAKE_COLLECT_RPM),
-                new SetArmSafe(ScoreMode.CUBE_INTAKE),
+                new SetArmSafely(ScoreMode.CUBE_INTAKE),
                 new WaitUntilCommand(() -> intake.getCubeSensor().get()),
                 new InstantCommand(() -> intake.setIntakeHold())
                 // Hasn't been tested, but an idea: need to stop intaking when intake.getCubeSensor().get() is true
@@ -177,7 +177,7 @@ public class RobotContainer {
             // If we grabbed a cube, we want to continue intaking until we're back at ZERO
             new SequentialCommandGroup(
                 new InstantCommand(()->intake.setIntakeHold()),
-                new SetArmSafe(true, false)
+                new SetArmSafely(true, false)
            )
         );
 
@@ -185,14 +185,14 @@ public class RobotContainer {
             new SequentialCommandGroup(
                 new SetServosOut(Intake.getInstance()),
                 new SetIntakeRPM(Intake.getInstance(), -1*Constants.INTAKE_COLLECT_RPM),
-                new SetArmSafe(ScoreMode.CONE_INTAKE)
+                new SetArmSafely(ScoreMode.CONE_INTAKE)
             )    
         );
 
         secondaryController.getRightBumperButton().onFalse(
             // If we grabbed a cone, we want to continue intaking until we're back at ZERO
             new SequentialCommandGroup(
-                new SetArmSafe(true, true),
+                new SetArmSafely(true, true),
                 new SetIntakeRPM(Intake.getInstance(), 0),
                 new SetServosIn(Intake.getInstance())
             )    

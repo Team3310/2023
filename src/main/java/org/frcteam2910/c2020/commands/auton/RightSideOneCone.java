@@ -27,7 +27,7 @@ public class RightSideOneCone extends AutonCommandBase {
     public RightSideOneCone(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
         resetRobotPose(container, trajectories.getConeBridgefromPlaceToLoad());
         this.addCommands(
-            new SetArmSafeAuton(ScoreMode.HIGH),
+            new SetArmSafelyAuton(ScoreMode.HIGH),
             new SetIntakeRPM(intake, Constants.INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
@@ -39,11 +39,11 @@ public class RightSideOneCone extends AutonCommandBase {
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromPlaceToLoad()),
                 new SetIntakeRPM(intake, 0),
-                new SetArmSafeAuton(ScoreMode.ZERO)
+                new SetArmSafelyAuton(ScoreMode.ZERO)
             ),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgeLoadTOPickup1()),
-                new SetArmSafeAuton(ScoreMode.CONE_INTAKE),
+                new SetArmSafelyAuton(ScoreMode.CONE_INTAKE),
                 new SetIntakeRPM(intake, Constants.INTAKE_COLLECT_RPM),
                 new SetServosOut(intake)
             ),
@@ -54,13 +54,13 @@ public class RightSideOneCone extends AutonCommandBase {
             ),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromPickUp1ToLoad()),
-                new SetArmSafe(ScoreMode.ZERO),
+                new SetArmSafely(ScoreMode.ZERO),
                 new SetIntakeRPM(intake, 0),
                 new SetServosIn(intake)
             ),  
             new ParallelDeadlineGroup(  
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromLoadtoPlace()),
-                new SetArmSafeAuton(ScoreMode.MID)
+                new SetArmSafelyAuton(ScoreMode.MID)
             ),    
             new ParallelDeadlineGroup(  
                 new ParallelRaceGroup( 
@@ -75,7 +75,7 @@ public class RightSideOneCone extends AutonCommandBase {
             ),
             new ParallelCommandGroup(
                 new SetIntakeRPM(intake, 0),
-                new SetArmSafeAuton(ScoreMode.ZERO) 
+                new SetArmSafelyAuton(ScoreMode.ZERO) 
             )  
         );
     }

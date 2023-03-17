@@ -22,7 +22,7 @@ public class LeftTwoObjectClose extends AutonCommandBase {
     public LeftTwoObjectClose(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Intake intake) {
         resetRobotPose(container, trajectories.getThreeObjectClosePart1());
         this.addCommands(
-            new SetArmSafeAuton(ScoreMode.HIGH),
+            new SetArmSafelyAuton(ScoreMode.HIGH),
             new SetIntakeRPM(intake, Constants.INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(

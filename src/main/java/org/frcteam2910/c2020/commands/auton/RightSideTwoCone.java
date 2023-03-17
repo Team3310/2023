@@ -28,7 +28,7 @@ public class RightSideTwoCone extends AutonCommandBase {
             new RightSideOneCone(container, trajectories),
             new ParallelDeadlineGroup(     
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgeLoadToPickup2()),
-                new SetArmSafe(ScoreMode.CONE_INTAKE, false),
+                new SetArmSafely(ScoreMode.CONE_INTAKE, false),
                 new InstantCommand(()->{
                     intake.setRollerRPM(Constants.INTAKE_COLLECT_RPM); 
                     intake.setServoPosition(-1.0);
@@ -47,7 +47,7 @@ public class RightSideTwoCone extends AutonCommandBase {
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromPickUp2ToLoad()),
                 new SequentialCommandGroup(
-                    new SetArmSafe(ScoreMode.ZERO, false),
+                    new SetArmSafely(ScoreMode.ZERO, false),
                     new InstantCommand(()->{
                         intake.setRollerSpeed(0);
                         intake.setServoPosition(1.0);
@@ -56,7 +56,7 @@ public class RightSideTwoCone extends AutonCommandBase {
             ),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromLoadtoPlace()),
-                new SetArmSafe(ScoreMode.HIGH, false)
+                new SetArmSafely(ScoreMode.HIGH, false)
             ),
             new ParallelDeadlineGroup(  
                 new ParallelRaceGroup( 

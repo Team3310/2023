@@ -5,11 +5,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.common.control.Trajectory;
 
-public class debugAutonPosition extends CommandBase {
+public class AutonPositionDebug extends CommandBase {
     private final DrivetrainSubsystem drivetrain;
     private String part;
 
-    public debugAutonPosition(DrivetrainSubsystem drivetrain, String part) {
+    public AutonPositionDebug(DrivetrainSubsystem drivetrain, String part) {
         this.drivetrain = drivetrain;
         this.part = part;
         // addRequirements(drivetrain);

@@ -11,26 +11,26 @@ import org.frcteam2910.c2020.subsystems.Arm;
 import org.frcteam2910.c2020.subsystems.Intake;
 import org.frcteam2910.c2020.util.ScoreMode;
 
-public class SetArmSafe extends SequentialCommandGroup {
+public class SetArmSafely extends SequentialCommandGroup {
 
     private Arm arm;
     // private final ScoreMode targetScoreMode;
     private final ScoreMode startMode;
     private boolean wasUnsafeManeuver = false;
 
-    public SetArmSafe(ScoreMode targetScoreMode){
+    public SetArmSafely(ScoreMode targetScoreMode){
         this(targetScoreMode, false, false);
     }
 
-    public SetArmSafe(ScoreMode targetScoreMode, boolean afterIntake){
+    public SetArmSafely(ScoreMode targetScoreMode, boolean afterIntake){
         this(targetScoreMode, afterIntake, false);
     }
 
-    public SetArmSafe(boolean afterIntake, boolean isCone){
+    public SetArmSafely(boolean afterIntake, boolean isCone){
         this(afterIntake?null:ScoreMode.ZERO, afterIntake, isCone);
     }
 
-    public SetArmSafe(ScoreMode targetScoreMode, boolean afterIntake, boolean isCone) {
+    public SetArmSafely(ScoreMode targetScoreMode, boolean afterIntake, boolean isCone) {
 
         // SmartDashboard.putString("target score mode", targetScoreMode.name());
         // SmartDashboard.putString("new score mode", arm.getScoreMode().name());

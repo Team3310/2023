@@ -60,7 +60,7 @@ public class TwoObjectMidBalance extends AutonCommandBase {
                     new FollowTrajectoryCommand(drive, trajectories.getFromOverBridgeToCone()),
                     new SetIntakeRPM(intake, Constants.INTAKE_COLLECT_RPM),
                     new SetServosOut(intake),
-                    new SetArmSafeAuton(ScoreMode.CONE_INTAKE)
+                    new SetArmSafelyAuton(ScoreMode.CONE_INTAKE)
                 ),
                 new ParallelRaceGroup(
                     new WaitUntilCommand(()->intake.getConeSensor().get()),
@@ -72,7 +72,7 @@ public class TwoObjectMidBalance extends AutonCommandBase {
                     new ChangeDriveMode(drive, DriveControlMode.BRIDGE_VOLTAGE),
                     new SetIntakeRPM(intake, 0),
                     new SequentialCommandGroup(
-                        new SetArmSafeAuton(true),
+                        new SetArmSafelyAuton(true),
                         new SetServosIn(intake)
                     )
                 ),
