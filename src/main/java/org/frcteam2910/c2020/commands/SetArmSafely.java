@@ -69,8 +69,8 @@ public class SetArmSafely extends SequentialCommandGroup {
             }
             else{
                 this.addCommands(
-                    new SetArmRotator(arm, 45),
-                    new WaitUntilCommand(()->arm.withinAngle(5,45)),
+                    new SetArmExtender(arm, 4.5, true),
+                    new WaitUntilCommand(()->arm.withinInches(0.5, 4.5)),
                     new SetArmExtender(arm, 0, true),
                     new WaitUntilCommand(()->arm.getArmInches()<0.5),
                     new SetArmRotator(arm, 0, true)  

@@ -171,9 +171,10 @@ public class RobotContainer {
 
         secondaryController.getRightTriggerAxis().onFalse(
             // If we grabbed a cube, we want to continue intaking until we're back at ZERO
+            // CommandScheduler.getInstance().clearButtons();
             new SequentialCommandGroup(
                 new InstantCommand(()->intake.setIntakeHold()),
-                new SetArmSafely(true, false)
+                new SetArmSafely(ScoreMode.ZERO)
            )
         );
 
