@@ -174,7 +174,7 @@ public class RobotContainer {
             // CommandScheduler.getInstance().clearButtons();
             new SequentialCommandGroup(
                 new InstantCommand(()->intake.setIntakeHold()),
-                new SetArmSafely(ScoreMode.ZERO)
+                new SetArmSafely(true, false)
            )
         );
 

@@ -85,8 +85,8 @@ public class Arm implements Subsystem{
         armRotationMotor.config_kD(0, 0.0);
 
         armTranslationMotor.config_kF(0, 0.0);
-        armTranslationMotor.config_kP(0, 0.06); //0.1
-        armTranslationMotor.config_kI(0, 0.0000001);
+        armTranslationMotor.config_kP(0, 0.03); //0.06
+        armTranslationMotor.config_kI(0, 0.0);//0.0000001
         armTranslationMotor.config_kD(0, 0.0);
     }
     //#endregion

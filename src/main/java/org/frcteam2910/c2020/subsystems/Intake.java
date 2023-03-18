@@ -31,6 +31,7 @@ public class Intake implements Subsystem{
     //misc
     private int kIntakeVelocitySlot = 0;
     private int kIntakePositionSlot = 1;
+    private boolean firstSet = false;
 
     boolean hasSetIntakeZero = false;
     private IntakeControlMode controlMode = IntakeControlMode.MANUAL;
@@ -63,8 +64,8 @@ public class Intake implements Subsystem{
         intakeMotor.config_IntegralZone(kIntakeVelocitySlot, (int)this.RollerRPMToNativeUnits(200));
 
         intakeMotor.config_kF(kIntakePositionSlot, 0.0);
-        intakeMotor.config_kP(kIntakePositionSlot, 0.10);
-        intakeMotor.config_kI(kIntakePositionSlot, 0.0001);
+        intakeMotor.config_kP(kIntakePositionSlot, -0.05);
+        intakeMotor.config_kI(kIntakePositionSlot, 0.0);
         intakeMotor.config_kD(kIntakePositionSlot, 0.0);
 
         cubeSensor = new DigitalInput(1);
@@ -90,17 +91,23 @@ public class Intake implements Subsystem{
         }
 
         public void setIntakeHold(){
-            controlMode = IntakeControlMode.HOLD;
-            intakeMotor.selectProfileSlot(kIntakePositionSlot, 0);
-            intakeMotor.set(TalonFXControlMode.Position, intakeMotor.getSelectedSensorPosition());
+            if(!firstSet){
+                controlMode = IntakeControlMode.HOLD;
+                intakeMotor.selectProfileSlot(kIntakePositionSlot, 0);
+                intakeMotor.set(TalonFXControlMode.Position, intakeMotor.getSelectedSensorPosition());
+                SmartDashboard.putNumber("set position", intakeMotor.getSelectedSensorPosition());
+                firstSet =true;
+            }
         }
 
         public void setRollerSpeed(double speed) {
+            firstSet = false;
             controlMode = IntakeControlMode.MANUAL;
             this.intakeMotor.set(ControlMode.PercentOutput, speed);
         }
         
         public void setRollerRPM(double rpm) {
+            firstSet = false;
             controlMode = IntakeControlMode.MANUAL;
             intakeMotor.selectProfileSlot(kIntakeVelocitySlot, 0);
             intakeMotor.set(ControlMode.Velocity, this.RollerRPMToNativeUnits(rpm));
@@ -129,6 +136,12 @@ public class Intake implements Subsystem{
         SmartDashboard.putBoolean("DIO Cube", cubeSensor.get());
         SmartDashboard.putBoolean("set intake zero", hasSetIntakeZero);
         SmartDashboard.putNumber("intake motor current", intakeMotor.getStatorCurrent());
+
+        SmartDashboard.putNumber("intake motor posistion", intakeMotor.getSelectedSensorPosition());
+
+        // if(cubeSensor.get()){
+        //     setIntakeHold();
+        // }
     }
 
 	public IntakeControlMode getControlMode() {
