@@ -358,10 +358,10 @@ public class AutonomousTrajectories {
                 bridgeConstraints, SAMPLE_DISTANCE);
     }
 
-    public Trajectory placeAndLeave(){
+    public Trajectory placeAndLeave(boolean isBlue){
         return new Trajectory(
                 new SimplePathBuilder(new Vector2(0, 0), Rotation2.fromDegrees(0))
-                        .lineTo(new Vector2(15*12, 0), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(87, 0), Rotation2.fromDegrees(0))
                         .build(),
                         slowConstraints, SAMPLE_DISTANCE
         );

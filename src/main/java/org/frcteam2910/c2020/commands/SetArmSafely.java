@@ -50,16 +50,14 @@ public class SetArmSafely extends SequentialCommandGroup {
         if(!afterIntake){
             this.addCommands(
                 new SetArmExtender(arm, 0.0, true),
-                new WaitUntilCommand(()->arm.getArmInches()<0.5),
                 new SetArmRotator(arm, targetScoreMode.getAngle(), true),
-                new WaitUntilCommand(()->arm.withinAngle(5.0, targetScoreMode.getAngle())),
                 new SetArmExtender(arm, targetScoreMode.getInches(), true)
             );
         }else{
             if(isCone){
                 this.addCommands(
                     new SetArmExtender(arm, 4.5, true),
-                    new SetArmRotator(arm, 25.0, true),
+                    new SetArmRotator(arm, 35.0, true),
                     new SetArmExtender(arm, 0, true),
                     new SetArmRotator(arm, 0, true)    
                 );
@@ -67,7 +65,6 @@ public class SetArmSafely extends SequentialCommandGroup {
             else{
                 this.addCommands(
                     new SetArmExtender(arm, 0, true),
-                    new WaitUntilCommand(()->arm.getArmInches()<0.5),
                     new SetArmRotator(arm, 10, true)    
                 );
             }

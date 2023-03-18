@@ -531,7 +531,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
     public void voltageDrive(){
         for(int i = 0; i < modules.length; i++){
-            modules[i].set(voltageOutput, voltageSteerAngle);
+            modules[i].set(voltageOutput, 0);
         }  
     }
 
