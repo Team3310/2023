@@ -164,10 +164,10 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        // teleopUsed = false;
+        teleopUsed = false;
         // robotContainer.getDrivetrainSubsystem().setLimelightOverride(false);
 
-        // robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.TRAJECTORY);
+        robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.TRAJECTORY);
 
         // Would it be better for these to be in robotInit? Probably, once we get the lightgate to zero the arm.
         robotContainer.getArm().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
@@ -233,7 +233,7 @@ public class Robot extends TimedRobot {
     public void disabledPeriodic() {
         //robotContainer.getVisionSubsystem().setLedMode(Limelight.LedMode.OFF);
 
-        // Update the side, which should then prompt a re-cache of auton command with the new side.
+        //Update the side, which should then prompt a re-cache of auton command with the new side.
         // if(robotContainer.getSideChooser().getSendableChooser().getSelected() != cachedTrajectoriesSide) {
         //     robotContainer.updateSide();
         //     robotContainer.recreateTrajectoriesBasedOnSide();
