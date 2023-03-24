@@ -50,7 +50,7 @@ public class AutonomousTrajectories {
     private Trajectory coneBridgeToPickUp1;
     private Trajectory coneBridgePickUp2;
     private Trajectory coneBridgeToPlace1;
-    private Trajectory coneBridgeToPlace;
+    private Trajectory coneBridgeToPlace2;
 
     private Trajectory onToBridge;
     private Trajectory goPastBridge;
@@ -91,8 +91,8 @@ public class AutonomousTrajectories {
         slowConstraints[slowConstraints.length - 2] = new MaxAccelerationConstraint(4.0 * 12.0);
         
         mediumConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
-        mediumConstraints[mediumConstraints.length - 1] = new MaxVelocityConstraint(9.0 * 12.0);
-        mediumConstraints[mediumConstraints.length - 2] = new MaxAccelerationConstraint(8.0 * 12.0);
+        mediumConstraints[mediumConstraints.length - 1] = new MaxVelocityConstraint(5.0 * 12.0); //9
+        mediumConstraints[mediumConstraints.length - 2] = new MaxAccelerationConstraint(3.0 * 12.0);//4
 
         bridgeConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
         bridgeConstraints[mediumConstraints.length - 1] = new MaxVelocityConstraint(2.0 * 12.0);
@@ -344,68 +344,64 @@ public class AutonomousTrajectories {
 //#endregion
 //#region Cone Bridge
         coneBridgePickUp2 = new Trajectory(
-                new SimplePathBuilder(new Vector2(-250, 119), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(-137.5, 125), Rotation2.fromDegrees(0))
-                        .arcTo(new Vector2(-58.5, 183), new Vector2(-141.7, 213.4))
+                new SimplePathBuilder(new Vector2(-250, 140.68), Rotation2.fromDegrees(180))
+                        .lineTo(new Vector2(-123.3, 140.68), Rotation2.fromDegrees(30))
+                        .arcTo(new Vector2(-58.1, 182.565), new Vector2(-123.3, 228.22))
                         .build(),
-                slowConstraints, SAMPLE_DISTANCE
+                mediumConstraints, SAMPLE_DISTANCE
         );
 
-        coneBridgeToPlace = new Trajectory(
-                new SimplePathBuilder(new Vector2(-58.5, 183), Rotation2.fromDegrees(0))
-                        .arcTo(new Vector2(-137.5, 125), new Vector2(-141.7, 213.4), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(-250, 119))
+        coneBridgeToPlace2 = new Trajectory(
+                new SimplePathBuilder(new Vector2(-58.1, 182.565), Rotation2.fromDegrees(30))
+                        .arcTo(new Vector2(-123.3, 140.68), new Vector2(-123.3, 228.22))
+                        .lineTo(new Vector2(-250, 146.68), Rotation2.fromDegrees(180))
                         .build(),
-                slowConstraints, SAMPLE_DISTANCE
+                mediumConstraints, SAMPLE_DISTANCE
         );
 
         coneBridgeToPickUp1 = new Trajectory(
                 new SimplePathBuilder(new Vector2(-250, 119), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(-137.5, 125))
                         .lineTo(new Vector2(-58.1, 130.5))
                         .build(),
-                slowConstraints, SAMPLE_DISTANCE
+                mediumConstraints, SAMPLE_DISTANCE
         );
 
         coneBridgeToPlace1 = new Trajectory(
                 new SimplePathBuilder(new Vector2(-58.1, 130.5), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(-137.5, 125))
-                        .lineTo(new Vector2(-250, 119))
+                        .lineTo(new Vector2(-250, 140.68))
                         .build(),
-                slowConstraints, SAMPLE_DISTANCE
+                mediumConstraints, SAMPLE_DISTANCE
         );
 
         //#region blue
                 coneBridgeToPickUp2Blue = new Trajectory(
-                        new SimplePathBuilder(new Vector2(-250, 119), Rotation2.fromDegrees(180))
-                                .lineTo(new Vector2(-137.5, 125), Rotation2.fromDegrees(0))
-                                .arcTo(new Vector2(-58.5, 183), new Vector2(-141.7, 213.4))
+                        new SimplePathBuilder(new Vector2(-250, 140.68), Rotation2.fromDegrees(180))
+                                .lineTo(new Vector2(-123.3, 140.68))
+                                .arcTo(new Vector2(-46.96, 182.565), new Vector2(-123.3, 228.22))
                                 .build(),
-                        slowConstraints, SAMPLE_DISTANCE
+                        mediumConstraints, SAMPLE_DISTANCE
                 );
 
                 coneBridgeToPlace2Blue = new Trajectory(
-                        new SimplePathBuilder(new Vector2(-58.5, 183), Rotation2.fromDegrees(0))
-                                .arcTo(new Vector2(-137.5, 125), new Vector2(-141.7, 213.4), Rotation2.fromDegrees(180))
-                                .lineTo(new Vector2(-250, 119))
+                        new SimplePathBuilder(new Vector2(-46.96, 182.565), Rotation2.fromDegrees(180))
+                                .arcTo(new Vector2(-123.3, 140.68), new Vector2(-123.3, 228.22))
+                                .lineTo(new Vector2(-250, 140.68))
                                 .build(),
-                        slowConstraints, SAMPLE_DISTANCE
+                        mediumConstraints, SAMPLE_DISTANCE
                 );
 
                 coneBridgeToPickUp1Blue = new Trajectory(
-                        new SimplePathBuilder(new Vector2(-250, 119), Rotation2.fromDegrees(180))
-                                .lineTo(new Vector2(-137.5, 125))
-                                .lineTo(new Vector2(-58.1, 130.5))
+                        new SimplePathBuilder(new Vector2(250, 119), Rotation2.fromDegrees(180))
+                                .lineTo(new Vector2(58.1, 130.5))
                                 .build(),
-                        slowConstraints, SAMPLE_DISTANCE
+                        mediumConstraints, SAMPLE_DISTANCE
                 );
 
                 coneBridgeToPlace1Blue = new Trajectory(
-                        new SimplePathBuilder(new Vector2(-58.1, 130.5), Rotation2.fromDegrees(180))
-                                .lineTo(new Vector2(-137.5, 125))
-                                .lineTo(new Vector2(-250, 119))
+                        new SimplePathBuilder(new Vector2(58.1, 130.5), Rotation2.fromDegrees(180))
+                                .lineTo(new Vector2(256, 140.68))
                                 .build(),
-                        slowConstraints, SAMPLE_DISTANCE
+                        mediumConstraints, SAMPLE_DISTANCE
                 );
         //#endregion
 //#endregion        
@@ -478,7 +474,7 @@ public class AutonomousTrajectories {
 
     public Trajectory getConeBridgeToPlace1(boolean isBlue){return isBlue?coneBridgeToPlace1Blue:coneBridgeToPlace1;}
 
-    public Trajectory getConeBridgeToPlace2(boolean isBlue){return isBlue?coneBridgeToPlace2Blue:coneBridgeToPlace;}
+    public Trajectory getConeBridgeToPlace2(boolean isBlue){return isBlue?coneBridgeToPlace2Blue:coneBridgeToPlace2;}
 
     public Trajectory getConeBridgeToPickup1(boolean isBlue){return isBlue?coneBridgeToPickUp1Blue:coneBridgeToPickUp1;}
 

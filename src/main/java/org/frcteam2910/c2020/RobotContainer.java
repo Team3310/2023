@@ -114,7 +114,8 @@ public class RobotContainer {
 
 
         primaryController.getXButton().onTrue(
-            new ChangeDriveMode(drivetrain, DriveControlMode.HOLD)
+            new InstantCommand(() -> DrivetrainSubsystem.getInstance().zeroGyro())
+            // new ChangeDriveMode(drivetrain, DriveControlMode.HOLD)
         );
         //#endregion
 
@@ -221,7 +222,7 @@ public class RobotContainer {
 
         // SmartDashboard.putData("Turn to Goal", new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurnToTarget()));
         SmartDashboard.putData("set drive control mode voltage", new InstantCommand(() -> {drivetrain.setBridgeDriveVoltage(1.0); drivetrain.setDriveControlMode(DriveControlMode.BRIDGE_VOLTAGE);}));
-        // SmartDashboard.putData("Limelight broken", new InstantCommand(() -> DrivetrainSubsystem.getInstance().setLimelightOverride(true)));
+        //SmartDashboard.putData("Zero Gyro", new InstantCommand(() -> DrivetrainSubsystem.getInstance().zeroGyro()));
         // SmartDashboard.putData("Limelight working", new InstantCommand(() -> DrivetrainSubsystem.getInstance().setLimelightOverride(false)));
         // SmartDashboard.putData("set Arm.getInstance() to 30 degrees", new InstantCommand(() -> Arm.getInstance().setArmDegreesPositionAbsolute(30)));
         // SmartDashboard.putData("set Arm.getInstance() to 60 degrees", new InstantCommand(() -> Arm.getInstance().setArmDegreesPositionAbsolute(60)));
@@ -229,7 +230,7 @@ public class RobotContainer {
         // SmartDashboard.putData("set Arm.getInstance() to 0 degrees", new InstantCommand(() -> Arm.getInstance().setArmDegreesPositionAbsolute(0)));
     }
     public Command getAutonomousCommand() {
-        return new OneObjectMid(this, autonomousTrajectories);
+        return autonomousChooser.getCommand(instance);
     }
 
     public DrivetrainSubsystem getDrivetrainSubsystem() {

@@ -186,6 +186,7 @@ public class Robot extends TimedRobot {
         
 
         robotContainer.getDrivetrainSubsystem().resetSteerAbsoluteAngle();
+        robotContainer.getDrivetrainSubsystem().setDriveCoast();
         robotContainer.getDrivetrainSubsystem().resetGyroAngle(robotContainer.getDrivetrainSubsystem().getPose().rotation);
 
         // robotContainer.getDrivetrainSubsystem().alignWheels();

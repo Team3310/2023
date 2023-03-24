@@ -1016,12 +1016,13 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     }
 
     public double getPitch(){
-        return gyroscope.getPitch().toDegrees() - 2; // -2 for bias when level
+        return gyroscope.getPitch(); //- 2; // -2 for bias when level
     }
 
     public double getRoll(){
-        return gyroscope.getRoll().toDegrees() + 0.3; // +0.3 for bias when level
-    }public double getYawDegreesTargetOffset() {
+        return gyroscope.getRoll(); //+ 0.3; // +0.3 for bias when level
+    }
+    public double getYawDegreesTargetOffset() {
         double yaw = getPose().rotation.toDegrees();
         return getLeastAngleDifference(yaw, 0);
     }
@@ -1078,7 +1079,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         ChassisVelocity velocity = swerveKinematics.toChassisVelocity(moduleVelocities);
 
         synchronized (kinematicsLock) {
-            if(getPitchDegreesOffLevel()<2 && getRollDegreesOffLevel()<2){
+            if(getPitchDegreesOffLevel()<5 && getRollDegreesOffLevel()<5){
                 // On the ground, update odometry
                 this.pose = swerveOdometry.update(swerveKinematics, angle, dt, moduleVelocities);
             }
@@ -1162,6 +1163,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             module.set(0, Math.toRadians(angle));
         }
     }
+
+    public void zeroGyro(){
+        gyroscope.zeroGyro();
+    }
     //#endregion
 
     @Override
@@ -1201,6 +1206,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         else{
             setDriveCoast();
         }
-            
+
+        SmartDashboard.putNumber("raw pitch", gyroscope.getPitch());
+        SmartDashboard.putNumber("raw roll", gyroscope.getRoll()); 
     }
 }
