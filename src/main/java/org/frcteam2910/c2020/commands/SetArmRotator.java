@@ -21,7 +21,7 @@ public class SetArmRotator extends CommandBase {
     public SetArmRotator(Arm arm, double targetDegrees, boolean waitToFinishUntilTargetReached) {
         this.arm = arm;
         this.waitUntilReachedTarget = waitToFinishUntilTargetReached;
-        this.startingDegrees = arm.getArmDegrees();
+        this.startingDegrees = arm.getArmDegreesIntegrated();
         this.targetDegrees = targetDegrees;
 
         addRequirements(arm);
@@ -40,7 +40,7 @@ public class SetArmRotator extends CommandBase {
     @Override
     public boolean isFinished(){
         if((!waitUntilReachedTarget) || arm.withinAngle(ARM_DEGREES_TOLERANCE, targetDegrees))
-            arm.setScoreMode(ScoreMode.getClosestMode(arm.getArmDegrees()));
+            arm.setScoreMode(ScoreMode.getClosestMode(arm.getArmDegreesIntegrated()));
         return (!waitUntilReachedTarget) || arm.withinAngle(ARM_DEGREES_TOLERANCE, targetDegrees);
     }
 

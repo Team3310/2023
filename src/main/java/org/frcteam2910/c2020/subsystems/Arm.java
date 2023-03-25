@@ -26,14 +26,12 @@ public class Arm implements Subsystem{
     private TalonFX armTranslationMotor;
 
     //sensors
-    private CANCoder armCanCoder = new CANCoder(5);
+    private CANCoder armExternalCANCoder = new CANCoder(Constants.ARM_EXTERNAL_CANCODER_PORT);
 
     //conversions
     private double DRUM_DIAMETER = 0.54134;
     private double TRANSLATIONAL_ROTATIONS_TO_INCHES = Math.PI * DRUM_DIAMETER;
     private double ARM_INCHES_TO_ENCODER_TICKS = Constants.ARM_TRANSLATIONAL_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION/TRANSLATIONAL_ROTATIONS_TO_INCHES;//Constants.ARM_TRANSLATIONAL_GEAR_RATIO * Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION * TRANSLATIONAL_ROTATIONS_TO_INCHES;
-    private double TICKS_PER_ENCODER_REVOLUTION = Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION * (72/18);
-    private double TICKS_PER_ENCODER_DEGREE = TICKS_PER_ENCODER_REVOLUTION/360;
 
     //misc
     private double inchesOffset;
@@ -71,7 +69,7 @@ public class Arm implements Subsystem{
 
         CANCoderConfiguration config = new CANCoderConfiguration();
         config.sensorDirection =  false;
-        armCanCoder.configAllSettings(config);
+        armExternalCANCoder.configAllSettings(config);
 
         final StatorCurrentLimitConfiguration statorCurrentConfigs = new StatorCurrentLimitConfiguration();
         statorCurrentConfigs.currentLimit = 30.0;
@@ -105,8 +103,8 @@ public class Arm implements Subsystem{
     //#region rotation Methods
     public boolean withinAngle(double tolerance, double angle){
         SmartDashboard.putNumber("angle checking", angle);
-        SmartDashboard.putNumber("result", Math.abs(getArmDegrees()-angle));
-        return Math.abs(getArmDegrees()-angle) < tolerance;
+        SmartDashboard.putNumber("result", Math.abs(getArmDegreesIntegrated()-angle));
+        return Math.abs(getArmDegreesIntegrated()-angle) < tolerance;
     }
 
     public void setRotationControlMode(ArmControlMode mode){
@@ -121,18 +119,23 @@ public class Arm implements Subsystem{
         this.scoreMode = sm;
     }
 
-    public double getArmDegrees(){
-        return (armRotationMotor.getSelectedSensorPosition() / Constants.ARM_DEGREES_TO_ENCODER_TICKS)+ degreesOffset;
+    public double getArmDegreesIntegrated(){
+        return (armRotationMotor.getSelectedSensorPosition() / Constants.ARM_DEGREES_TO_INTEGRATED_ENCODER_TICKS) + degreesOffset;
+    }
+
+    public double getArmDegreesExternal(){
+        return (armExternalCANCoder.getPosition() / Constants.ARM_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS) + degreesOffset;
     }
 
     public double getArmDegreesEncoderTicks(double degrees){
-        return degrees * Constants.ARM_DEGREES_TO_ENCODER_TICKS;
+        return degrees * Constants.ARM_DEGREES_TO_INTEGRATED_ENCODER_TICKS;
     }
 
     public void setArmDegreesZero(double offset){
         degreesOffset = offset;
         targetDegreesTicks = 0;
         armRotationMotor.setSelectedSensorPosition(0);
+        armExternalCANCoder.setPosition(0);
     }
 
     public double limitArmDegrees(double targetDegrees){
@@ -157,9 +160,9 @@ public class Arm implements Subsystem{
         manualRotationSpeed = speed;
 
         rotationControlMode = ArmControlMode.MANUAL;
-        if (getArmDegrees() < Constants.ARM_MIN_ROTATION_DEGREES && speed < 0.0) {
+        if (getArmDegreesIntegrated() < Constants.ARM_MIN_ROTATION_DEGREES && speed < 0.0) {
             speed = 0;
-        } else if (getArmDegrees() > Constants.ARM_MAX_ROTATION_DEGREES && speed > 0.0) {
+        } else if (getArmDegreesIntegrated() > Constants.ARM_MAX_ROTATION_DEGREES && speed > 0.0) {
             speed = 0;
         }
 
@@ -182,7 +185,7 @@ public class Arm implements Subsystem{
     }
 
     public double getTargetDegrees(){
-        return targetDegreesTicks/Constants.ARM_DEGREES_TO_ENCODER_TICKS;
+        return targetDegreesTicks/Constants.ARM_DEGREES_TO_INTEGRATED_ENCODER_TICKS;
     }   
 
     public void setMotorNeutralMode(NeutralMode nm) {
@@ -282,20 +285,21 @@ public class Arm implements Subsystem{
     @Override
     public void periodic(){
         SmartDashboard.putString("score mode", scoreMode.name());
-        SmartDashboard.putString("closest score mode", ScoreMode.getClosestMode(getArmDegrees()).name());
+        SmartDashboard.putString("closest score mode", ScoreMode.getClosestMode(getArmDegreesIntegrated()).name());
 
-        SmartDashboard.putNumber("arm degrees", getArmDegrees());
+        SmartDashboard.putNumber("arm degrees internal", getArmDegreesIntegrated());
+        SmartDashboard.putNumber("arm degrees ext", getArmDegreesExternal());
         SmartDashboard.putNumber("arm inches", getArmInches());
 
         if(rotationControlMode == ArmControlMode.MANUAL){
             targetDegreesTicks = armRotationMotor.getSelectedSensorPosition();
-            setScoreMode(ScoreMode.getClosestMode(getArmDegrees()));
+            setScoreMode(ScoreMode.getClosestMode(getArmDegreesIntegrated()));
         }
 
         if (rotationControlMode == ArmControlMode.MANUAL){
-            if (getArmDegrees() < Constants.ARM_MIN_ROTATION_DEGREES && manualRotationSpeed < 0.0) {
+            if (getArmDegreesIntegrated() < Constants.ARM_MIN_ROTATION_DEGREES && manualRotationSpeed < 0.0) {
                 setRotationHold();
-            } else if (getArmDegrees() > Constants.ARM_MAX_ROTATION_DEGREES && manualRotationSpeed > 0.0) {
+            } else if (getArmDegreesIntegrated() > Constants.ARM_MAX_ROTATION_DEGREES && manualRotationSpeed > 0.0) {
                 setRotationHold();
             }
         }
