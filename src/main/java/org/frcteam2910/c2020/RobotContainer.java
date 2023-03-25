@@ -157,7 +157,7 @@ public class RobotContainer {
         secondaryController.getRightTriggerAxis().onTrue(
             new SequentialCommandGroup(
                 new SetIntakeRPM(Intake.getInstance(), Constants.ARM_INTAKE_COLLECT_RPM),
-                new SetArmSafely(ScoreMode.CUBE_INTAKE)
+                new SetArmSafely(ScoreMode.CUBE_INTAKE, false, true)
                 // For now, it's up to the operator to stop intaking to not pop the cube
                 
                 // Hasn't been tested, but an idea: need to stop intaking when intake.getCubeSensor().get() is true
@@ -223,8 +223,15 @@ public class RobotContainer {
         // SmartDashboard.putData("Turn to Goal", new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurnToTarget()));
         //SmartDashboard.putData("set drive control mode voltage", new InstantCommand(() -> {drivetrain.setBridgeDriveVoltage(1.0); drivetrain.setDriveControlMode(DriveControlMode.BRIDGE_VOLTAGE);}));
         SmartDashboard.putData("extendo zero", new ArmExtenderZero(Arm.getInstance()));
+        SmartDashboard.putData("roller rpm to 1000", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(1000)));
+        SmartDashboard.putData("roller rpm to 2000", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(2000)));
         SmartDashboard.putData("roller rpm to 100", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(100)));
         SmartDashboard.putData("roller rpm to 0", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(0)));
+        SmartDashboard.putData("lift zero", new InstantCommand(() -> Intake.getInstance().setCubeIntakeDeployHome(0)));
+        SmartDashboard.putData("lift degrees to 30", new InstantCommand(() -> Intake.getInstance().setCubeIntakeDeployTargetPosition(30)));
+        SmartDashboard.putData("lift degrees to 70", new InstantCommand(() -> Intake.getInstance().setCubeIntakeDeployTargetPosition(70)));
+        SmartDashboard.putData("lift degrees to 111", new InstantCommand(() -> Intake.getInstance().setCubeIntakeDeployTargetPosition(111)));
+        SmartDashboard.putData("lift degrees to 0", new InstantCommand(() -> Intake.getInstance().setCubeIntakeDeployTargetPosition(0)));
         //SmartDashboard.putData("Zero Gyro", new InstantCommand(() -> DrivetrainSubsystem.getInstance().zeroGyro()));
         // SmartDashboard.putData("Limelight working", new InstantCommand(() -> DrivetrainSubsystem.getInstance().setLimelightOverride(false)));
         // SmartDashboard.putData("set Arm.getInstance() to 30 degrees", new InstantCommand(() -> Arm.getInstance().setArmDegreesPositionAbsolute(30)));

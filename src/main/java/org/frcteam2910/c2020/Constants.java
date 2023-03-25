@@ -75,11 +75,11 @@ public class Constants {
     // Arm Home Values, Offsets, and Ratios
     public static final double ARM_ROTATOR_EXTERNAL_ENCODER_RATIO = (72.0/18.0);
     
-    public static final double ARM_ROTATOR_INTEGRATED_ENCODER_GEAR_RATIO = (50.0/12.0)*
-                                                                            (44.0/42.0)*
-                                                                            (36.0/18.0)*
-                                                                            (36.0/18.0)*
-                                                                            ARM_ROTATOR_EXTERNAL_ENCODER_RATIO;
+    public static final double ARM_ROTATOR_INTEGRATED_ENCODER_GEAR_RATIO = (50.0/11.0)*
+                                                                           (44.0/42.0)*
+                                                                           (36.0/18.0)*
+                                                                           (36.0/18.0)*
+                                                                           ARM_ROTATOR_EXTERNAL_ENCODER_RATIO;
 
     public static final double ARM_ONE_REVOLUTION_TO_INTEGRATED_ENCODER_TICKS = ARM_ROTATOR_INTEGRATED_ENCODER_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
     public static final double ARM_ROTATOR_ONE_DEGREE_TO_INTEGRATED_ENCODER_TICKS = ARM_ONE_REVOLUTION_TO_INTEGRATED_ENCODER_TICKS/360.0;
@@ -108,7 +108,7 @@ public class Constants {
     public static final double ARM_INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 50.0 / 12.0;
     public static final double ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = ARM_INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * ENCODER_TICKS_PER_MOTOR_REVOLUTION;
 
-    public static final double CUBE_INTAKE_DEPLOY_MOTOR_RATIO = (66.0/9.0)*
+    public static final double CUBE_INTAKE_DEPLOY_MOTOR_RATIO = (64.0/11.0)*
                                                                 (36.0/18.0);
     public static final double CUBE_INTAKE_DEPLOY_ONE_REVOLUTION_IN_ENCODER_TICKS = CUBE_INTAKE_DEPLOY_MOTOR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
     public static final double CUBE_INTAKE_DEPLOY_ONE_DEGREE_IN_ENCODER_TICKS = CUBE_INTAKE_DEPLOY_ONE_REVOLUTION_IN_ENCODER_TICKS/360.0;

@@ -2,6 +2,7 @@ package org.frcteam2910.c2020.commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
@@ -48,11 +49,19 @@ public class SetArmSafely extends SequentialCommandGroup {
         // this.addCommands(new PutString(targetScoreMode.name(), "target mode "));
 
         if(!afterIntake){
-            this.addCommands(
-                new SetArmExtender(arm, 0.0, true),
-                new SetArmRotator(arm, targetScoreMode.getAngle(), true),
-                new SetArmExtender(arm, targetScoreMode.getInches(), true)
-            );
+            if(!isCone){
+                this.addCommands(
+                    new SetArmExtender(arm, 0.0, true),
+                    new SetArmRotator(arm, targetScoreMode.getAngle(), true),
+                    new SetArmExtender(arm, targetScoreMode.getInches(), true)
+                );
+            }
+            else{
+                this.addCommands(
+                    new InstantCommand(()->Intake.getInstance().setCubeIntakeDeployTargetPosition(111)),  
+                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(1000))
+                );
+            }
         }else{
             if(isCone){
                 this.addCommands(
@@ -64,8 +73,8 @@ public class SetArmSafely extends SequentialCommandGroup {
             }
             else{
                 this.addCommands(
-                    new SetArmExtender(arm, 0, true),
-                    new SetArmRotator(arm, 10, true)    
+                    new InstantCommand(()->Intake.getInstance().setCubeIntakeDeployTargetPosition(0)),  
+                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(0))
                 );
             }
         }

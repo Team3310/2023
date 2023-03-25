@@ -73,7 +73,7 @@ public class Arm implements Subsystem{
         armExternalCANCoder.configAllSettings(config);
 
         final StatorCurrentLimitConfiguration statorCurrentConfigs = new StatorCurrentLimitConfiguration();
-        statorCurrentConfigs.currentLimit = 30.0;
+        statorCurrentConfigs.currentLimit = 40.0;
         statorCurrentConfigs.enable = true;
         armRotationMotor.configStatorCurrentLimit(statorCurrentConfigs);
 
@@ -86,7 +86,7 @@ public class Arm implements Subsystem{
         armRotationMotor.configMotionAcceleration(28000);
         armRotationMotor.configMotionSCurveStrength(4);
 
-        armTranslationMotor.configMotionCruiseVelocity(10000);
+        armTranslationMotor.configMotionCruiseVelocity(20000);
         armTranslationMotor.configMotionAcceleration(28000);
         armTranslationMotor.configMotionSCurveStrength(4);
 
@@ -280,7 +280,7 @@ public class Arm implements Subsystem{
         extenderControlMode = ArmControlMode.HOLD;
         armTranslationMotor.selectProfileSlot(0, 0);    
 
-        armTranslationMotor.set(ControlMode.Position, targetInchesTicks);
+        armTranslationMotor.set(ControlMode.MotionMagic, targetInchesTicks);
     }
         //#endregion
 
@@ -292,6 +292,9 @@ public class Arm implements Subsystem{
         SmartDashboard.putNumber("arm degrees internal", getArmDegreesIntegrated());
         SmartDashboard.putNumber("arm degrees ext", getArmDegreesExternal());
         SmartDashboard.putNumber("arm inches", getArmInches());
+
+        SmartDashboard.putNumber("extendo voltage", armTranslationMotor.getMotorOutputVoltage());
+        SmartDashboard.putNumber("extendo current", armTranslationMotor.getStatorCurrent());
 
         if(rotationControlMode == ArmControlMode.MANUAL){
             targetDegreesTicks = armRotationMotor.getSelectedSensorPosition();
