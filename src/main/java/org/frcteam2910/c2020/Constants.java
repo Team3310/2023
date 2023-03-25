@@ -68,21 +68,25 @@ public class Constants {
     public static final int ARM_ROTATION_MOTOR_PORT = 14;
     public static final int ARM_TRANSLATIONAL_MOTOR_PORT = 13;
     public static final int INTAKE_MOTOR_PORT = 5;
+    public static final int CUBE_INTAKE_ROLLER_MOTOR_PORT = 21;
+    public static final int CUBE_INTAKE_DEPLOY_MOTOR_PORT = 20;
     
     // Arm Home Values, Offsets, and Ratios
-                                                        // (50.0/11.0)*(60.0/26.0)*(36.0/18.0)*(36.0/18.0)*(72.0/18.0);
-    public static final double ARM_ROTATION_GEAR_RATIO = (50.0/11.0)*
-                                                         (60.0/26.0)*
+    public static final double ARM_ROTATION_ENCODER_RATIO = (72.0/18.0);
+    
+    public static final double ARM_ROTATION_GEAR_RATIO = (50.0/12.0)*
+                                                         (44.0/42.0)*
                                                          (36.0/18.0)*
                                                          (36.0/18.0)*
-                                                         (72.0/18.0);
-    public static final double ARM_REVOLUTIONS_TO_ENCODER_TICKS = ARM_ROTATION_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
-    public static final double ARM_DEGREES_TO_ENCODER_TICKS = ARM_REVOLUTIONS_TO_ENCODER_TICKS/360.0;
+                                                         ARM_ROTATION_ENCODER_RATIO;
+
+    public static final double ARM_REVOLUTIONS_TO_TALON_ENCODER_TICKS = ARM_ROTATION_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
+    public static final double ARM_REVOLUTIONS_TO_ENCODER_TICKS = ARM_ROTATION_ENCODER_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
+    public static final double ARM_DEGREES_TO_ENCODER_TICKS = ARM_REVOLUTIONS_TO_TALON_ENCODER_TICKS/360.0;
     public static final double ARM_HOME_DEGREES = 0.0;
 
-    public static final double ARM_TRANSLATIONAL_GEAR_RATIO = (18/12.0)*(36/18.0);
-    public static final double ARM_EXTEND_ZEROING_SPEED = 0.25;
-    public static final double ARM_EXTEND_HOME_INCHES = 0.0;
+    public static final double ARM_TRANSLATIONAL_GEAR_RATIO = (18.0/12.0)*
+                                                              (36.0/18.0);
     
     // Define Arm motion parameters
     public static final double ARM_MIN_ROTATION_DEGREES = -110.0;
@@ -91,9 +95,17 @@ public class Constants {
     public static final double ARM_MIN_EXTEND_INCHES = 0.0;
     public static final double ARM_MAX_EXTEND_INCHES = 15.0;
 
+    public static final double ARM_EXTEND_ZEROING_SPEED = 0.25;
+    public static final double ARM_EXTEND_HOME_INCHES = 0.0;
+
     // Intake Motor Constants
     public static final double INTAKE_COLLECT_RPM = 1500.0;
     public static final double INTAKE_SPIT_RPM = -1300.0;
+
+    public static final double CUBE_INTAKE_DEPLOY_MOTOR_RATIO = (66.0/9.0)*
+                                                                (36.0/18.0);
+
+    public static final double CUBE_INTAKE_ROLLER_MOTOR_RATIO = (18.0/12.0);
 
     public static final double INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 50.0 / 12.0;
     public static final double INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * ENCODER_TICKS_PER_MOTOR_REVOLUTION;
