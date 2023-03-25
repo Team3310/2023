@@ -156,10 +156,10 @@ public class Intake implements Subsystem{
 
         // These are for velocity units
         public double RollerRPMToNativeUnits(double rpm) {
-            return (rpm * Constants.INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) / (10*60);
+            return (rpm * Constants.ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) / (10*60);
         }
         public double NativeUnitsToRollerRPM(double ticks) {
-            return (ticks / Constants.INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) * (10*60);
+            return (ticks / Constants.ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) * (10*60);
         }
 
         // These are for velocity units

@@ -170,7 +170,7 @@ public class Robot extends TimedRobot {
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.TRAJECTORY);
 
         // Would it be better for these to be in robotInit? Probably, once we get the lightgate to zero the arm.
-        robotContainer.getArm().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
+        robotContainer.getArm().setArmDegreesZero(Constants.ARM_ROTATOR_HOME_DEGREES);
 
         robotContainer.getAutonomousCommand().schedule();
     }

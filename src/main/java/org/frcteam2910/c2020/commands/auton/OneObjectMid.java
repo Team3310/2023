@@ -28,7 +28,7 @@ public class OneObjectMid extends AutonCommandBase {
         this.addCommands(
             //new ArmExtenderZero(Arm.getInstance()),
             new SetArmSafelyAuton(ScoreMode.HIGH),
-            new SetIntakeRPM(intake, -1*Constants.INTAKE_SPIT_RPM),
+            new SetIntakeRPM(intake, -1*Constants.ARM_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
                     new WaitUntilCommand(new BooleanSupplier() {

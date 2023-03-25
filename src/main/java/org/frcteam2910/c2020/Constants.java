@@ -73,37 +73,40 @@ public class Constants {
     public static final int ARM_EXTERNAL_CANCODER_PORT = 5;
     
     // Arm Home Values, Offsets, and Ratios
-    public static final double ARM_ROTATION_EXTERNAL_ENCODER_RATIO = (72.0/18.0);
+    public static final double ARM_ROTATOR_EXTERNAL_ENCODER_RATIO = (72.0/18.0);
     
-    public static final double ARM_ROTATION_INTEGRATED_ENCODER_GEAR_RATIO = (50.0/12.0)*
-                                                         (44.0/42.0)*
-                                                         (36.0/18.0)*
-                                                         (36.0/18.0)*
-                                                         ARM_ROTATION_EXTERNAL_ENCODER_RATIO;
+    public static final double ARM_ROTATOR_INTEGRATED_ENCODER_GEAR_RATIO = (50.0/12.0)*
+                                                                            (44.0/42.0)*
+                                                                            (36.0/18.0)*
+                                                                            (36.0/18.0)*
+                                                                            ARM_ROTATOR_EXTERNAL_ENCODER_RATIO;
 
-    public static final double ARM_REVOLUTIONS_TO_INTEGRATED_ENCODER_TICKS = ARM_ROTATION_INTEGRATED_ENCODER_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
-    public static final double ARM_DEGREES_TO_INTEGRATED_ENCODER_TICKS = ARM_REVOLUTIONS_TO_INTEGRATED_ENCODER_TICKS/360.0;
+    public static final double ARM_ONE_REVOLUTION_TO_INTEGRATED_ENCODER_TICKS = ARM_ROTATOR_INTEGRATED_ENCODER_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
+    public static final double ARM_ROTATOR_ONE_DEGREE_TO_INTEGRATED_ENCODER_TICKS = ARM_ONE_REVOLUTION_TO_INTEGRATED_ENCODER_TICKS/360.0;
 
-    public static final double ARM_ONE_REVOLUTION_TO_EXTERNAL_ENCODER_TICKS = ARM_ROTATION_EXTERNAL_ENCODER_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
-    public static final double ARM_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS = ARM_ONE_REVOLUTION_TO_EXTERNAL_ENCODER_TICKS/360.0;
+    public static final double ARM_ROTATOR_ONE_REVOLUTION_TO_EXTERNAL_ENCODER_TICKS = ARM_ROTATOR_EXTERNAL_ENCODER_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
+    public static final double ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS = ARM_ROTATOR_ONE_REVOLUTION_TO_EXTERNAL_ENCODER_TICKS/360.0;
 
-    public static final double ARM_TRANSLATIONAL_GEAR_RATIO = (18.0/12.0)*
+    public static final double ARM_EXTENDER_GEAR_RATIO = (18.0/12.0)*
                                                               (36.0/18.0);
     
     // Define Arm motion parameters
-    public static final double ARM_HOME_DEGREES = 0.0;
-    public static final double ARM_MIN_ROTATION_DEGREES = -110.0;
-    public static final double ARM_MAX_ROTATION_DEGREES = 110.0;
+    public static final double ARM_ROTATOR_HOME_DEGREES = 0.0;
+    public static final double ARM_ROTATOR_MIN_ROTATION_DEGREES = -110.0;
+    public static final double ARM_ROTATOR_MAX_ROTATION_DEGREES = 110.0;
     
-    public static final double ARM_MIN_EXTEND_INCHES = 0.0;
-    public static final double ARM_MAX_EXTEND_INCHES = 15.0;
+    public static final double ARM_EXTENDER_MIN_EXTEND_INCHES = 0.0;
+    public static final double ARM_EXTENDER_MAX_EXTEND_INCHES = 15.0;
 
-    public static final double ARM_EXTEND_ZEROING_SPEED = 0.25;
-    public static final double ARM_EXTEND_HOME_INCHES = 0.0;
+    public static final double ARM_EXTENDER_ZEROING_SPEED = 0.25;
+    public static final double ARM_EXTENDER_HOME_INCHES = 0.0;
 
     // Intake Motor Constants
-    public static final double INTAKE_COLLECT_RPM = 1500.0;
-    public static final double INTAKE_SPIT_RPM = -1300.0;
+    public static final double ARM_INTAKE_COLLECT_RPM = 1500.0;
+    public static final double ARM_INTAKE_SPIT_RPM = -1300.0;
+
+    public static final double ARM_INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 50.0 / 12.0;
+    public static final double ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = ARM_INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * ENCODER_TICKS_PER_MOTOR_REVOLUTION;
 
     public static final double CUBE_INTAKE_DEPLOY_MOTOR_RATIO = (66.0/9.0)*
                                                                 (36.0/18.0);
@@ -111,8 +114,5 @@ public class Constants {
     public static final double CUBE_INTAKE_DEPLOY_ONE_DEGREE_IN_ENCODER_TICKS = CUBE_INTAKE_DEPLOY_ONE_REVOLUTION_IN_ENCODER_TICKS/360.0;
 
     public static final double CUBE_INTAKE_ROLLER_MOTOR_RATIO = (18.0/12.0);
-
-    public static final double INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 50.0 / 12.0;
-    public static final double INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * ENCODER_TICKS_PER_MOTOR_REVOLUTION;
     //#endregion
 }

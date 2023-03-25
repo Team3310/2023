@@ -31,7 +31,7 @@ public class Arm implements Subsystem{
     //conversions
     private double DRUM_DIAMETER = 0.54134;
     private double TRANSLATIONAL_ROTATIONS_TO_INCHES = Math.PI * DRUM_DIAMETER;
-    private double ARM_INCHES_TO_ENCODER_TICKS = Constants.ARM_TRANSLATIONAL_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION/TRANSLATIONAL_ROTATIONS_TO_INCHES;//Constants.ARM_TRANSLATIONAL_GEAR_RATIO * Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION * TRANSLATIONAL_ROTATIONS_TO_INCHES;
+    private double ARM_INCHES_TO_ENCODER_TICKS = Constants.ARM_EXTENDER_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION/TRANSLATIONAL_ROTATIONS_TO_INCHES;//Constants.ARM_TRANSLATIONAL_GEAR_RATIO * Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION * TRANSLATIONAL_ROTATIONS_TO_INCHES;
 
     //misc
     private double inchesOffset;
@@ -62,6 +62,7 @@ public class Arm implements Subsystem{
 
         TalonFXConfiguration configs = new TalonFXConfiguration();
         configs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+        //armRotationMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
         armRotationMotor.configAllSettings(configs);
         armTranslationMotor.configAllSettings(configs);
         armTranslationMotor.setNeutralMode(NeutralMode.Brake);
@@ -75,6 +76,7 @@ public class Arm implements Subsystem{
         statorCurrentConfigs.currentLimit = 30.0;
         statorCurrentConfigs.enable = true;
         armRotationMotor.configStatorCurrentLimit(statorCurrentConfigs);
+
         armTranslationMotor.configStatorCurrentLimit(statorCurrentConfigs);
 
         armRotationMotor.setNeutralMode(NeutralMode.Brake);
@@ -102,8 +104,8 @@ public class Arm implements Subsystem{
     
     //#region rotation Methods
     public boolean withinAngle(double tolerance, double angle){
-        SmartDashboard.putNumber("angle checking", angle);
-        SmartDashboard.putNumber("result", Math.abs(getArmDegreesIntegrated()-angle));
+        // SmartDashboard.putNumber("angle checking", angle);
+        // SmartDashboard.putNumber("result", Math.abs(getArmDegreesIntegrated()-angle));
         return Math.abs(getArmDegreesIntegrated()-angle) < tolerance;
     }
 
@@ -120,15 +122,15 @@ public class Arm implements Subsystem{
     }
 
     public double getArmDegreesIntegrated(){
-        return (armRotationMotor.getSelectedSensorPosition() / Constants.ARM_DEGREES_TO_INTEGRATED_ENCODER_TICKS) + degreesOffset;
+        return (armRotationMotor.getSelectedSensorPosition() / Constants.ARM_ROTATOR_ONE_DEGREE_TO_INTEGRATED_ENCODER_TICKS) + degreesOffset;
     }
 
     public double getArmDegreesExternal(){
-        return (armExternalCANCoder.getPosition() / Constants.ARM_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS) + degreesOffset;
+        return (armExternalCANCoder.getPosition() / Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS) + degreesOffset;
     }
 
     public double getArmDegreesEncoderTicks(double degrees){
-        return degrees * Constants.ARM_DEGREES_TO_INTEGRATED_ENCODER_TICKS;
+        return degrees * Constants.ARM_ROTATOR_ONE_DEGREE_TO_INTEGRATED_ENCODER_TICKS;
     }
 
     public void setArmDegreesZero(double offset){
@@ -139,10 +141,10 @@ public class Arm implements Subsystem{
     }
 
     public double limitArmDegrees(double targetDegrees){
-        if(targetDegrees < Constants.ARM_MIN_ROTATION_DEGREES){
-            return Constants.ARM_MIN_ROTATION_DEGREES;
-        }else if(targetDegrees > Constants.ARM_MAX_ROTATION_DEGREES){
-            return Constants.ARM_MAX_ROTATION_DEGREES;
+        if(targetDegrees < Constants.ARM_ROTATOR_MIN_ROTATION_DEGREES){
+            return Constants.ARM_ROTATOR_MIN_ROTATION_DEGREES;
+        }else if(targetDegrees > Constants.ARM_ROTATOR_MAX_ROTATION_DEGREES){
+            return Constants.ARM_ROTATOR_MAX_ROTATION_DEGREES;
         }
 
         return targetDegrees;   
@@ -160,9 +162,9 @@ public class Arm implements Subsystem{
         manualRotationSpeed = speed;
 
         rotationControlMode = ArmControlMode.MANUAL;
-        if (getArmDegreesIntegrated() < Constants.ARM_MIN_ROTATION_DEGREES && speed < 0.0) {
+        if (getArmDegreesIntegrated() < Constants.ARM_ROTATOR_MIN_ROTATION_DEGREES && speed < 0.0) {
             speed = 0;
-        } else if (getArmDegreesIntegrated() > Constants.ARM_MAX_ROTATION_DEGREES && speed > 0.0) {
+        } else if (getArmDegreesIntegrated() > Constants.ARM_ROTATOR_MAX_ROTATION_DEGREES && speed > 0.0) {
             speed = 0;
         }
 
@@ -185,7 +187,7 @@ public class Arm implements Subsystem{
     }
 
     public double getTargetDegrees(){
-        return targetDegreesTicks/Constants.ARM_DEGREES_TO_INTEGRATED_ENCODER_TICKS;
+        return targetDegreesTicks/Constants.ARM_ROTATOR_ONE_DEGREE_TO_INTEGRATED_ENCODER_TICKS;
     }   
 
     public void setMotorNeutralMode(NeutralMode nm) {
@@ -204,7 +206,7 @@ public class Arm implements Subsystem{
     }
 
     public double getTranslationalRotations(){
-        return armTranslationMotor.getSelectedSensorPosition() / Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION / Constants.ARM_TRANSLATIONAL_GEAR_RATIO;
+        return armTranslationMotor.getSelectedSensorPosition() / Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION / Constants.ARM_EXTENDER_GEAR_RATIO;
     }
 
     public double getArmInches(){
@@ -237,10 +239,10 @@ public class Arm implements Subsystem{
     }
 
     public double limitArmInches(double targetInches){
-        if(targetInches < Constants.ARM_MIN_EXTEND_INCHES){
-            return Constants.ARM_MIN_EXTEND_INCHES;
-        }else if(targetInches > Constants.ARM_MAX_EXTEND_INCHES){
-            return Constants.ARM_MAX_EXTEND_INCHES;
+        if(targetInches < Constants.ARM_EXTENDER_MIN_EXTEND_INCHES){
+            return Constants.ARM_EXTENDER_MIN_EXTEND_INCHES;
+        }else if(targetInches > Constants.ARM_EXTENDER_MAX_EXTEND_INCHES){
+            return Constants.ARM_EXTENDER_MAX_EXTEND_INCHES;
         }
 
         return targetInches;   
@@ -259,11 +261,11 @@ public class Arm implements Subsystem{
             extenderControlMode = ArmControlMode.MANUAL;
         }
 
-        if (!override && getArmInches() < Constants.ARM_MIN_EXTEND_INCHES && speed < 0.0) {
+        if (!override && getArmInches() < Constants.ARM_EXTENDER_MIN_EXTEND_INCHES && speed < 0.0) {
             curSpeed = 0;
-        } else if (!override && getArmInches() > Constants.ARM_MAX_EXTEND_INCHES && speed > 0.0) {
+        } else if (!override && getArmInches() > Constants.ARM_EXTENDER_MAX_EXTEND_INCHES && speed > 0.0) {
             curSpeed = 0;
-        } else if (!override && getArmInches() - Constants.ARM_MIN_EXTEND_INCHES <= 2 && curSpeed < 0) {
+        } else if (!override && getArmInches() - Constants.ARM_EXTENDER_MIN_EXTEND_INCHES <= 2 && curSpeed < 0) {
             curSpeed *= 0.25;
         }
 
@@ -297,9 +299,9 @@ public class Arm implements Subsystem{
         }
 
         if (rotationControlMode == ArmControlMode.MANUAL){
-            if (getArmDegreesIntegrated() < Constants.ARM_MIN_ROTATION_DEGREES && manualRotationSpeed < 0.0) {
+            if (getArmDegreesIntegrated() < Constants.ARM_ROTATOR_MIN_ROTATION_DEGREES && manualRotationSpeed < 0.0) {
                 setRotationHold();
-            } else if (getArmDegreesIntegrated() > Constants.ARM_MAX_ROTATION_DEGREES && manualRotationSpeed > 0.0) {
+            } else if (getArmDegreesIntegrated() > Constants.ARM_ROTATOR_MAX_ROTATION_DEGREES && manualRotationSpeed > 0.0) {
                 setRotationHold();
             }
         }
@@ -308,9 +310,9 @@ public class Arm implements Subsystem{
             setTargetTicks(armTranslationMotor.getSelectedSensorPosition());
         
         if (extenderControlMode == ArmControlMode.MANUAL) {
-            if (getArmInches() < Constants.ARM_MIN_EXTEND_INCHES && manualTranslationSpeed < 0.0) {
+            if (getArmInches() < Constants.ARM_EXTENDER_MIN_EXTEND_INCHES && manualTranslationSpeed < 0.0) {
                 setTranslationalHold();
-            } else if (getArmInches() > Constants.ARM_MAX_EXTEND_INCHES && manualTranslationSpeed > 0.0) {
+            } else if (getArmInches() > Constants.ARM_EXTENDER_MAX_EXTEND_INCHES && manualTranslationSpeed > 0.0) {
                 setTranslationalHold();
             }
         } 

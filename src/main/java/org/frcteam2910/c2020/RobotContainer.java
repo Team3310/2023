@@ -156,7 +156,7 @@ public class RobotContainer {
 
         secondaryController.getRightTriggerAxis().onTrue(
             new SequentialCommandGroup(
-                new SetIntakeRPM(Intake.getInstance(), Constants.INTAKE_COLLECT_RPM),
+                new SetIntakeRPM(Intake.getInstance(), Constants.ARM_INTAKE_COLLECT_RPM),
                 new SetArmSafely(ScoreMode.CUBE_INTAKE)
                 // For now, it's up to the operator to stop intaking to not pop the cube
                 
@@ -183,7 +183,7 @@ public class RobotContainer {
         secondaryController.getRightBumperButton().onTrue(
             new SequentialCommandGroup(
                 new SetServosOut(Intake.getInstance()),
-                new SetIntakeRPM(Intake.getInstance(), -1*Constants.INTAKE_COLLECT_RPM),
+                new SetIntakeRPM(Intake.getInstance(), -1*Constants.ARM_INTAKE_COLLECT_RPM),
                 new SetArmSafely(ScoreMode.CONE_INTAKE)
             )    
         );
@@ -199,7 +199,7 @@ public class RobotContainer {
         
         secondaryController.getLeftBumperButton().onTrue(
             // Outtake Cone
-            new SetIntakeRPM(Intake.getInstance(), -1*Constants.INTAKE_SPIT_RPM)
+            new SetIntakeRPM(Intake.getInstance(), -1*Constants.ARM_INTAKE_SPIT_RPM)
         );
 
         secondaryController.getLeftBumperButton().onFalse(
@@ -208,7 +208,7 @@ public class RobotContainer {
 
         secondaryController.getLeftTriggerAxis().onTrue(
             // Outtake Cube
-            new SetIntakeRPM(Intake.getInstance(), Constants.INTAKE_SPIT_RPM)
+            new SetIntakeRPM(Intake.getInstance(), Constants.ARM_INTAKE_SPIT_RPM)
         );
 
         secondaryController.getLeftTriggerAxis().onFalse(
