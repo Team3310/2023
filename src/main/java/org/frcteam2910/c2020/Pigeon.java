@@ -35,6 +35,12 @@ public class Pigeon extends Gyroscope {
         return Rotation2.fromDegrees(handle.getPitch()).toDegrees()-YAxisGyroError;
     }
 
+    public double[] getGravityVector(){
+        double[] vectors = new double[3];
+        handle.getGravityVector(vectors);
+        return vectors;
+    }
+
     public short[] getAccels(){
         short[] refAccels = new short[] {0,0,0};
         handle.getBiasedAccelerometer(refAccels);

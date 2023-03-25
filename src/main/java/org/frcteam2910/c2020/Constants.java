@@ -80,7 +80,7 @@ public class Constants {
     public static final double ARM_DEGREES_TO_ENCODER_TICKS = ARM_REVOLUTIONS_TO_ENCODER_TICKS/360.0;
     public static final double ARM_HOME_DEGREES = 0.0;
 
-    public static final double ARM_TRANSLATIONAL_GEAR_RATIO = (36/12.0)*(36/18.0);
+    public static final double ARM_TRANSLATIONAL_GEAR_RATIO = (18/12.0)*(36/18.0);
     public static final double ARM_EXTEND_ZEROING_SPEED = 0.25;
     public static final double ARM_EXTEND_HOME_INCHES = 0.0;
     

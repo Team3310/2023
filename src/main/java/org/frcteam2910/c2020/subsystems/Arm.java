@@ -10,6 +10,8 @@ import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.CANCoderConfiguration;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -23,11 +25,16 @@ public class Arm implements Subsystem{
     private TalonFX armRotationMotor;
     private TalonFX armTranslationMotor;
 
+    //sensors
+    private CANCoder armCanCoder = new CANCoder(5);
+
     //conversions
     private double DRUM_DIAMETER = 0.54134;
     private double TRANSLATIONAL_ROTATIONS_TO_INCHES = Math.PI * DRUM_DIAMETER;
     private double ARM_INCHES_TO_ENCODER_TICKS = Constants.ARM_TRANSLATIONAL_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION/TRANSLATIONAL_ROTATIONS_TO_INCHES;//Constants.ARM_TRANSLATIONAL_GEAR_RATIO * Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION * TRANSLATIONAL_ROTATIONS_TO_INCHES;
-    
+    private double TICKS_PER_ENCODER_REVOLUTION = Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION * (72/18);
+    private double TICKS_PER_ENCODER_DEGREE = TICKS_PER_ENCODER_REVOLUTION/360;
+
     //misc
     private double inchesOffset;
     private double targetInches = 0.0;
@@ -61,6 +68,10 @@ public class Arm implements Subsystem{
         armTranslationMotor.configAllSettings(configs);
         armTranslationMotor.setNeutralMode(NeutralMode.Brake);
         armTranslationMotor.setInverted(false);
+
+        CANCoderConfiguration config = new CANCoderConfiguration();
+        config.sensorDirection =  false;
+        armCanCoder.configAllSettings(config);
 
         final StatorCurrentLimitConfiguration statorCurrentConfigs = new StatorCurrentLimitConfiguration();
         statorCurrentConfigs.currentLimit = 30.0;

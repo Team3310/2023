@@ -84,6 +84,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private boolean turbo = false;
     private double voltageOutput;
     private double voltageSteerAngle;
+    private double lastScalar;
 
     private Vector2 balanceInitialPos = Vector2.ZERO;
     private Timer balanceTimer = new Timer();
@@ -531,7 +532,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
     public void voltageDrive(){
         for(int i = 0; i < modules.length; i++){
-            modules[i].set(voltageOutput, 0);
+            modules[i].set(voltageOutput, voltageSteerAngle);
         }  
     }
 
@@ -1079,7 +1080,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         ChassisVelocity velocity = swerveKinematics.toChassisVelocity(moduleVelocities);
 
         synchronized (kinematicsLock) {
-            if(getPitchDegreesOffLevel()<5 && getRollDegreesOffLevel()<5){
+            if(true/*getPitchDegreesOffLevel()<5 && getRollDegreesOffLevel()<5*/){
                 // On the ground, update odometry
                 this.pose = swerveOdometry.update(swerveKinematics, angle, dt, moduleVelocities);
             }
@@ -1208,6 +1209,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         }
 
         SmartDashboard.putNumber("raw pitch", gyroscope.getPitch());
-        SmartDashboard.putNumber("raw roll", gyroscope.getRoll()); 
+        SmartDashboard.putNumber("raw roll", gyroscope.getRoll());
+        
+        SmartDashboard.putNumber("gravity vector", gyroscope.getGravityVector()[0]);
+        SmartDashboard.putNumber("gravity vector1", gyroscope.getGravityVector()[1]);
+        SmartDashboard.putNumber("gravity vector2", gyroscope.getGravityVector()[2]);
     }
 }

@@ -25,12 +25,15 @@ public class AutonomousChooser {
         // autonomousModeChooser.addOption("Left Two Object Close Balance", AutonomousMode.THREE_OBJECT_CLOSE_BALANCE);
         autonomousModeChooser.addOption("Right Three Object", AutonomousMode.THREE_OBJECT_BRIDGE);
         autonomousModeChooser.addOption("Right Two Object", AutonomousMode.TWO_OBJECT_BRIDGE);
+        autonomousModeChooser.addOption("Right Two Object Balance", AutonomousMode.TWO_OBJECT_BRIDGE_BALANCE);
+        autonomousModeChooser.addOption("Right Two Half Object Balance", AutonomousMode.TWO_HALF_OBJECT_BRIDGE_BALANCE);
         // autonomousModeChooser.addOption("On To Bridge", AutonomousMode.TO_BRIDGE);
         // autonomousModeChooser.addOption("Up Bridge", AutonomousMode.UP_BRIDGE);
         // autonomousModeChooser.addOption("Bridge Balance", AutonomousMode.BALANCE);
         // autonomousModeChooser.addOption("Right Two Object", AutonomousMode.RIGHT_TWO_OBJECT);
         // autonomousModeChooser.addOption("Two Object Bridge Balance", AutonomousMode.TWO_OBJECT_BALANCE);
         autonomousModeChooser.addOption("One Object Bridge Balance", AutonomousMode.ONE_OBJECT_BALANCE);
+        autonomousModeChooser.addOption("One Half Object Bridge Balance", AutonomousMode.ONE_HALF_OBJECT_BALANCE);
         autonomousModeChooser.addOption("One Object Drive Away", AutonomousMode.ONE_OBJECT_DRIVE_AWAY);
   
         // autonomousModeChooser.addOption("7 Feet", AutonomousMode.SEVEN_FEET);
@@ -80,7 +83,7 @@ public class AutonomousChooser {
             case TWO_OBJECT_BRIDGE:
                 return new RightSideTwoCone(container, trajectories);
             case TO_BRIDGE:
-                return new OnToBridge(container, trajectories);
+                return new OnToBridge(container, trajectories,-5);
             case BALANCE:
                 return new DriveBalanceCommand(container.getDrivetrainSubsystem(), true, false);
             case THREE_OBJECT_CLOSE_BALANCE:
@@ -93,6 +96,12 @@ public class AutonomousChooser {
                 return new RightSideTwoCone(container, trajectories);
             case ONE_OBJECT_DRIVE_AWAY:
                 return new PlaceConeAndLeave(container, trajectories); 
+            case TWO_OBJECT_BRIDGE_BALANCE:
+                return new RightSideTwoConeBalance(container, trajectories);    
+            case TWO_HALF_OBJECT_BRIDGE_BALANCE:
+                return new RightSide2HalfBalance(container, trajectories);   
+            case ONE_HALF_OBJECT_BALANCE:
+                return new OneHalfObjectMidBalance(container, trajectories);     
             default:
                 return getSevenFeet(container);
         }
@@ -123,7 +132,10 @@ public class AutonomousChooser {
         THREE_OBJECT_CLOSE_BALANCE,
         ONE_OBJECT_BALANCE,
         TWO_OBJECT_BALANCE,
-        ONE_OBJECT_DRIVE_AWAY
+        ONE_OBJECT_DRIVE_AWAY,
+        TWO_OBJECT_BRIDGE_BALANCE,
+        TWO_HALF_OBJECT_BRIDGE_BALANCE,
+        ONE_HALF_OBJECT_BALANCE,
         ;
     }
 }
