@@ -4,6 +4,7 @@ import org.frcteam2910.c2020.commands.*;
 import org.frcteam2910.c2020.commands.auton.OneObjectMid;
 import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
+import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.LimelightMode;
 import org.frcteam2910.c2020.util.*;
 import org.frcteam2910.common.robot.input.*;
 import org.frcteam2910.common.robot.input.DPadButton.Direction;
@@ -78,12 +79,16 @@ public class RobotContainer {
         );
         primaryController.getAButton().onTrue(
             new InstantCommand(()->{
-                drivetrain.setStartDegrees(drivetrain.getRollDegreesOffLevel());
+                drivetrain.setBalanceStartDegrees(drivetrain.getRollDegreesOffLevel());
                 drivetrain.setDriveControlMode(DriveControlMode.BALANCE);
             })
         );
         primaryController.getYButton().onTrue(
                 new InstantCommand(()->Intake.getInstance().setServoPosition(-1))
+        );
+        primaryController.getXButton().onTrue(
+            new InstantCommand(() -> DrivetrainSubsystem.getInstance().zeroGyro())
+            // new ChangeDriveMode(drivetrain, DriveControlMode.HOLD)
         );
 
 
@@ -96,28 +101,27 @@ public class RobotContainer {
         );
 
         primaryController.getRightBumperButton().onTrue(
-            new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(true))
+            new InstantCommand(() -> {
+                DrivetrainSubsystem.getInstance().setTurbo(true);
+                DrivetrainSubsystem.getInstance().setDriveControlMode(DriveControlMode.JOYSTICKS);
+            })
         );
-
         primaryController.getRightBumperButton().onFalse(
             new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(false))
         );
 
 
-        primaryController.getRightTriggerAxis().onFalse(
-                new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
+        primaryController.getRightTriggerAxis().onTrue(
+            new InstantCommand(() -> {
+                DrivetrainSubsystem.getInstance().setDriveControlMode(DriveControlMode.LIMELIGHT);
+                DrivetrainSubsystem.getInstance().setLimelightMode(LimelightMode.RETROREFLECTIVE);
+            })
         );
-        // primaryController.getRightTriggerAxis().onTrue(
-        //     new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(true))
-        // );
-        // primaryController.getRightTriggerAxis().onFalse(
-        //     new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(false))
-        // );
-
-
-        primaryController.getXButton().onTrue(
-            new InstantCommand(() -> DrivetrainSubsystem.getInstance().zeroGyro())
-            // new ChangeDriveMode(drivetrain, DriveControlMode.HOLD)
+        primaryController.getRightTriggerAxis().onFalse(
+            new InstantCommand(() -> {
+                DrivetrainSubsystem.getInstance().setDriveControlMode(DriveControlMode.JOYSTICKS);
+                DrivetrainSubsystem.getInstance().setLimelightMode(LimelightMode.NONE);
+            })
         );
 
         primaryController.getLeftBumperButton().onTrue(
@@ -127,7 +131,6 @@ public class RobotContainer {
                 intake.setCubeRollerRPM(2000);
             })
         );
-
         primaryController.getLeftBumperButton().onFalse(
             new InstantCommand(()->{
                 intake.setCubeIntakeDeployTargetPosition(0);
@@ -141,7 +144,6 @@ public class RobotContainer {
                 intake.setCubeRollerRPM(-2000);
             })
         );
-
         primaryController.getLeftTriggerAxis().onFalse(
             new InstantCommand(()->{
                 intake.setCubeRollerRPM(0);
