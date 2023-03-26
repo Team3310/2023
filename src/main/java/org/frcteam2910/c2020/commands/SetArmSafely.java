@@ -49,17 +49,19 @@ public class SetArmSafely extends SequentialCommandGroup {
         // this.addCommands(new PutString(targetScoreMode.name(), "target mode "));
 
         if(!afterIntake){
-            if(!isCone){
+            if(targetScoreMode!=ScoreMode.CUBE_INTAKE){
                 this.addCommands(
                     new SetArmExtender(arm, 0.0, true),
                     new SetArmRotator(arm, targetScoreMode.getAngle(), true),
                     new SetArmExtender(arm, targetScoreMode.getInches(), true)
                 );
             }
-            else{
+            else if(targetScoreMode==ScoreMode.CUBE_INTAKE){
                 this.addCommands(
+                    new SetArmExtender(arm, 0.0, true),
+                    new SetArmRotator(arm, 0.0, true),
                     new InstantCommand(()->Intake.getInstance().setCubeIntakeDeployTargetPosition(111)),  
-                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(1000))
+                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(2000))
                 );
             }
         }else{

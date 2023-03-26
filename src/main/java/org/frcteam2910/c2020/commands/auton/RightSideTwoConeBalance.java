@@ -24,10 +24,12 @@ public class RightSideTwoConeBalance extends AutonCommandBase {
     }
 
     public RightSideTwoConeBalance(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
-        this.addCommands(
-            new RightSideTwoCone(container, trajectories),
-            new WaitCommand(0.5),
-            new FollowTrajectoryCommand(drive, trajectories.getToBridge1()),
+        this.addCommands(  
+        new RightSideTwoCone(container, trajectories),
+            new ParallelDeadlineGroup(
+                new FollowTrajectoryCommand(drive, trajectories.getToBridge1()),
+                new SetArmSafely(ScoreMode.ZERO)
+            ),
             new OnToBridge(container, trajectories, -5)
         );
     }

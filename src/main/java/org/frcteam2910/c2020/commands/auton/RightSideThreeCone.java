@@ -27,9 +27,17 @@ public class RightSideThreeCone extends AutonCommandBase {
         boolean isBlue = false;//getSide(container);
         this.addCommands(
             new RightSideTwoCone(container, trajectories),
-            new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup2(isBlue)),
+            new ParallelDeadlineGroup(
+                new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup2(isBlue)),
+                new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false) 
+            ),
             new WaitCommand(1.0),
-            new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPlace2(isBlue))
+            new ParallelDeadlineGroup(
+                new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPlace2(isBlue)),
+                new SetArmSafely(true, false) 
+            ),
+            new SetArmSafely(ScoreMode.MID),
+            new SetIntakeRPM(intake, -Constants.ARM_INTAKE_SPIT_RPM)
             // new ParallelDeadlineGroup(     
             //     new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup2(isBlue)),
             //     new SetArmSafely(ScoreMode.CONE_INTAKE, false),

@@ -88,7 +88,7 @@ public class Constants {
     public static final double ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS = ARM_ROTATOR_ONE_REVOLUTION_TO_EXTERNAL_ENCODER_TICKS/360.0;
 
     public static final double ARM_EXTENDER_GEAR_RATIO = (18.0/12.0)*
-                                                              (36.0/18.0);
+                                                         (36.0/18.0);
     
     // Define Arm motion parameters
     public static final double ARM_ROTATOR_HOME_DEGREES = 0.0;

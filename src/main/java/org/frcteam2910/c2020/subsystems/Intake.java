@@ -37,6 +37,7 @@ public class Intake implements Subsystem{
     private int kIntakePositionSlot = 1;
     private boolean firstSet = false;
     private double _deployPosDegreesOffset = 0.0;
+    public boolean setCubeOuttake = false;
 
     boolean hasSetIntakeZero = false;
     private IntakeControlMode controlMode = IntakeControlMode.MANUAL;
@@ -221,9 +222,10 @@ public class Intake implements Subsystem{
         // if(cubeSensor.get()){
         //     setIntakeHold();
         // }
-
-        if(liftSensor.get()){
-            setCubeRollerRPM(0);
+        if(!setCubeOuttake){
+            if(liftSensor.get()){
+                setCubeRollerRPM(0);
+            }
         }
     }
 

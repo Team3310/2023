@@ -85,6 +85,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private double voltageOutput;
     private double voltageSteerAngle;
     private double lastScalar;
+    private double lastDegree;
+    private double startDegrees;
 
     private Vector2 balanceInitialPos = Vector2.ZERO;
     private Timer balanceTimer = new Timer();
@@ -191,7 +193,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public ProfiledPIDController profiledLimelightController = new ProfiledPIDController(1.0, 0.03, 0.02, constraints, 0.02);
     public PIDController limelightController = new PIDController(2.0, 0.03, 0.25, 0.02); //(3.0, 0.03, 0.02) (1.7, 0.03, 0.25) 0.02
     public PIDController ballTrackController = new PIDController(1.0, 0.03, 0.25, 0.02);
-    private PidController balanceController = new PidController(new PidConstants(0.6, 0.00001, 0.00));
+    private PidController balanceController = new PidController(new PidConstants(1.2, 0.0, 20.0));
     private PidController joystickRotateGyroController = new PidController(new PidConstants(.01, 0.002, 0.0));
 
     public static final DrivetrainFeedforwardConstants FEEDFORWARD_CONSTANTS = 
@@ -627,28 +629,48 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         }
     }
 
-    public void balanceOutDrive() {
-        balanceController.reset();
-        balanceController.setSetpoint(0);
-        boolean tiltedBackward = (getRoll() > 180);
-        double pitchOutput = tiltedBackward ? -1 : 1;
-        double degreesAwayFromBalance = tiltedBackward ? (360 - getRoll()) : getRoll();
-        if(degreesAwayFromBalance < Constants.BALANCE_DEADBAND){
-            degreesAwayFromBalance = 0;
-            if(!balanceTimer.hasElapsed(0.1)){
-                balanceTimer.start();
-                balanceController.integralAccum=0;
-            }    
-        }
-        else{
-            balanceTimer.stop();
-            balanceTimer.reset();
-        } 
+    public void setStartDegrees(double startDegrees){
+        this.startDegrees = startDegrees;
+    }
 
-        double forwardAxisOutput = balanceController.calculate(Math.toRadians(degreesAwayFromBalance), 0.02);
-        if(degreesAwayFromBalance > Constants.BALANCE_DEADBAND)
-            forwardAxisOutput/=1.4;
-        drive(new Vector2(pitchOutput * forwardAxisOutput, 0.0), 0.0, false);
+    public void balanceOutDrive() {
+        // balanceController.reset();
+        // balanceController.setSetpoint(0);
+        boolean tiltedBackward = (getRoll() > 180);
+        // double pitchOutput = tiltedBackward ? -1 : 1;
+        double degreesAwayFromBalance = tiltedBackward ? (360 - getRoll()) : getRoll();
+        // if(degreesAwayFromBalance < Constants.BALANCE_DEADBAND){
+        //     degreesAwayFromBalance = 0;
+        //     if(!balanceTimer.hasElapsed(0.1)){
+        //         balanceTimer.start();
+        //         balanceController.integralAccum=0;
+        //     }    
+        // }
+        // else{
+        //     balanceTimer.stop();
+        //     balanceTimer.reset();
+        // } 
+
+        // double forwardAxisOutput = balanceController.calculate(Math.toRadians(degreesAwayFromBalance), 0.02);
+        // if(degreesAwayFromBalance > Constants.BALANCE_DEADBAND)
+        //     forwardAxisOutput/=1.3;
+
+        // if(Math.abs(degreesAwayFromBalance-lastDegree)>2){
+        //     setDriveControlMode(DriveControlMode.HOLD);
+        // }else{
+        //     lastDegree = degreesAwayFromBalance;
+        // }    
+        // drive(new Vector2(pitchOutput * forwardAxisOutput, 0.0), 0.0, false);
+
+
+        
+        if(startDegrees-0.75>degreesAwayFromBalance){
+            setDriveControlMode(DriveControlMode.HOLD);
+        }
+        drive(new Vector2((tiltedBackward?1:-1)*0.18, 0.0), 0.0, false);
+
+
+
         // DriveControlMode is BALANCE
         // balanceController.reset();
         // balanceController.setSetpoint(0);
