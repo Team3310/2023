@@ -59,7 +59,7 @@ public class Intake implements Subsystem{
         intakeMotor = new TalonFX(Constants.INTAKE_MOTOR_PORT, "rio");
         cubeIntakeRollerMotor = new TalonFX(Constants.CUBE_INTAKE_ROLLER_MOTOR_PORT, "rio");
         cubeIntakeLiftMotor = new TalonFX(Constants.CUBE_INTAKE_DEPLOY_MOTOR_PORT, "Drivetrain");
-        intakeMotor.setInverted(true);
+        intakeMotor.setInverted(false);
         cubeIntakeRollerMotor.setInverted(false);
         cubeIntakeLiftMotor.setInverted(false);
         leftServo.setInverted(false);

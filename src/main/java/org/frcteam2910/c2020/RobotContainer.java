@@ -197,7 +197,7 @@ public class RobotContainer {
         secondaryController.getRightBumperButton().onTrue(
             new SequentialCommandGroup(
                 new SetServosOut(Intake.getInstance()),
-                new SetIntakeRPM(Intake.getInstance(), -Constants.ARM_INTAKE_COLLECT_RPM),
+                new SetIntakeRPM(Intake.getInstance(), Constants.ARM_INTAKE_COLLECT_RPM),
                 new SetArmSafely(ScoreMode.CONE_INTAKE)
             )    
         );
@@ -213,7 +213,7 @@ public class RobotContainer {
         // Cube Intake
         secondaryController.getRightTriggerAxis().onTrue(
             new SequentialCommandGroup(
-                new SetIntakeRPM(Intake.getInstance(), -Constants.ARM_INTAKE_COLLECT_RPM),
+                new SetIntakeRPM(Intake.getInstance(), Constants.ARM_INTAKE_COLLECT_RPM),
                 new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false),
                 new InstantCommand(() -> {
                     // This flag is set so that we can force stuff to stop moving once cone/cube is in arm intake
@@ -246,7 +246,7 @@ public class RobotContainer {
         
         // Outtake Cone
         secondaryController.getLeftBumperButton().onTrue(
-            new SetIntakeRPM(Intake.getInstance(), -Constants.ARM_INTAKE_SPIT_RPM)
+            new SetIntakeRPM(Intake.getInstance(), Constants.ARM_INTAKE_SPIT_RPM)
         );
         secondaryController.getLeftBumperButton().onFalse(
             new PutIntakeZeroAfterOuttake(Intake.getInstance(), Arm.getInstance())
@@ -260,7 +260,7 @@ public class RobotContainer {
                     intake.stopRollingOnTriggeredArmIntakeDIO = true;
                     intake.resetIntakeDIOTimestamp();
                 }),
-                new SetIntakeRPM(Intake.getInstance(), -Constants.ARM_INTAKE_SPIT_RPM)
+                new SetIntakeRPM(Intake.getInstance(), Constants.ARM_INTAKE_SPIT_RPM)
             )
         );
         secondaryController.getLeftTriggerAxis().onFalse(

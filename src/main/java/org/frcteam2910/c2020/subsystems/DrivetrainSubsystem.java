@@ -523,12 +523,16 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         wasJustTurning = Math.abs(getDriveForwardAxis().get(true))<0.1 && Math.abs(getDriveStrafeAxis().get(true))<0.1 && Math.abs(getDriveRotationAxis().get(true))>0.1;                             
     }
 
+    /**
+     * If no input given and gyro autocorrect is on, output is given to rotate towards 
+     * @param rotationInput
+     * @return
+     */
     public double getGyroRotationOutput(double rotationInput) {
         double rotationOutput = 0.0;
         if(Math.abs(rotationInput) <= Constants.DRIVE_ROTATION_JOYSTICK_DEADBAND)
         {
-            // No movement for both joysticks
-
+            // No command from rotation joystick
             if(RobotContainer.getInstance().getGyroAutoAdjustMode().getMode() == org.frcteam2910.c2020.util.GyroAutoChooser.Mode.On)
             {
                 // Auto gyro correction if no turning
@@ -664,30 +668,6 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         }
     }
 
-    public void limelightSearch(){
-        // DriveControlMode is LIMELIGHT_SEARCH
-
-        // Chassis must rotate to 'scan' for a limelight (goal) target
-        if(!limelightForward.hasTarget()){
-
-            primaryController.getLeftXAxis().setInverted(true);
-            primaryController.getRightXAxis().setInverted(true);
-
-            double rotationOutput = 0.8;
-
-            if(isRight){
-                rotationOutput *= -1.0;
-            }
-
-            drive(new Vector2(getDriveForwardAxis().get(true), getDriveStrafeAxis().get(true)), rotationOutput, true);
-        }
-        else {
-            setDriveControlMode(DriveControlMode.LIMELIGHT);
-        }
-    }
-
-
-
     public void balanceOutDrive() {
         // balanceController.reset();
         // balanceController.setSetpoint(0);
@@ -794,56 +774,6 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         // }
 
         // drive(new Vector2(invertOutput * forwardAxisOutput, 0.0), 0.0, false);
-    }
-
-    // public void limelightDrive(){
-    //     // Config config = new Config(152.4/1000, angularVelocity, angularVelocity, angularVelocity, angularVelocity);
-    //     // AprilTagPoseEstimator poseEstimator = new AprilTagPoseEstimator(config);
-    //     // AprilTagDetection aprilTagDetection = new AprilTagDetection(limelightBall., MAX_LATENCY_COMPENSATION_MAP_ENTRIES, MAX_LATENCY_COMPENSATION_MAP_ENTRIES, MAX_LATENCY_COMPENSATION_MAP_ENTRIES, lastModuleAngle, TRACKWIDTH, MAX_LATENCY_COMPENSATION_MAP_ENTRIES, lastModuleAngle)
-    //     // AprilTagDetector aprilTagDetector = new AprilTagDetector();
-    //     // poseEstimator.
-    //     // DriveControlMode is LIMELIGHT
-    //     targetAngle = getPoseAtTime(Timer.getFPGATimestamp() - limelightForward.getPipelineLatency() / 1000.0).rotation.toRadians() - Math.toRadians(limelightForward.getFilteredTargetHorizOffset());
-
-    //     //targetAngle = Math.toRadians(-limelightGoal.getFilteredTargetHorizOffset()) + getPose().rotation.toRadians();
-
-    //     limelightController.setSetpoint(targetAngle);
-
-    //     primaryController.getLeftXAxis().setInverted(true);
-    //     primaryController.getRightXAxis().setInverted(true);
-
-    //     double rotationOutput = limelightController.calculate(getPose().rotation.toRadians());
-
-    //     drive(new Vector2(getDriveForwardAxis().get(true), getDriveStrafeAxis().get(true)), rotationOutput, true);
-    // }
-
-    public void limelightProfiledDrive(){
-        // DriveControlMode is LIMELIGHT
-
-        primaryController.getLeftXAxis().setInverted(true);
-        primaryController.getRightXAxis().setInverted(true);
-
-        double rotationOutput = profiledLimelightController.calculate(getPose().rotation.toRadians());
-
-        drive(new Vector2(getDriveForwardAxis().get(true), getDriveStrafeAxis().get(true)), rotationOutput, true);
-
-        if(Math.toDegrees(profiledLimelightController.getPositionError()) < 0.05 && limelightForward.hasTarget()) {
-            setDriveControlMode(DriveControlMode.LIMELIGHT);
-        }
-    }
-
-    public void limelightLockedDrive(){
-        // DriveControlMode is LIMELIGHT_LOCKED
-
-        limelightController.setSetpoint(Math.toRadians(-limelightForward.getFilteredTargetHorizOffset()) + getPose().rotation.toRadians());
-
-        primaryController.getLeftXAxis().setInverted(true);
-        primaryController.getRightXAxis().setInverted(true);
-
-        double rotationOutput = limelightController.calculate(getPose().rotation.toRadians());
-
-        // No x-y plane movement allowed, and we tell the PIDController to snap to the calculated angle
-        drive(new Vector2(0, 0), rotationOutput, true);
     }
     //#endregion
 
