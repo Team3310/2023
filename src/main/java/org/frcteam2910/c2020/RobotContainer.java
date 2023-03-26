@@ -122,7 +122,7 @@ public class RobotContainer {
 
         primaryController.getLeftBumperButton().onTrue(
             new InstantCommand(()->{
-                intake.setCubeOuttake = false;
+                intake.stopRollingOnTriggeredCubeIntakeDIO = true;
                 intake.setCubeIntakeDeployTargetPosition(110);
                 intake.setCubeRollerRPM(2000);
             })
@@ -137,7 +137,7 @@ public class RobotContainer {
 
         primaryController.getLeftTriggerAxis().onTrue(
             new InstantCommand(()->{
-                intake.setCubeOuttake = true;
+                intake.stopRollingOnTriggeredCubeIntakeDIO = false;
                 intake.setCubeRollerRPM(-2000);
             })
         );
@@ -215,8 +215,9 @@ public class RobotContainer {
                 new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false),
                 new InstantCommand(() -> {
                     // This flag is set so that we can force stuff to stop moving once cone/cube is in arm intake
-                    Intake.getInstance().armWasIntakingCube = true;
-                    Intake.getInstance().setCubeOuttake = true;
+                    Intake.getInstance().stopRollingOnTriggeredCubeIntakeDIO = false;
+                    Intake.getInstance().stopRollingOnTriggeredArmIntakeDIO = true;
+                    intake.resetIntakeDIOTimestamp();
                 })
                 
                 
@@ -236,7 +237,7 @@ public class RobotContainer {
             // If we grabbed a cube, we want to continue intaking until we're back at ZERO
             // CommandScheduler.getInstance().clearButtons();
             new SequentialCommandGroup(
-                new InstantCommand(()->intake.setIntakeHold()),
+                new InstantCommand(()->intake.setArmIntakeHold()),
                 new SetArmSafely(true, false)
            )
         );
@@ -253,8 +254,9 @@ public class RobotContainer {
         secondaryController.getLeftTriggerAxis().onTrue(
             new SequentialCommandGroup(
                 new InstantCommand(() -> {
-                    Intake.getInstance().armWasIntakingCube = false;
-                    Intake.getInstance().setCubeOuttake = false;
+                    intake.stopRollingOnTriggeredCubeIntakeDIO = false;
+                    intake.stopRollingOnTriggeredArmIntakeDIO = true;
+                    intake.resetIntakeDIOTimestamp();
                 }),
                 new SetIntakeRPM(Intake.getInstance(), -Constants.ARM_INTAKE_SPIT_RPM)
             )

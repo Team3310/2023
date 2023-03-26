@@ -1,6 +1,7 @@
 package org.frcteam2910.c2020.subsystems;
 
 import org.frcteam2910.c2020.Constants;
+import org.frcteam2910.c2020.Robot;
 import org.frcteam2910.c2020.Servo;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -28,7 +29,7 @@ public class Intake implements Subsystem{
     //sensors
     private DigitalInput cubeSensor;
     private DigitalInput coneSensor;
-    private DigitalInput liftSensor;
+    private DigitalInput cubeRollerSensor;
 
     //conversions
     
@@ -37,8 +38,9 @@ public class Intake implements Subsystem{
     private int kIntakePositionSlot = 1;
     private boolean firstSet = false;
     private double _deployPosDegreesOffset = 0.0;
-    public boolean setCubeOuttake = false;
-    public boolean armWasIntakingCube = false;
+    public boolean stopRollingOnTriggeredCubeIntakeDIO = false;
+    public boolean stopRollingOnTriggeredArmIntakeDIO = false;
+    private long lastSysMillisTriggeredDIO = Long.MIN_VALUE;
 
     boolean hasSetIntakeZero = false;
     private IntakeControlMode controlMode = IntakeControlMode.MANUAL;
@@ -77,7 +79,7 @@ public class Intake implements Subsystem{
         intakeMotor.config_kP(kIntakeVelocitySlot, 0.10);
         intakeMotor.config_kI(kIntakeVelocitySlot, 0.0001);
         intakeMotor.config_kD(kIntakeVelocitySlot, 0.0);
-        intakeMotor.config_IntegralZone(kIntakeVelocitySlot, (int)this.RollerRPMToNativeUnits(200));
+        intakeMotor.config_IntegralZone(kIntakeVelocitySlot, (int)this.ArmRoller_RpmToVelocityTicks(200));
 
         intakeMotor.config_kF(kIntakePositionSlot, 0.0);
         intakeMotor.config_kP(kIntakePositionSlot, -0.05);
@@ -88,7 +90,7 @@ public class Intake implements Subsystem{
         cubeIntakeRollerMotor.config_kP(kIntakeVelocitySlot, 0.10);
         cubeIntakeRollerMotor.config_kI(kIntakeVelocitySlot, 0.0004);
         cubeIntakeRollerMotor.config_kD(kIntakeVelocitySlot, 0.0);
-        //cubeIntakeMotor.config_IntegralZone(kIntakeVelocitySlot, (int)this.RollerRPMToNativeUnits(200));
+        //cubeIntakeMotor.config_IntegralZone(kIntakeVelocitySlot, (int)this.CubeRoller_RpmToVelocityTicks(200));
 
         // cubeIntakeRollerMotor.config_kF(kIntakePositionSlot, 0.0);
         // cubeIntakeRollerMotor.config_kP(kIntakePositionSlot, 0.05);
@@ -102,7 +104,7 @@ public class Intake implements Subsystem{
 
         cubeSensor = new DigitalInput(1);
         coneSensor = new DigitalInput(0);
-        liftSensor = new DigitalInput(2);
+        cubeRollerSensor = new DigitalInput(2);
     }
     //#endregion
     
@@ -114,7 +116,6 @@ public class Intake implements Subsystem{
     }
     //#endregion
         //#region intake
-
         public void setControlMode(IntakeControlMode c){
             this.controlMode = c;
         }
@@ -123,7 +124,7 @@ public class Intake implements Subsystem{
             this.hasSetIntakeZero = zero;
         }
 
-        public void setIntakeHold(){
+        public void setArmIntakeHold(){
             if(!firstSet){
                 controlMode = IntakeControlMode.HOLD;
                 intakeMotor.selectProfileSlot(kIntakePositionSlot, 0);
@@ -133,22 +134,22 @@ public class Intake implements Subsystem{
             }
         }
 
-        public void setRollerSpeed(double speed) {
+        public void setArmIntakeSpeed(double speed) {
             firstSet = false;
             controlMode = IntakeControlMode.MANUAL;
             this.intakeMotor.set(ControlMode.PercentOutput, speed);
         }
         
-        public void setRollerRPM(double rpm) {
+        public void setArmIntakeRPM(double rpm) {
             firstSet = false;
             controlMode = IntakeControlMode.MANUAL;
             intakeMotor.selectProfileSlot(kIntakeVelocitySlot, 0);
-            intakeMotor.set(ControlMode.Velocity, this.RollerRPMToNativeUnits(rpm));
+            intakeMotor.set(ControlMode.Velocity, this.ArmRoller_RpmToVelocityTicks(rpm));
         }
 
         public void setCubeRollerRPM(double rpm) {
             cubeIntakeRollerMotor.selectProfileSlot(kIntakeVelocitySlot, 0);
-            cubeIntakeRollerMotor.set(TalonFXControlMode.Velocity, this.CubeRollerRPMToNativeUnits(rpm));
+            cubeIntakeRollerMotor.set(TalonFXControlMode.Velocity, this.CubeRoller_RpmToVelocityTicks(rpm));
         }
 
         public void setCubeIntakeDeployTargetPosition(double positionDegrees) {
@@ -170,23 +171,27 @@ public class Intake implements Subsystem{
         }
 
         // These are for velocity units
-        public double RollerRPMToNativeUnits(double rpm) {
+        public double ArmRoller_RpmToVelocityTicks(double rpm) {
             return (rpm * Constants.ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) / (10*60);
         }
-        public double NativeUnitsToRollerRPM(double ticks) {
-            return (ticks / Constants.ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) * (10*60);
+        public double ArmRoller_VelocityTicksToRpm(double ticksPer100ms) {
+            return (ticksPer100ms / Constants.ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) * (10*60);
         }
 
         // These are for velocity units
-        public double CubeRollerRPMToNativeUnits(double rpm) {
+        public double CubeRoller_RpmToVelocityTicks(double rpm) {
             return (rpm * Constants.CUBE_INTAKE_ROLLER_MOTOR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION) / (10*60);
         }
-        public double NativeUnitsToCubeRollerRPM(double ticksPer100ms) {
+        public double CubeRoller_VelocityTicksToRpm(double ticksPer100ms) {
             return (ticksPer100ms / (Constants.CUBE_INTAKE_ROLLER_MOTOR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION)) * (10*60);
         }
 
+        public void resetIntakeDIOTimestamp() {
+            lastSysMillisTriggeredDIO = Long.MIN_VALUE;
+        }
+
         public double getCubeRollerRPM() {
-            return this.NativeUnitsToCubeRollerRPM(cubeIntakeRollerMotor.getSelectedSensorVelocity());
+            return this.CubeRoller_VelocityTicksToRpm(cubeIntakeRollerMotor.getSelectedSensorVelocity());
         }
 
         public double getCubeIntakeDeployDegrees() {
@@ -211,31 +216,47 @@ public class Intake implements Subsystem{
     public void periodic(){
         SmartDashboard.putBoolean("DIO Cone", coneSensor.get());
         SmartDashboard.putBoolean("DIO Cube", cubeSensor.get());
-        SmartDashboard.putBoolean("DIO Lift", liftSensor.get());
+        SmartDashboard.putBoolean("DIO Cube Roll", cubeRollerSensor.get());
         // SmartDashboard.putBoolean("set intake zero", hasSetIntakeZero);
         SmartDashboard.putNumber("intake motor current", intakeMotor.getStatorCurrent());
         SmartDashboard.putNumber("intake motor position", intakeMotor.getSelectedSensorPosition());
         SmartDashboard.putNumber("intake deploy position", getCubeIntakeDeployDegrees());
         SmartDashboard.putNumber("intake roller velocity", getCubeRollerRPM());
-        SmartDashboard.putNumber("intake lift volatge", cubeIntakeLiftMotor.getMotorOutputVoltage());
+        SmartDashboard.putNumber("intake lift voltage", cubeIntakeLiftMotor.getMotorOutputVoltage());
 
 
         // if(cubeSensor.get()){
         //     setIntakeHold();
         // }
-        if(!setCubeOuttake){
-            if(liftSensor.get()){
+        if(stopRollingOnTriggeredCubeIntakeDIO){
+            if(cubeRollerSensor.get()){
+                // if(lastSysMillisTriggeredDIO <= 0){
+                //     lastSysMillisTriggeredDIO = System.currentTimeMillis();
+                // }
                 setCubeRollerRPM(0);
             }
+            // if(System.currentTimeMillis() - lastSysMillisTriggeredDIO > (int)(delayFactorSec * 1000)) {
+            //     // We're beyond the delay factor, time to act
+            //     setCubeRollerRPM(0);
+            // }
         }
 
-        if(armWasIntakingCube) {
+        if(stopRollingOnTriggeredArmIntakeDIO) {
             // While holding right trigger (cube intake), if detect something where the cone would go,
             // override any commands to move intake rollers.
+                // double delayFactorSec = 0.5;
             if(coneSensor.get()){
+                // if(lastSysMillisTriggeredDIO <= 0){
+                //     lastSysMillisTriggeredDIO = System.currentTimeMillis();
+                // }
                 setCubeRollerRPM(0);
-                setIntakeHold();
+                setArmIntakeHold();
             }
+            // if(System.currentTimeMillis() - lastSysMillisTriggeredDIO > (int)(delayFactorSec * 1000)) {
+            //     // We're beyond the delay factor, time to act
+            //     setCubeRollerRPM(0);
+            //     setArmIntakeHold();
+            // }
         }
     }
 
