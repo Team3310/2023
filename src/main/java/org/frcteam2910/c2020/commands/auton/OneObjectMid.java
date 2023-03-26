@@ -27,7 +27,7 @@ public class OneObjectMid extends AutonCommandBase {
         //resetRobotPose(container, trajectories.getOnToBridge());
         this.addCommands(
             //new ArmExtenderZero(Arm.getInstance()),
-            new SetArmSafelyAuton(ScoreMode.HIGH),
+            new SetArmSafely(ScoreMode.HIGH),
             new SetIntakeRPM(intake, -1*Constants.ARM_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
@@ -42,9 +42,9 @@ public class OneObjectMid extends AutonCommandBase {
                 new WaitCommand(1.0)
             ),
             new ParallelCommandGroup(
-                new SetArmSafelyAuton(ScoreMode.ZERO),
+                new SetArmSafely(ScoreMode.ZERO),
                 new SetIntakeRPM(intake, 0)
-            )    
+            )
         );
     }
 }

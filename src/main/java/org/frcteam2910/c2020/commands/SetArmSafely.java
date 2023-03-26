@@ -60,6 +60,7 @@ public class SetArmSafely extends SequentialCommandGroup {
                 this.addCommands(
                     new SetArmExtender(arm, 0.0, true),
                     new SetArmRotator(arm, 0.0, true),
+                    new SetArmRotator(arm, targetScoreMode.getAngle(), true),
                     new InstantCommand(()->Intake.getInstance().setCubeIntakeDeployTargetPosition(111)),  
                     new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(2000))
                 );

@@ -28,15 +28,16 @@ public class OneObjectMidBalance extends AutonCommandBase {
         boolean isBlue=getSide(container);
         this.addCommands(
             new OneObjectMid(container, trajectories),
-            new InstantCommand(()->drive.setBridgeDriveVoltage(5)),
+            new InstantCommand(()->drive.setBridgeDriveVoltage(-5)),
             new ChangeDriveMode(drive, DriveControlMode.BRIDGE_VOLTAGE),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
             new WaitCommand(0.2),
-            new InstantCommand(()->drive.setBridgeDriveVoltage(-5)),
+            new InstantCommand(()->drive.setBridgeDriveVoltage(5)),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
+            new InstantCommand(() -> drive.setStartDegrees(drive.getRollDegreesOffLevel())),
             new ChangeDriveMode(drive, DriveControlMode.BALANCE)
             // new FollowTrajectoryCommand(drive, trajectories.getOnToBridge()),
             // new WaitCommand(2.0),

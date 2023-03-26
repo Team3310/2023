@@ -38,6 +38,7 @@ public class Intake implements Subsystem{
     private boolean firstSet = false;
     private double _deployPosDegreesOffset = 0.0;
     public boolean setCubeOuttake = false;
+    public boolean armWasIntakingCube = false;
 
     boolean hasSetIntakeZero = false;
     private IntakeControlMode controlMode = IntakeControlMode.MANUAL;
@@ -225,6 +226,15 @@ public class Intake implements Subsystem{
         if(!setCubeOuttake){
             if(liftSensor.get()){
                 setCubeRollerRPM(0);
+            }
+        }
+
+        if(armWasIntakingCube) {
+            // While holding right trigger (cube intake), if detect something where the cone would go,
+            // override any commands to move intake rollers.
+            if(coneSensor.get()){
+                setCubeRollerRPM(0);
+                setIntakeHold();
             }
         }
     }

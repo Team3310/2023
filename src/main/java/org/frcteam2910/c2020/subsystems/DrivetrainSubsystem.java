@@ -664,7 +664,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
 
         
-        if(startDegrees-0.75>degreesAwayFromBalance){
+        if(startDegrees-1>degreesAwayFromBalance){
             setDriveControlMode(DriveControlMode.HOLD);
         }
         drive(new Vector2((tiltedBackward?1:-1)*0.18, 0.0), 0.0, false);

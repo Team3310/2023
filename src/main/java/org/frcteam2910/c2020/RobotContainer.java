@@ -169,6 +169,13 @@ public class RobotContainer {
                 new InstantCommand(()-> Arm.getInstance().setTargetArmInchesPositionAbsolute(Arm.getInstance().getArmInches()+0.25))
         );
 
+        secondaryController.getStartButton().onTrue(
+            new ArmExtenderZero(Arm.getInstance())
+        );
+        secondaryController.getBackButton().onTrue(
+            new InstantCommand(()->Arm.getInstance().setArmDegreesZero(0))
+        );
+        
 
         secondaryController.getBButton().onTrue(
             new SetArmSafely( ScoreMode.ZERO)
@@ -184,10 +191,35 @@ public class RobotContainer {
         );
 
 
+        // Cone Intake
+        secondaryController.getRightBumperButton().onTrue(
+            new SequentialCommandGroup(
+                new SetServosOut(Intake.getInstance()),
+                new SetIntakeRPM(Intake.getInstance(), -Constants.ARM_INTAKE_COLLECT_RPM),
+                new SetArmSafely(ScoreMode.CONE_INTAKE)
+            )    
+        );
+        secondaryController.getRightBumperButton().onFalse(
+            // If we grabbed a cone, we want to continue intaking until we're back at ZERO
+            new SequentialCommandGroup(
+                new SetArmSafely(true, true),
+                new SetIntakeRPM(Intake.getInstance(), 0),
+                new SetServosIn(Intake.getInstance())
+            )    
+        );
+
+        // Cube Intake
         secondaryController.getRightTriggerAxis().onTrue(
             new SequentialCommandGroup(
-                new SetIntakeRPM(Intake.getInstance(), Constants.ARM_INTAKE_COLLECT_RPM),
-                new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false)
+                new SetIntakeRPM(Intake.getInstance(), -Constants.ARM_INTAKE_COLLECT_RPM),
+                new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false),
+                new InstantCommand(() -> {
+                    // This flag is set so that we can force stuff to stop moving once cone/cube is in arm intake
+                    Intake.getInstance().armWasIntakingCube = true;
+                    Intake.getInstance().setCubeOuttake = true;
+                })
+                
+                
                 // For now, it's up to the operator to stop intaking to not pop the cube
                 
                 // Hasn't been tested, but an idea: need to stop intaking when intake.getCubeSensor().get() is true
@@ -200,7 +232,6 @@ public class RobotContainer {
                 // )
             )    
         );
-
         secondaryController.getRightTriggerAxis().onFalse(
             // If we grabbed a cube, we want to continue intaking until we're back at ZERO
             // CommandScheduler.getInstance().clearButtons();
@@ -209,45 +240,29 @@ public class RobotContainer {
                 new SetArmSafely(true, false)
            )
         );
-
-        secondaryController.getRightBumperButton().onTrue(
-            new SequentialCommandGroup(
-                new SetServosOut(Intake.getInstance()),
-                new SetIntakeRPM(Intake.getInstance(), -1*Constants.ARM_INTAKE_COLLECT_RPM),
-                new SetArmSafely(ScoreMode.CONE_INTAKE)
-            )    
-        );
-
-        secondaryController.getRightBumperButton().onFalse(
-            // If we grabbed a cone, we want to continue intaking until we're back at ZERO
-            new SequentialCommandGroup(
-                new SetArmSafely(true, true),
-                new SetIntakeRPM(Intake.getInstance(), 0),
-                new SetServosIn(Intake.getInstance())
-            )    
-        );
         
+        // Outtake Cone
         secondaryController.getLeftBumperButton().onTrue(
-            // Outtake Cone
-            new SetIntakeRPM(Intake.getInstance(), -1*Constants.ARM_INTAKE_SPIT_RPM)
+            new SetIntakeRPM(Intake.getInstance(), -Constants.ARM_INTAKE_SPIT_RPM)
         );
-
         secondaryController.getLeftBumperButton().onFalse(
             new PutIntakeZeroAfterOuttake(Intake.getInstance(), Arm.getInstance())
         );
 
+        // Outtake Cube
         secondaryController.getLeftTriggerAxis().onTrue(
-            // Outtake Cube
-            new SetIntakeRPM(Intake.getInstance(), Constants.ARM_INTAKE_SPIT_RPM)
+            new SequentialCommandGroup(
+                new InstantCommand(() -> {
+                    Intake.getInstance().armWasIntakingCube = false;
+                    Intake.getInstance().setCubeOuttake = false;
+                }),
+                new SetIntakeRPM(Intake.getInstance(), -Constants.ARM_INTAKE_SPIT_RPM)
+            )
         );
-
         secondaryController.getLeftTriggerAxis().onFalse(
             new PutIntakeZeroAfterOuttake(Intake.getInstance(), Arm.getInstance())
         );
 
-        
-        secondaryController.getStartButton().onTrue(new ArmExtenderZero(Arm.getInstance()));
-        secondaryController.getBackButton().onTrue(new InstantCommand(()->Arm.getInstance().setArmDegreesZero(0)));
         //#endregion
 
         // SmartDashboard.putData("Turn to Goal", new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurnToTarget()));
