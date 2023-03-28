@@ -364,13 +364,13 @@ public class AutonomousTrajectories {
 
         coneBridgeToPickUp1 = new Trajectory(
                 new SimplePathBuilder(new Vector2(-250, 119), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(-40.1, 140.5))
+                        .lineTo(new Vector2(-32.1, 140.5))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
 
         coneBridgeToPlace1 = new Trajectory(
-                new SimplePathBuilder(new Vector2(-40.1, 140.5), Rotation2.fromDegrees(180))
+                new SimplePathBuilder(new Vector2(-32.1, 140.5), Rotation2.fromDegrees(180))
                         .lineTo(new Vector2(-246, 140.68))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE

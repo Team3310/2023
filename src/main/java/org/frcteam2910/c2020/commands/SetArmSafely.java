@@ -58,11 +58,11 @@ public class SetArmSafely extends SequentialCommandGroup {
             }
             else if(targetScoreMode==ScoreMode.CUBE_INTAKE){
                 this.addCommands(
-                    new SetArmExtender(arm, 0.0, true),
-                    new SetArmRotator(arm, 0.0, true),
-                    new SetArmRotator(arm, targetScoreMode.getAngle(), true),
                     new InstantCommand(()->Intake.getInstance().setCubeIntakeDeployTargetPosition(111)),  
-                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(2000))
+                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(2000)),
+                    new SetArmExtender(arm, 0.0, true),
+                    new SetArmRotator(arm, targetScoreMode.getAngle(), true),
+                    new SetArmExtender(arm, targetScoreMode.getInches(), true)
                 );
             }
         }else{
@@ -77,7 +77,8 @@ public class SetArmSafely extends SequentialCommandGroup {
             else{
                 this.addCommands(
                     new InstantCommand(()->Intake.getInstance().setCubeIntakeDeployTargetPosition(0)),  
-                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(0))
+                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(0)),
+                    new SetArmExtender(arm, 0)
                 );
             }
         }

@@ -147,7 +147,7 @@ public class Robot extends TimedRobot {
         updateManager.startLoop(0.02);
         robotContainer.getDrivetrainSubsystem().setDriveBrake();
         robotContainer.getDrivetrainSubsystem().setSteerBrake();
-        robotContainer.getArm().setArmInchesZero(1.875);
+        robotContainer.getArm().setArmInchesZero(1.75);
         robotContainer.getArm().setArmDegreesZero(0.0);
 //        PortForwarder.add(5800, "limelight.local", 5800);
 //        PortForwarder.add(5801, "limelight.local", 5801);

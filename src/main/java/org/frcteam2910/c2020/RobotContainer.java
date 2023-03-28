@@ -1,6 +1,7 @@
 package org.frcteam2910.c2020;
 
 import org.frcteam2910.c2020.commands.*;
+import org.frcteam2910.c2020.commands.auton.OnToBridge;
 import org.frcteam2910.c2020.commands.auton.OneObjectMid;
 import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 
 public class RobotContainer {
@@ -77,10 +79,14 @@ public class RobotContainer {
                 new InstantCommand(()->Intake.getInstance().setServoPosition(1))
         );
         primaryController.getAButton().onTrue(
-            new InstantCommand(()->{
-                drivetrain.setStartDegrees(drivetrain.getRollDegreesOffLevel());
-                drivetrain.setDriveControlMode(DriveControlMode.BALANCE);
-            })
+            new SequentialCommandGroup(
+                new ChangeDriveMode(drivetrain, DriveControlMode.BRIDGE_VOLTAGE),
+                new InstantCommand(()->drivetrain.setBridgeDriveVoltage(-5)),
+                new WaitUntilCommand(() -> drivetrain.getRollDegreesOffLevel()>20),
+                new WaitUntilCommand(() -> drivetrain.getRollDegreesOffLevel()<12.25),
+                new DriveBalanceCommand(drivetrain, true, false, false),
+                new DriveBalanceCommand(drivetrain, true, false, true)
+            )
         );
         primaryController.getYButton().onTrue(
                 new InstantCommand(()->Intake.getInstance().setServoPosition(-1))
@@ -195,7 +201,7 @@ public class RobotContainer {
         secondaryController.getRightBumperButton().onTrue(
             new SequentialCommandGroup(
                 new SetServosOut(Intake.getInstance()),
-                new SetIntakeRPM(Intake.getInstance(), -Constants.ARM_INTAKE_COLLECT_RPM),
+                new SetIntakeRPM(Intake.getInstance(), Constants.ARM_INTAKE_COLLECT_RPM),
                 new SetArmSafely(ScoreMode.CONE_INTAKE)
             )    
         );
@@ -237,6 +243,12 @@ public class RobotContainer {
             // If we grabbed a cube, we want to continue intaking until we're back at ZERO
             // CommandScheduler.getInstance().clearButtons();
             new SequentialCommandGroup(
+                new InstantCommand(() -> {
+                    // This flag is set so that we can force stuff to stop moving once cone/cube is in arm intake
+                    Intake.getInstance().stopRollingOnTriggeredCubeIntakeDIO = false;
+                    Intake.getInstance().stopRollingOnTriggeredArmIntakeDIO = false;
+                    intake.resetIntakeDIOTimestamp();
+                }),
                 new InstantCommand(()->intake.setArmIntakeHold()),
                 new SetArmSafely(true, false)
            )
@@ -244,7 +256,7 @@ public class RobotContainer {
         
         // Outtake Cone
         secondaryController.getLeftBumperButton().onTrue(
-            new SetIntakeRPM(Intake.getInstance(), -Constants.ARM_INTAKE_SPIT_RPM)
+            new SetIntakeRPM(Intake.getInstance(), Constants.ARM_INTAKE_SPIT_RPM)
         );
         secondaryController.getLeftBumperButton().onFalse(
             new PutIntakeZeroAfterOuttake(Intake.getInstance(), Arm.getInstance())
@@ -253,11 +265,6 @@ public class RobotContainer {
         // Outtake Cube
         secondaryController.getLeftTriggerAxis().onTrue(
             new SequentialCommandGroup(
-                new InstantCommand(() -> {
-                    intake.stopRollingOnTriggeredCubeIntakeDIO = false;
-                    intake.stopRollingOnTriggeredArmIntakeDIO = true;
-                    intake.resetIntakeDIOTimestamp();
-                }),
                 new SetIntakeRPM(Intake.getInstance(), -Constants.ARM_INTAKE_SPIT_RPM)
             )
         );

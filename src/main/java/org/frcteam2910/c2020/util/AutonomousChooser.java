@@ -85,7 +85,7 @@ public class AutonomousChooser {
             case TO_BRIDGE:
                 return new OnToBridge(container, trajectories,-5);
             case BALANCE:
-                return new DriveBalanceCommand(container.getDrivetrainSubsystem(), true, false);
+                return new DriveBalanceCommand(container.getDrivetrainSubsystem(), true, false, true);
             case THREE_OBJECT_CLOSE_BALANCE:
                 return new LeftTwoObjectBalance(container, trajectories);
             case ONE_OBJECT_BALANCE:

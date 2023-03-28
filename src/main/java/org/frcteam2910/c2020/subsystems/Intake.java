@@ -59,7 +59,7 @@ public class Intake implements Subsystem{
         intakeMotor = new TalonFX(Constants.INTAKE_MOTOR_PORT, "rio");
         cubeIntakeRollerMotor = new TalonFX(Constants.CUBE_INTAKE_ROLLER_MOTOR_PORT, "rio");
         cubeIntakeLiftMotor = new TalonFX(Constants.CUBE_INTAKE_DEPLOY_MOTOR_PORT, "Drivetrain");
-        intakeMotor.setInverted(true);
+        intakeMotor.setInverted(false);
         cubeIntakeRollerMotor.setInverted(false);
         cubeIntakeLiftMotor.setInverted(false);
         leftServo.setInverted(false);
@@ -245,10 +245,11 @@ public class Intake implements Subsystem{
             // While holding right trigger (cube intake), if detect something where the cone would go,
             // override any commands to move intake rollers.
                 // double delayFactorSec = 0.5;
-            if(coneSensor.get()){
+            if(coneSensor.get() || cubeSensor.get()){
                 // if(lastSysMillisTriggeredDIO <= 0){
                 //     lastSysMillisTriggeredDIO = System.currentTimeMillis();
                 // }
+                setCubeRollerRPM(0);
                 setCubeRollerRPM(0);
                 setArmIntakeHold();
             }
