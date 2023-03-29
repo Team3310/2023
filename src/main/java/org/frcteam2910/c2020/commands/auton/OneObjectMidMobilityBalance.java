@@ -33,12 +33,23 @@ public class OneObjectMidMobilityBalance extends AutonCommandBase {
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
+            new InstantCommand(()->{
+                intake.stopRollingOnTriggeredCubeIntakeDIO = true;
+                intake.setCubeIntakeDeployTargetPosition(110);
+                intake.setCubeRollerRPM(2000);
+            }),
+            new InstantCommand(()->drive.setBridgeDriveVoltage(-3.5)),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
+            new WaitCommand(1.1),
+            new InstantCommand(()->drive.setBridgeDriveVoltage(0)),
             new WaitCommand(0.2),
-            new InstantCommand(()->drive.setBridgeDriveVoltage(5)),
+            new InstantCommand(()->{
+                //drive.setBridgeDriveAngle(-3);
+                drive.setBridgeDriveVoltage(6);
+            }),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
             new InstantCommand(() -> drive.setStartDegrees(drive.getRollDegreesOffLevel())),
-            new ChangeDriveMode(drive, DriveControlMode.BALANCE)
+            new DriveBalanceCommand(drive, true, true, true)
             // new FollowTrajectoryCommand(drive, trajectories.getOnToBridge()),
             // new WaitCommand(2.0),
             // new FollowTrajectoryCommand(drive, trajectories.getPastBridge())

@@ -534,9 +534,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     }
 
     public void voltageDrive(){
-        for(int i = 0; i < modules.length; i++){
-            modules[i].set(voltageOutput, voltageSteerAngle);
-        }  
+        commandedPoseAngleDeg = 180;
+        drive(new Vector2((voltageOutput/12), 0.0), getGyroRotationOutput(0), false);
     }
 
     public void rotationDrive(){
@@ -1025,10 +1024,13 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 break;    
             case BRIDGE_VOLTAGE:
                 voltageDrive();
+                synchronized (stateLock) {
+                    currentDriveSignal = this.driveSignal;
+                }
                 break;    
         }
 
-        if(driveControlMode != DriveControlMode.HOLD && driveControlMode != DriveControlMode.BRIDGE_VOLTAGE) {
+        if(driveControlMode != DriveControlMode.HOLD) {
             // Tell all swerve modules their new targets based on the kinematics.
             updateModules(currentDriveSignal);
         }

@@ -410,7 +410,7 @@ public class AutonomousTrajectories {
                 coneBridgeToBridge1 = new Trajectory(
                 new SimplePathBuilder(new Vector2(-246, 140.68), Rotation2.fromDegrees(180))
                         .lineTo(new Vector2(-240, 140.68))
-                        .lineTo(new Vector2(-251.00, 197.52706924))
+                        .lineTo(new Vector2(-240.00, 197.52706924))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
                 );
@@ -431,9 +431,9 @@ public class AutonomousTrajectories {
         //#endregion
 //#endregion        
         onToBridge = new Trajectory(
-                new SimplePathBuilder(new Vector2(-252, 207), Rotation2.fromDegrees(0))
-                        .lineTo(new Vector2(-173, 207), Rotation2.fromDegrees(0))
-                        .lineTo(new Vector2(-176, 207), Rotation2.fromDegrees(0))
+                new SimplePathBuilder(new Vector2(-252, 207), Rotation2.fromDegrees(180))
+                        .lineTo(new Vector2(-173, 207), Rotation2.fromDegrees(180))
+                        .lineTo(new Vector2(-176, 207), Rotation2.fromDegrees(180))
                         .build(),
                 slowConstraints, SAMPLE_DISTANCE);
 

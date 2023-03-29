@@ -30,12 +30,14 @@ public class RightSideTwoCone extends AutonCommandBase {
         SmartDashboard.putBoolean("isBlue", isBlue);
         resetRobotPose(container, trajectories.getConeBridgeToPickup1(isBlue));
         this.addCommands(
-            new SetArmSafely(ScoreMode.MID),
+            new SetArmExtender(arm, 0.0),
+            new SetArmRotator(arm, ScoreMode.MID.getAngle()-4.0),
+            new SetArmExtender(arm, ScoreMode.MID.getInches()),
             new SetIntakeRPM(intake, Constants.ARM_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
                     new WaitUntilCommand(()->!intake.getConeSensor().get()),
-                    new WaitCommand(0.2)
+                    new WaitCommand(0.05)
                 ),
                 new WaitCommand(1.0)
             ),
@@ -47,14 +49,16 @@ public class RightSideTwoCone extends AutonCommandBase {
             ),
             new WaitCommand(0.25),
             new ParallelCommandGroup(
+                new InstantCommand(()->intake.setCubeRollerRPM(0)),
                 new InstantCommand(()->intake.setArmIntakeHold()),
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPlace1(isBlue)),
                 new InstantCommand(()->intake.setCubeIntakeDeployTargetPosition(0)),
-                new SetArmSafely(true, false) 
+                new SequentialCommandGroup(
+                    new SetArmExtender(arm, 0.0),
+                    new SetArmRotator(arm, ScoreMode.MID.getAngle()+1),
+                    new SetArmExtender(arm, 10)
+                )
             ),
-            new SetArmExtender(arm, 0.0),
-            new SetArmRotator(arm, ScoreMode.MID.getAngle()),
-            new SetArmExtender(arm, 6),
             new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
