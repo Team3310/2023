@@ -50,7 +50,7 @@ public class RightSideTwoCone extends AutonCommandBase {
                 new SetArmSafely(true, false) 
             ),
             new SetArmSafely(ScoreMode.HIGH),
-            new SetIntakeRPM(intake, -Constants.ARM_INTAKE_SPIT_RPM)
+            new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_SPIT_RPM)
         //     new SetArmSafelyAuton(ScoreMode.HIGH),
         //     new SetIntakeRPM(intake, Constants.INTAKE_SPIT_RPM),
         //     new ParallelRaceGroup(

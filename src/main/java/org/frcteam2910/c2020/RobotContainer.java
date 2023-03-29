@@ -136,6 +136,7 @@ public class RobotContainer {
 
         primaryController.getLeftBumperButton().onFalse(
             new InstantCommand(()->{
+                intake.stopRollingOnTriggeredCubeIntakeDIO = false;
                 intake.setCubeIntakeDeployTargetPosition(0);
                 intake.setCubeRollerRPM(0);
             })
@@ -217,7 +218,7 @@ public class RobotContainer {
         // Cube Intake
         secondaryController.getRightTriggerAxis().onTrue(
             new SequentialCommandGroup(
-                new SetIntakeRPM(Intake.getInstance(), -Constants.ARM_INTAKE_COLLECT_RPM),
+                new SetIntakeRPM(Intake.getInstance(), Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
                 new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false),
                 new InstantCommand(() -> {
                     // This flag is set so that we can force stuff to stop moving once cone/cube is in arm intake
@@ -265,7 +266,11 @@ public class RobotContainer {
         // Outtake Cube
         secondaryController.getLeftTriggerAxis().onTrue(
             new SequentialCommandGroup(
-                new SetIntakeRPM(Intake.getInstance(), -Constants.ARM_INTAKE_SPIT_RPM)
+                new SetIntakeRPM(Intake.getInstance(), Constants.ARM_CUBE_INTAKE_SPIT_RPM),
+                new InstantCommand(() -> {
+                    Intake.getInstance().stopRollingOnTriggeredCubeIntakeDIO = false;
+                    Intake.getInstance().stopRollingOnTriggeredArmIntakeDIO = false;
+                })
             )
         );
         secondaryController.getLeftTriggerAxis().onFalse(

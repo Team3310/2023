@@ -103,7 +103,9 @@ public class Constants {
 
     // Intake Motor Constants
     public static final double ARM_INTAKE_COLLECT_RPM = 1500.0;
+    public static final double ARM_CUBE_INTAKE_COLLECT_RPM = -350.0;
     public static final double ARM_INTAKE_SPIT_RPM = -1300.0;
+    public static final double ARM_CUBE_INTAKE_SPIT_RPM = 200.0;
 
     public static final double ARM_INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 50.0 / 12.0;
     public static final double ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = ARM_INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * ENCODER_TICKS_PER_MOTOR_REVOLUTION;

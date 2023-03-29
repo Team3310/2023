@@ -82,7 +82,7 @@ public class Intake implements Subsystem{
         intakeMotor.config_IntegralZone(kIntakeVelocitySlot, (int)this.ArmRoller_RpmToVelocityTicks(200));
 
         intakeMotor.config_kF(kIntakePositionSlot, 0.0);
-        intakeMotor.config_kP(kIntakePositionSlot, -0.05);
+        intakeMotor.config_kP(kIntakePositionSlot, 0.1);
         intakeMotor.config_kI(kIntakePositionSlot, 0.0);
         intakeMotor.config_kD(kIntakePositionSlot, 0.0);
 
@@ -125,13 +125,10 @@ public class Intake implements Subsystem{
         }
 
         public void setArmIntakeHold(){
-            if(!firstSet){
                 controlMode = IntakeControlMode.HOLD;
                 intakeMotor.selectProfileSlot(kIntakePositionSlot, 0);
                 intakeMotor.set(TalonFXControlMode.Position, intakeMotor.getSelectedSensorPosition());
                 SmartDashboard.putNumber("set position", intakeMotor.getSelectedSensorPosition());
-                firstSet =true;
-            }
         }
 
         public void setArmIntakeSpeed(double speed) {
@@ -226,7 +223,7 @@ public class Intake implements Subsystem{
 
 
         // if(cubeSensor.get()){
-        //     setIntakeHold();
+        //     setArmIntakeHold();
         // }
         if(stopRollingOnTriggeredCubeIntakeDIO){
             if(cubeRollerSensor.get()){
@@ -245,7 +242,7 @@ public class Intake implements Subsystem{
             // While holding right trigger (cube intake), if detect something where the cone would go,
             // override any commands to move intake rollers.
                 // double delayFactorSec = 0.5;
-            if(coneSensor.get() || cubeSensor.get()){
+            if(cubeSensor.get()){
                 // if(lastSysMillisTriggeredDIO <= 0){
                 //     lastSysMillisTriggeredDIO = System.currentTimeMillis();
                 // }
