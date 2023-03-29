@@ -31,12 +31,7 @@ public class OneObjectMid extends AutonCommandBase {
             new SetIntakeRPM(intake, Constants.ARM_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
-                    new WaitUntilCommand(new BooleanSupplier() {
-                        @Override
-                        public boolean getAsBoolean(){
-                            return !intake.getConeSensor().get();
-                        }
-                    }),
+                    new WaitUntilCommand(()->!intake.getConeSensor().get()),
                     new WaitCommand(0.3)
                 ),
                 new WaitCommand(1.0)

@@ -20,7 +20,6 @@ public class OnToBridge extends AutonCommandBase {
     }
 
     public OnToBridge(RobotContainer container, AutonomousTrajectories trajectories, double value, DrivetrainSubsystem drive) {
-        resetRobotPose(container, trajectories.getOnToBridge());
         this.addCommands(
             new ChangeDriveMode(drive, DriveControlMode.BRIDGE_VOLTAGE),
             new InstantCommand(()->drive.setBridgeDriveVoltage(value)),

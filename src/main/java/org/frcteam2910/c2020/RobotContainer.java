@@ -266,11 +266,12 @@ public class RobotContainer {
         // Outtake Cube
         secondaryController.getLeftTriggerAxis().onTrue(
             new SequentialCommandGroup(
-                new SetIntakeRPM(Intake.getInstance(), Constants.ARM_CUBE_INTAKE_SPIT_RPM),
+                new SetArmExtender(arm, 17.5),
                 new InstantCommand(() -> {
                     Intake.getInstance().stopRollingOnTriggeredCubeIntakeDIO = false;
                     Intake.getInstance().stopRollingOnTriggeredArmIntakeDIO = false;
-                })
+                }),
+                new SetIntakeRPM(Intake.getInstance(), Constants.ARM_CUBE_INTAKE_SPIT_RPM)
             )
         );
         secondaryController.getLeftTriggerAxis().onFalse(

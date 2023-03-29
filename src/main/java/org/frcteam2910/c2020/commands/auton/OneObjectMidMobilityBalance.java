@@ -19,17 +19,23 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
-public class OneObjectMidBalance extends AutonCommandBase {
-    public OneObjectMidBalance(RobotContainer container, AutonomousTrajectories trajectories){
+public class OneObjectMidMobilityBalance extends AutonCommandBase {
+    public OneObjectMidMobilityBalance(RobotContainer container, AutonomousTrajectories trajectories){
         this(container, trajectories, container.getDrivetrainSubsystem(), container.getArm(), container.getIntake());
     }
 
-    public OneObjectMidBalance(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
+    public OneObjectMidMobilityBalance(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
         boolean isBlue=getSide(container);
         this.addCommands(
             new OneObjectMid(container, trajectories),
             new InstantCommand(()->drive.setBridgeDriveVoltage(-5)),
             new ChangeDriveMode(drive, DriveControlMode.BRIDGE_VOLTAGE),
+            new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
+            new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
+            new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
+            new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
+            new WaitCommand(0.2),
+            new InstantCommand(()->drive.setBridgeDriveVoltage(5)),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
             new InstantCommand(() -> drive.setStartDegrees(drive.getRollDegreesOffLevel())),
             new ChangeDriveMode(drive, DriveControlMode.BALANCE)

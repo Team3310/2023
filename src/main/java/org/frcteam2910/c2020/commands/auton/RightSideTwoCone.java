@@ -30,7 +30,7 @@ public class RightSideTwoCone extends AutonCommandBase {
         SmartDashboard.putBoolean("isBlue", isBlue);
         resetRobotPose(container, trajectories.getConeBridgeToPickup1(isBlue));
         this.addCommands(
-            new SetArmSafely(ScoreMode.HIGH),
+            new SetArmSafely(ScoreMode.MID),
             new SetIntakeRPM(intake, Constants.ARM_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
@@ -41,16 +41,28 @@ public class RightSideTwoCone extends AutonCommandBase {
             ),
             new ParallelCommandGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup1(isBlue)),
-                new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false),
-                new InstantCommand(()->intake.setArmIntakeHold())
+                new InstantCommand(()->intake.setCubeIntakeDeployTargetPosition(111)),
+                new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
+                new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false)
             ),
             new WaitCommand(0.25),
             new ParallelCommandGroup(
+                new InstantCommand(()->intake.setArmIntakeHold()),
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPlace1(isBlue)),
+                new InstantCommand(()->intake.setCubeIntakeDeployTargetPosition(0)),
                 new SetArmSafely(true, false) 
             ),
-            new SetArmSafely(ScoreMode.HIGH),
-            new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_SPIT_RPM)
+            new SetArmExtender(arm, 0.0),
+            new SetArmRotator(arm, ScoreMode.MID.getAngle()),
+            new SetArmExtender(arm, 6),
+            new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_SPIT_RPM),
+            new ParallelRaceGroup(
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(()->!intake.getCubeSensor().get()),
+                    new WaitCommand(0.2)
+                ),
+                new WaitCommand(0.75)
+            )
         //     new SetArmSafelyAuton(ScoreMode.HIGH),
         //     new SetIntakeRPM(intake, Constants.INTAKE_SPIT_RPM),
         //     new ParallelRaceGroup(

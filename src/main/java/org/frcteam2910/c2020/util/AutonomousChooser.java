@@ -33,6 +33,7 @@ public class AutonomousChooser {
         // autonomousModeChooser.addOption("Right Two Object", AutonomousMode.RIGHT_TWO_OBJECT);
         // autonomousModeChooser.addOption("Two Object Bridge Balance", AutonomousMode.TWO_OBJECT_BALANCE);
         autonomousModeChooser.addOption("One Object Bridge Balance", AutonomousMode.ONE_OBJECT_BALANCE);
+        autonomousModeChooser.addOption("One Object Bridge Mobility Balance", AutonomousMode.ONE_OBJECT_M_BALANCE);
         autonomousModeChooser.addOption("One Half Object Bridge Balance", AutonomousMode.ONE_HALF_OBJECT_BALANCE);
         autonomousModeChooser.addOption("One Object Drive Away", AutonomousMode.ONE_OBJECT_DRIVE_AWAY);
   
@@ -101,7 +102,9 @@ public class AutonomousChooser {
             case TWO_HALF_OBJECT_BRIDGE_BALANCE:
                 return new RightSide2HalfBalance(container, trajectories);   
             case ONE_HALF_OBJECT_BALANCE:
-                return new OneHalfObjectMidBalance(container, trajectories);     
+                return new OneHalfObjectMidBalance(container, trajectories);
+            case ONE_OBJECT_M_BALANCE:
+                return new OneObjectMidMobilityBalance(container, trajectories);         
             default:
                 return getSevenFeet(container);
         }
@@ -136,6 +139,7 @@ public class AutonomousChooser {
         TWO_OBJECT_BRIDGE_BALANCE,
         TWO_HALF_OBJECT_BRIDGE_BALANCE,
         ONE_HALF_OBJECT_BALANCE,
+        ONE_OBJECT_M_BALANCE,
         ;
     }
 }
