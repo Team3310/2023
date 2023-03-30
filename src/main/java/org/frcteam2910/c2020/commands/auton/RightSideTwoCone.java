@@ -43,9 +43,9 @@ public class RightSideTwoCone extends AutonCommandBase {
                 new InstantCommand(()->intake.setCubeIntakeDeployTargetPosition(111)),
                 new SequentialCommandGroup(
                     new WaitCommand(0.75),
-                    new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM)
-                ),    
-                new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false)
+                    new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
+                    new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false)
+                )
             ),
             new WaitCommand(0.1),
             new ParallelCommandGroup(
