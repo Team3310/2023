@@ -177,6 +177,12 @@ public class Robot extends TimedRobot {
     }
 
     @Override
+    public void simulationPeriodic(){
+        test.printCoords(RobotContainer.getInstance().getTrajectories().getConeBridgeToPickup1(false),
+                         RobotContainer.getInstance().getTrajectories().getConeBridgeToPickup1(true));
+    }
+
+    @Override
     public void teleopInit() {
         teleopUsed = true;
 

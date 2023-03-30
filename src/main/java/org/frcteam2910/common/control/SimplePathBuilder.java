@@ -22,8 +22,8 @@ public final class SimplePathBuilder {
     }
 
     public Path getXReflectedPath(){
-        SimplePathBuilder reflectedPath = new SimplePathBuilder(segmentList.get(0).getStart().getPosition(), segmentList.get(0).getStart().getHeading());
-
+        SimplePathBuilder reflectedPath = new SimplePathBuilder(segmentList.get(0).getStart().getPosition().multiply(-1, 0), Rotation2.fromDegrees(segmentList.get(0).getStart().getHeading().toDegrees()-180));
+        
         for(int i=0; i<segmentList.size(); i++){
             PathSegment segment = segmentList.get(i);
             if(segmentTypeList.get(i)==PathType.ARC){

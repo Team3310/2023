@@ -56,6 +56,10 @@ public class RobotContainer {
         instance = this;
     }
 
+    public AutonomousTrajectories getTrajectories(){
+        return autonomousTrajectories;
+    }
+
     public void recreateTrajectoriesBasedOnSide(){
         autonomousTrajectories = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, sideChooser.getSide());
         autonomousChooser.updateTrajectories(autonomousTrajectories);
