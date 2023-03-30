@@ -48,7 +48,7 @@ public class OneObjectMidMobilityBalance extends AutonCommandBase {
                 drive.setBridgeDriveVoltage(6);
             }),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
-            new InstantCommand(() -> drive.setStartDegrees(drive.getRollDegreesOffLevel())),
+            new InstantCommand(() -> drive.setBalanceStartDegrees(drive.getRollDegreesOffLevel())),
             new DriveBalanceCommand(drive, true, true, true)
             // new FollowTrajectoryCommand(drive, trajectories.getOnToBridge()),
             // new WaitCommand(2.0),

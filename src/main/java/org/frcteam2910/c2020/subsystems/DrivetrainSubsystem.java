@@ -634,7 +634,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         // Set the drive signal to a field-centric or robot-centric joystick-based input when we see a ball.
         if(forward) {
             if(limelightForward.hasTarget()) {
-                limelightStrafeController.setSetpoint(0);
+                limelightStrafeController.setSetpoint(-12);
 
     
                 // Last boolean in drive() is true for field-oriented or false for robot-centric left joystick
@@ -936,10 +936,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public void update(double time, double dt) {
         updateOdometry(time, dt);
 
-        if(Math.abs(getDriveForwardAxis().get(true))>0.1 || Math.abs(getDriveStrafeAxis().get(true))>0.1 || Math.abs(getDriveRotationAxis().get(true))>0.1){
-            setDriveControlMode(DriveControlMode.JOYSTICKS);
-            wasJustTurning = false;
-        }   
+        // if(Math.abs(getDriveForwardAxis().get(true))>0.1 || Math.abs(getDriveStrafeAxis().get(true))>0.1 || Math.abs(getDriveRotationAxis().get(true))>0.1){
+        //     setDriveControlMode(DriveControlMode.JOYSTICKS);
+        //     wasJustTurning = false;
+        // }   
 
         DriveControlMode i_controlMode = getDriveControlMode();
 
