@@ -287,6 +287,7 @@ public class Arm implements Subsystem{
     @Override
     public void periodic(){
         SmartDashboard.putString("score mode", scoreMode.name());
+        SmartDashboard.putString("arm control mode", rotationControlMode.name());
         SmartDashboard.putString("closest score mode", ScoreMode.getClosestMode(getArmDegreesIntegrated()).name());
 
         SmartDashboard.putNumber("arm degrees internal", getArmDegreesIntegrated());

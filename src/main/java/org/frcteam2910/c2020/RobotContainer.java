@@ -287,6 +287,9 @@ public class RobotContainer {
         // SmartDashboard.putData("Turn to Goal", new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurnToTarget()));
         //SmartDashboard.putData("set drive control mode voltage", new InstantCommand(() -> {drivetrain.setBridgeDriveVoltage(1.0); drivetrain.setDriveControlMode(DriveControlMode.BRIDGE_VOLTAGE);}));
         SmartDashboard.putData("extendo zero", new ArmExtenderZero(Arm.getInstance()));
+        SmartDashboard.putData("cancel all command", new InstantCommand(()->CommandScheduler.getInstance().cancelAll()));
+        SmartDashboard.putData("arm to zero", new SetArmSafely(ScoreMode.ZERO));
+        SmartDashboard.putData("arm to high", new SetArmSafely(ScoreMode.HIGH));
         // SmartDashboard.putData("roller rpm to 1000", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(1000)));
         // SmartDashboard.putData("roller rpm to 2000", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(2000)));
         // SmartDashboard.putData("roller rpm to 100", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(100)));

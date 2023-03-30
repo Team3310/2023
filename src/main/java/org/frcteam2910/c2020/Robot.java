@@ -180,8 +180,8 @@ public class Robot extends TimedRobot {
     //by running the WPIlib command Simulate Robot Code
     @Override
     public void simulationPeriodic(){
-        test.printCoords(RobotContainer.getInstance().getTrajectories().getConeBridgeToPickup1(false),
-                         RobotContainer.getInstance().getTrajectories().getConeBridgeToPlace1(false));
+        // test.printCoords(RobotContainer.getInstance().getTrajectories().getConeBridgeToPickup1(false),
+                        //  RobotContainer.getInstance().getTrajectories().getConeBridgeToPlace1(false));
     }
 
     @Override

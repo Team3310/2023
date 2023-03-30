@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
+import java.time.Instant;
 import java.util.function.BooleanSupplier;
 
 import org.frcteam2910.c2020.subsystems.Arm;
@@ -41,8 +42,10 @@ public class SetArmSafely extends SequentialCommandGroup {
         this.startMode = arm.getScoreMode();
         wasUnsafeManeuver = true;
 
-        arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO);
-        // arm.setScoreMode(targetScoreMode);
+        // arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO);
+        this.addCommands(
+            new InstantCommand(()->arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO))
+        );
 
         addRequirements(arm);
 
