@@ -39,8 +39,8 @@ public class SetArmRotator extends CommandBase {
 
     @Override
     public boolean isFinished(){
-        if((!waitUntilReachedTarget) || arm.withinAngle(ARM_DEGREES_TOLERANCE, targetDegrees))
-            arm.setScoreMode(ScoreMode.getClosestMode(arm.getArmDegreesIntegrated()));
+        // if((!waitUntilReachedTarget) || arm.withinAngle(ARM_DEGREES_TOLERANCE, targetDegrees))
+        //     arm.setScoreMode(ScoreMode.getClosestMode(arm.getArmDegreesIntegrated()));
         return (!waitUntilReachedTarget) || arm.withinAngle(ARM_DEGREES_TOLERANCE, targetDegrees);
     }
 

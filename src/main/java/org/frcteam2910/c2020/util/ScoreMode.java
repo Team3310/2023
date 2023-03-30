@@ -7,7 +7,7 @@ public enum ScoreMode{
     MID(85, 0.875),
     HIGH(103, 14.5), // "money" - paul
     LOW(40, 0.1),
-    CUBE_INTAKE(10, 5); //33, 9.5 practice : 24.5, 5.25
+    CUBE_INTAKE(10, 4); //33, 9.5 practice : 24.5, 5.25
 
     ScoreMode(double angle, double inches){
         this.angle = angle;
@@ -15,13 +15,13 @@ public enum ScoreMode{
     }
 
     public static ScoreMode getClosestMode(double angle){
-        if(angle<=-95){
+        if(angle>=95){
             return HIGH;
         }
-        else if(angle<=-50){
+        else if(angle>=50){
             return MID;
         }
-        else if(angle<=-15){
+        else if(angle>=15){
             return LOW;
         }
         else if(angle<=15 && angle >= -15){
@@ -50,17 +50,17 @@ public enum ScoreMode{
         else{
             if(isCube){
                 switch(this){
-                    case HIGH : return -100;
-                    case MID : return -85.5;
-                    case LOW : return -40;
+                    case HIGH : return 100;
+                    case MID : return 85.5;
+                    case LOW : return 40;
                     default : return this.getAngle();
                 }
             }
             else{
                 switch(this){
-                    case HIGH : return -100;
-                    case MID : return -80;
-                    case LOW : return -40;
+                    case HIGH : return 100;
+                    case MID : return 80;
+                    case LOW : return 40;
                     default : return this.getAngle();
                 }
             }
