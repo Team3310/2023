@@ -176,10 +176,12 @@ public class Robot extends TimedRobot {
         robotContainer.getAutonomousCommand().schedule();
     }
 
+    //we can use this to run test code that doesn't need the robot 
+    //by running the WPIlib command Simulate Robot Code
     @Override
     public void simulationPeriodic(){
         test.printCoords(RobotContainer.getInstance().getTrajectories().getConeBridgeToPickup1(false),
-                         RobotContainer.getInstance().getTrajectories().getConeBridgeToPickup1(true));
+                         RobotContainer.getInstance().getTrajectories().getConeBridgeToPlace1(false));
     }
 
     @Override

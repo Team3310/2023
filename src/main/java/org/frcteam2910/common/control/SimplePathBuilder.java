@@ -21,7 +21,7 @@ public final class SimplePathBuilder {
         rotationMap.put(0.0, initialRotation);
     }
 
-    public Path getXReflectedPath(){
+    public SimplePathBuilder getXReflectedPath(){
         SimplePathBuilder reflectedPath = new SimplePathBuilder(segmentList.get(0).getStart().getPosition().multiply(-1, 0), Rotation2.fromDegrees(segmentList.get(0).getStart().getHeading().toDegrees()-180));
         
         for(int i=0; i<segmentList.size(); i++){
@@ -34,13 +34,13 @@ public final class SimplePathBuilder {
             }
         }
 
-        return reflectedPath.build();
+        return reflectedPath;
     }
 
-    public Path getBackwardsPath(){
-        SimplePathBuilder invertedPath = new SimplePathBuilder(segmentList.get(0).getEnd().getPosition(), segmentList.get(0).getEnd().getHeading());
+    public SimplePathBuilder getBackwardsPath(){
+        SimplePathBuilder invertedPath = new SimplePathBuilder(segmentList.get(segmentList.size()-1).getEnd().getPosition(), segmentList.get(segmentList.size()-1).getEnd().getHeading());
 
-        for(int i=segmentList.size()-1; i>0; i--){
+        for(int i=segmentList.size()-1; i>-1; i--){
             PathSegment segment = segmentList.get(i);
             if(segmentTypeList.get(i)==PathType.ARC){
                 invertedPath.arcTo(segment.getStart().getPosition(), segment.getCenter(), segment.getStart().getHeading());
@@ -50,7 +50,7 @@ public final class SimplePathBuilder {
             }
         }
 
-        return invertedPath.build();
+        return invertedPath;
     }
 
     private void addSegment(PathSegment segment) {

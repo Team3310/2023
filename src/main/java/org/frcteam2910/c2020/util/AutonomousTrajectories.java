@@ -463,22 +463,22 @@ public class AutonomousTrajectories {
     public Trajectory getThreeObjectBridgePart4(boolean isBlue){return isBlue?threeObjectBridgePart4Blue:threeObjectBridgePart4;}
 
     public Trajectory getConeBridgeToPlace1(boolean isBlue){
-        return isBlue?new Trajectory(coneBridgeToPlace1.getXReflectedPath(), mediumConstraints, SAMPLE_DISTANCE):
-                      new Trajectory(coneBridgeToPlace1.build(), mediumConstraints, SAMPLE_DISTANCE);
+        return isBlue?new Trajectory(coneBridgeToPickUp1.getXReflectedPath().getBackwardsPath().build(), mediumConstraints, SAMPLE_DISTANCE):
+                      new Trajectory(coneBridgeToPickUp1.getBackwardsPath().build(), mediumConstraints, SAMPLE_DISTANCE);
     }
 
     public Trajectory getConeBridgeToPlace2(boolean isBlue){
-        return isBlue?new Trajectory(coneBridgeToPlace2.getXReflectedPath(), mediumConstraints, SAMPLE_DISTANCE):
+        return isBlue?new Trajectory(coneBridgeToPlace2.getXReflectedPath().build(), mediumConstraints, SAMPLE_DISTANCE):
                       new Trajectory(coneBridgeToPlace2.build(), mediumConstraints, SAMPLE_DISTANCE);
     }
 
     public Trajectory getConeBridgeToPickup1(boolean isBlue){
-        return isBlue?new Trajectory(coneBridgeToPickUp1.getXReflectedPath(), mediumConstraints, SAMPLE_DISTANCE):
+        return isBlue?new Trajectory(coneBridgeToPickUp1.getXReflectedPath().build(), mediumConstraints, SAMPLE_DISTANCE):
                       new Trajectory(coneBridgeToPickUp1.build(), mediumConstraints, SAMPLE_DISTANCE);
     }
 
     public Trajectory getConeBridgeToPickup2(boolean isBlue){
-        return isBlue?new Trajectory(coneBridgeToPickUp2.getXReflectedPath(), mediumConstraints, SAMPLE_DISTANCE):
+        return isBlue?new Trajectory(coneBridgeToPickUp2.getXReflectedPath().build(), mediumConstraints, SAMPLE_DISTANCE):
                       new Trajectory(coneBridgeToPickUp2.build(), mediumConstraints, SAMPLE_DISTANCE);
     }
 
