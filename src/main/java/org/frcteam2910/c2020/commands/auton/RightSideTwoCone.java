@@ -3,8 +3,6 @@ package org.frcteam2910.c2020.commands.auton;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-import java.util.function.BooleanSupplier;
-
 import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.RobotContainer;
 import org.frcteam2910.c2020.commands.*;
@@ -15,7 +13,6 @@ import org.frcteam2910.c2020.util.ScoreMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -31,7 +28,7 @@ public class RightSideTwoCone extends AutonCommandBase {
         resetRobotPose(container, trajectories.getConeBridgeToPickup1(isBlue));
         this.addCommands(
             new SetArmExtender(arm, 0.0),
-            new SetArmRotator(arm, ScoreMode.MID.getAngle()-7.5),
+            new SetArmRotator(arm, ScoreMode.MID.getAngle()-6.0),
             new SetArmExtender(arm, ScoreMode.MID.getInches()),
             new SetIntakeRPM(intake, Constants.ARM_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
@@ -39,7 +36,7 @@ public class RightSideTwoCone extends AutonCommandBase {
                     new WaitUntilCommand(()->!intake.getConeSensor().get()),
                     new WaitCommand(0.05)
                 ),
-                new WaitCommand(1.0)
+                new WaitCommand(0.5)
             ),
             new ParallelCommandGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup1(isBlue)),
@@ -47,7 +44,7 @@ public class RightSideTwoCone extends AutonCommandBase {
                 new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
                 new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false)
             ),
-            new WaitCommand(0.25),
+            new WaitCommand(0.1),
             new ParallelCommandGroup(
                 new InstantCommand(()->intake.setCubeRollerRPM(0)),
                 new InstantCommand(()->intake.setArmIntakeHold()),

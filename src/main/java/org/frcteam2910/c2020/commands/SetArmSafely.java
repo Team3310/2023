@@ -42,6 +42,7 @@ public class SetArmSafely extends SequentialCommandGroup {
         wasUnsafeManeuver = true;
 
         arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO);
+        // arm.setScoreMode(targetScoreMode);
 
         addRequirements(arm);
 
