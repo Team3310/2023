@@ -75,7 +75,7 @@ public class Intake implements Subsystem{
         statorCurrentConfigs.enable = true;
         intakeMotor.configStatorCurrentLimit(statorCurrentConfigs);  
         cubeIntakeRollerMotor.configStatorCurrentLimit(statorCurrentConfigs);
-        statorCurrentConfigs.currentLimit = 20.0;
+        statorCurrentConfigs.currentLimit = 40.0;
         cubeIntakeLiftMotor.configStatorCurrentLimit(statorCurrentConfigs);      
 
         intakeMotor.config_kF(kIntakeVelocitySlot, 0.0);
@@ -160,15 +160,15 @@ public class Intake implements Subsystem{
             //     cubeIntakeLiftMotor.config_kF(kIntakePositionSlot, -0.006);
             //     cubeIntakeLiftMotor.config_kP(kIntakePositionSlot, 0.01);
             // // }
-            cubeIntakeLiftMotor.setIntegralAccumulator(0);
-            cubeIntakeLiftMotor.selectProfileSlot(kIntakePositionSlot, 0);
-            cubeIntakeLiftMotor.set(TalonFXControlMode.Position, getCubeIntakeDeployDegreesTicks(positionDegrees));
-            // if(positionDegrees==110){
-            //     cubeIntakeLiftMotor.set(ControlMode.Current, 0.2);
-            // }
-            // else{
-            //     cubeIntakeLiftMotor.set(ControlMode.Current, -0.2);
-            // }
+            // cubeIntakeLiftMotor.setIntegralAccumulator(0);
+            // cubeIntakeLiftMotor.selectProfileSlot(kIntakePositionSlot, 0);
+            // cubeIntakeLiftMotor.set(TalonFXControlMode.Position, getCubeIntakeDeployDegreesTicks(positionDegrees));
+            if(positionDegrees==110){
+                cubeIntakeLiftMotor.set(ControlMode.PercentOutput, 0.2);
+            }
+            else{
+                cubeIntakeLiftMotor.set(ControlMode.PercentOutput, -0.2);
+            }
         }
 
         public void setCubeIntakeDeployHome(double deployPosDegreesOffset) {
