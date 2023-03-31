@@ -91,7 +91,7 @@ public class Arm implements Subsystem{
         armTranslationMotor.configMotionSCurveStrength(4);
 
         armRotationMotor.config_kF(0, 0.0);
-        armRotationMotor.config_kP(0, 0.0375);
+        armRotationMotor.config_kP(0, 0.03);
         armRotationMotor.config_kI(0, 0.00000001);
         armRotationMotor.config_kD(0, 0.0);
 
@@ -304,6 +304,7 @@ public class Arm implements Subsystem{
         SmartDashboard.putNumber("arm degrees ext", getArmDegreesExternal());
         SmartDashboard.putNumber("arm inches", getArmInches());
 
+        SmartDashboard.putNumber("target arm degrees", getTargetDegrees());
         SmartDashboard.putNumber("extendo voltage", armTranslationMotor.getMotorOutputVoltage());
         SmartDashboard.putNumber("extendo current", armTranslationMotor.getStatorCurrent());
 
