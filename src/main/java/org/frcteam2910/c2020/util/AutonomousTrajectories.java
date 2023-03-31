@@ -78,7 +78,7 @@ public class AutonomousTrajectories {
     private Trajectory coneBridgePickUp2Blue;
     private Trajectory coneBridgeToPlace1Blue;
     private Trajectory coneBridgeToPlace2Blue;
-    private Trajectory coneBridgeToBridge1;
+    private SimplePathBuilder coneBridgeToBridge1;
     private Trajectory coneBridgeToBridge2;
     private Trajectory coneBridgeToBridge2Half;
 //#endregion
@@ -393,6 +393,10 @@ public class AutonomousTrajectories {
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
+
+        coneBridgeToBridge1 = new SimplePathBuilder(new Vector2(-246, 140.68), Rotation2.fromDegrees(180))
+                                .lineTo(new Vector2(-240, 140.68))
+                                .lineTo(new Vector2(-240, 197.68));
         //#endregion
 //#endregion        
         onToBridge = new Trajectory(
@@ -463,8 +467,8 @@ public class AutonomousTrajectories {
     public Trajectory getThreeObjectBridgePart4(boolean isBlue){return isBlue?threeObjectBridgePart4Blue:threeObjectBridgePart4;}
 
     public Trajectory getConeBridgeToPlace1(boolean isBlue){
-        return isBlue?new Trajectory(coneBridgeToPickUp1.getXReflectedPath().getBackwardsPath().build(), mediumConstraints, SAMPLE_DISTANCE):
-                      new Trajectory(coneBridgeToPickUp1.getBackwardsPath().build(), mediumConstraints, SAMPLE_DISTANCE);
+        return isBlue?new Trajectory(coneBridgeToPlace1.getXReflectedPath().build(), mediumConstraints, SAMPLE_DISTANCE):
+                      new Trajectory(coneBridgeToPlace1.build(), mediumConstraints, SAMPLE_DISTANCE);
     }
 
     public Trajectory getConeBridgeToPlace2(boolean isBlue){
@@ -498,8 +502,9 @@ public class AutonomousTrajectories {
                 bridgeConstraints, SAMPLE_DISTANCE);
     }
 
-    public Trajectory getToBridge1(){
-        return coneBridgeToBridge1;
+    public Trajectory getToBridge1(boolean isBlue){
+        return isBlue?new Trajectory(coneBridgeToBridge1.getXReflectedPath().build(), mediumConstraints, SAMPLE_DISTANCE):
+                      new Trajectory(coneBridgeToBridge1.build(), mediumConstraints, SAMPLE_DISTANCE);
     }
 
     public Trajectory getToBridge2(){

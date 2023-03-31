@@ -41,7 +41,7 @@ public class Arm implements Subsystem{
     private double degreesOffset;
     private double targetDegreesTicks;
     private double manualRotationSpeed;
-    private ScoreMode scoreMode = ScoreMode.ZERO;
+    public ScoreMode scoreMode = ScoreMode.ZERO;
 
     private ArmControlMode extenderControlMode = ArmControlMode.HOLD;
     private ArmControlMode rotationControlMode = ArmControlMode.HOLD;
@@ -107,6 +107,10 @@ public class Arm implements Subsystem{
         // SmartDashboard.putNumber("angle checking", angle);
         // SmartDashboard.putNumber("result", Math.abs(getArmDegreesIntegrated()-angle));
         return Math.abs(getArmDegreesIntegrated()-angle) < tolerance;
+    }
+
+    public boolean withinTarget(){
+        return Math.abs(getArmInches()-targetInches)<0.75;
     }
 
     public void setRotationControlMode(ArmControlMode mode){
@@ -233,6 +237,7 @@ public class Arm implements Subsystem{
 
     public synchronized void setTargetArmInchesPositionAbsolute(double targetInches) {
         extenderControlMode = ArmControlMode.HOLD;
+        SmartDashboard.putNumber("TARGET ARM INCHES", targetInches);
         this.targetInches = targetInches;
         targetInchesTicks = getArmInchesEncoderTicksAbsolute(targetInches);
         armTranslationMotor.set(TalonFXControlMode.Position, targetInchesTicks);
@@ -272,6 +277,11 @@ public class Arm implements Subsystem{
         armTranslationMotor.set(ControlMode.PercentOutput, curSpeed);
     }
 
+    public void cubeExtend(){
+        double target = getArmInches()+6;
+        setTargetArmInchesPositionAbsolute(target);
+    }
+
     public synchronized void setTranslationalHold(){
         // if(firstHoldSet){
         //     firstHoldSet = false;
@@ -286,7 +296,7 @@ public class Arm implements Subsystem{
 
     @Override
     public void periodic(){
-        SmartDashboard.putString("score mode", scoreMode.name());
+        SmartDashboard.putString("score mode", Arm.getInstance().scoreMode.name());
         SmartDashboard.putString("arm control mode", rotationControlMode.name());
         SmartDashboard.putString("closest score mode", ScoreMode.getClosestMode(getArmDegreesIntegrated()).name());
 

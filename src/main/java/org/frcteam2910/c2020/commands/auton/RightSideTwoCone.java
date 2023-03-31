@@ -23,7 +23,7 @@ public class RightSideTwoCone extends AutonCommandBase {
     }
 
     public RightSideTwoCone(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
-        boolean isBlue = false;//getSide(container);
+        boolean isBlue = getSide(container);
         SmartDashboard.putBoolean("isBlue", isBlue);
         resetRobotPose(container, trajectories.getConeBridgeToPickup1(isBlue));
         this.addCommands(
@@ -41,7 +41,10 @@ public class RightSideTwoCone extends AutonCommandBase {
             new ParallelCommandGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup1(isBlue)),
                 new InstantCommand(()->intake.setCubeIntakeDeployTargetPosition(111)),
-                new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
+                new SequentialCommandGroup(
+                    new WaitCommand(0.3),
+                    new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM)
+                ),    
                 new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false)
             ),
             new WaitCommand(0.1),
