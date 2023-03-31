@@ -29,7 +29,7 @@ public class CubeExtend extends CommandBase {
 
     @Override
     public boolean isFinished(){
-        return (!waitUntilReachedTarget) || arm.withinTarget();
+        return (!waitUntilReachedTarget) || arm.withinCubeTarget();
     }
 
     @Override

@@ -109,7 +109,7 @@ public class Arm implements Subsystem{
         return Math.abs(getArmDegreesIntegrated()-angle) < tolerance;
     }
 
-    public boolean withinTarget(){
+    public boolean withinCubeTarget(){
         return Math.abs(getArmInches()-targetInches)<0.75;
     }
 
@@ -278,8 +278,16 @@ public class Arm implements Subsystem{
     }
 
     public void cubeExtend(){
-        double target = getArmInches()+6;
-        setTargetArmInchesPositionAbsolute(target);
+        if(getScoreMode()!=ScoreMode.LOW){
+            double target = getArmInches()+6;
+            setTargetArmInchesPositionAbsolute(target);
+            // if(getScoreMode()==ScoreMode.HIGH){
+            //     setArmDegreesPositionAbsolute(113);
+            // }
+        }else{
+            double target = getArmDegreesIntegrated()+10;
+            setArmDegreesPositionAbsolute(target);
+        }
     }
 
     public synchronized void setTranslationalHold(){
