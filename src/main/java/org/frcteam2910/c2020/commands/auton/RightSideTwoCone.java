@@ -40,7 +40,7 @@ public class RightSideTwoCone extends AutonCommandBase {
             ),
             new ParallelCommandGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup1(isBlue)),
-                new InstantCommand(()->intake.setCubeIntakeDeployTargetPosition(111)),
+                new InstantCommand(()->intake.setCubeIntakeDeployTargetPosition(110)),
                 new SequentialCommandGroup(
                     new WaitCommand(0.75),
                     new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),

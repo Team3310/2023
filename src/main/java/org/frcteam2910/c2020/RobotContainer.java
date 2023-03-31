@@ -134,6 +134,7 @@ public class RobotContainer {
             new InstantCommand(()->{
                 intake.stopRollingOnTriggeredCubeIntakeDIO = true;
                 intake.setCubeIntakeDeployTargetPosition(110);
+                intake.resetIntakeDIOTimestamp();
                 intake.setCubeRollerRPM(2000);
             })
         );
@@ -142,6 +143,7 @@ public class RobotContainer {
             new InstantCommand(()->{
                 intake.stopRollingOnTriggeredCubeIntakeDIO = false;
                 intake.setCubeIntakeDeployTargetPosition(0);
+                intake.resetIntakeDIOTimestamp();
                 intake.setCubeRollerRPM(0);
             })
         );

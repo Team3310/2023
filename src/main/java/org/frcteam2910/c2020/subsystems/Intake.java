@@ -236,36 +236,36 @@ public class Intake implements Subsystem{
         //     setArmIntakeHold();
         // }
         if(stopRollingOnTriggeredCubeIntakeDIO){
-            double delayFactorSec = 0.5;
+            double delayFactorSec = 0.25;
             if(cubeRollerSensor.get()){
-                if(lastSysMillisTriggeredDIO <= 0){
-                    lastSysMillisTriggeredDIO = System.currentTimeMillis();
-                }
+                // if(lastSysMillisTriggeredDIO <= 0){
+                //     lastSysMillisTriggeredDIO = System.currentTimeMillis();
+                // }
                 setCubeRollerRPM(0);
             }
-            if(System.currentTimeMillis() - lastSysMillisTriggeredDIO > (int)(delayFactorSec * 1000)) {
-                // We're beyond the delay factor, time to act
-                setCubeRollerRPM(0);
-            }
+            // if(System.currentTimeMillis() - lastSysMillisTriggeredDIO > (int)(delayFactorSec * 1000)) {
+            //     // We're beyond the delay factor, time to act
+            //     setCubeRollerRPM(0);
+            // }
         }
 
         if(stopRollingOnTriggeredArmIntakeDIO) {
             // While holding right trigger (cube intake), if detect something where the cone would go,
             // override any commands to move intake rollers.
-                double delayFactorSec = 0.5;
+                double delayFactorSec = 0.25;
             if(cubeSensor.get()){
-                if(lastSysMillisTriggeredDIO <= 0){
-                    lastSysMillisTriggeredDIO = System.currentTimeMillis();
-                }
+                // if(lastSysMillisTriggeredDIO <= 0){
+                //     lastSysMillisTriggeredDIO = System.currentTimeMillis();
+                // }
                 setCubeRollerRPM(0);
                 setCubeRollerRPM(0);
                 setArmIntakeHold();
             }
-            if(System.currentTimeMillis() - lastSysMillisTriggeredDIO > (int)(delayFactorSec * 1000)) {
-                // We're beyond the delay factor, time to act
-                setCubeRollerRPM(0);
-                setArmIntakeHold();
-            }
+            // if(System.currentTimeMillis() - lastSysMillisTriggeredDIO > (int)(delayFactorSec * 1000)) {
+            //     // We're beyond the delay factor, time to act
+            //     setCubeRollerRPM(0);
+            //     setArmIntakeHold();
+            // }
         }
     }
 
