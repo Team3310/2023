@@ -404,30 +404,30 @@ public class AutonomousTrajectories {
 
         //#region blue
         coneBridgePickUp2Blue = new Trajectory(
-                new SimplePathBuilder(new Vector2(-246, 140.68), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(-123.3, 140.68), Rotation2.fromDegrees(225))
+                new SimplePathBuilder(new Vector2(-246, 140.68), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(-123.3, 140.68), Rotation2.fromDegrees(45))
                         .arcTo(new Vector2(-28.95271996, 195.00), new Vector2(-123.29914997, 246.99918908))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
 
         coneBridgeToPlace2Blue = new Trajectory(
-                new SimplePathBuilder(new Vector2(-28.95271996, 195.00), Rotation2.fromDegrees(225))
+                new SimplePathBuilder(new Vector2(-28.95271996, 195.00), Rotation2.fromDegrees(45))
                         .arcTo(new Vector2(-123.3, 140.68), new Vector2(-123.29914997, 246.99918908))
-                        .lineTo(new Vector2(-250, 146.68), Rotation2.fromDegrees(160))
+                        .lineTo(new Vector2(-250, 146.68), Rotation2.fromDegrees(-20))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
 
         coneBridgeToPickUp1Blue = new Trajectory(
-                new SimplePathBuilder(new Vector2(-250, 119), Rotation2.fromDegrees(180))
+                new SimplePathBuilder(new Vector2(-250, 119), Rotation2.fromDegrees(0))
                         .lineTo(new Vector2(-32.1, 140.5))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
 
         coneBridgeToPlace1Blue = new Trajectory(
-                new SimplePathBuilder(new Vector2(-32.1, 140.5), Rotation2.fromDegrees(180))
+                new SimplePathBuilder(new Vector2(-32.1, 140.5), Rotation2.fromDegrees(0))
                         .lineTo(new Vector2(-246, 140.68))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
