@@ -75,7 +75,7 @@ public class SetArmSafely extends SequentialCommandGroup {
                     new SetArmExtender(arm, 4.5, true),
                     new SetArmRotator(arm, 35.0, true),
                     new SetArmExtender(arm, 0, true),
-                    new SetArmRotator(arm, 0, true)    
+                    new SetArmRotator(arm, 10, true)    
                 );
             }
             else{

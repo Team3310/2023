@@ -1,7 +1,7 @@
 package org.frcteam2910.c2020.util;
 
 public enum ScoreMode{
-    ZERO(0.001, 0.25), 
+    ZERO(10.0, 0.25), 
     CONE_INTAKE(15, 0.1), //17, 3.375 practice : 15 , 0.1
     
     MID(85, 0.875),
