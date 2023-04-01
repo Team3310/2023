@@ -95,10 +95,10 @@ public class Intake implements Subsystem{
         cubeIntakeRollerMotor.config_kD(kIntakeVelocitySlot, 0.0);
         //cubeIntakeMotor.config_IntegralZone(kIntakeVelocitySlot, (int)this.CubeRoller_RpmToVelocityTicks(200));
 
-        // cubeIntakeRollerMotor.config_kF(kIntakePositionSlot, 0.0);
-        // cubeIntakeRollerMotor.config_kP(kIntakePositionSlot, 0.05);
-        // cubeIntakeRollerMotor.config_kI(kIntakePositionSlot, 0.0);
-        // cubeIntakeRollerMotor.config_kD(kIntakePositionSlot, 0.0);
+        cubeIntakeRollerMotor.config_kF(kIntakePositionSlot, 0.0);
+        cubeIntakeRollerMotor.config_kP(kIntakePositionSlot, 0.05);
+        cubeIntakeRollerMotor.config_kI(kIntakePositionSlot, 0.0);
+        cubeIntakeRollerMotor.config_kD(kIntakePositionSlot, 0.0);
 
         cubeIntakeLiftMotor.config_kF(kIntakePositionSlot, 0.00);
         cubeIntakeLiftMotor.config_kP(kIntakePositionSlot, 0.06);
@@ -148,8 +148,14 @@ public class Intake implements Subsystem{
         }
 
         public void setCubeRollerRPM(double rpm) {
-            cubeIntakeRollerMotor.selectProfileSlot(kIntakeVelocitySlot, 0);
-            cubeIntakeRollerMotor.set(TalonFXControlMode.Velocity, this.CubeRoller_RpmToVelocityTicks(rpm));
+            if(Math.floor(rpm)!=0){
+                cubeIntakeRollerMotor.selectProfileSlot(kIntakeVelocitySlot, 0);
+                cubeIntakeRollerMotor.set(TalonFXControlMode.Velocity, this.CubeRoller_RpmToVelocityTicks(rpm));
+            }
+            else{
+                cubeIntakeRollerMotor.selectProfileSlot(kIntakePositionSlot, 0);
+                cubeIntakeRollerMotor.set(TalonFXControlMode.Position, this.cubeIntakeRollerMotor.getSelectedSensorPosition());
+            }
         }
 
         public void setCubeIntakeDeployTargetPosition(double positionDegrees) {
@@ -228,7 +234,7 @@ public class Intake implements Subsystem{
         SmartDashboard.putNumber("intake motor current", intakeMotor.getStatorCurrent());
         SmartDashboard.putNumber("intake motor position", intakeMotor.getSelectedSensorPosition());
         SmartDashboard.putNumber("intake deploy position", getCubeIntakeDeployDegrees());
-        SmartDashboard.putNumber("intake roller velocity", getCubeRollerRPM());
+        SmartDashboard.putNumber("cube intake roller rpm", getCubeRollerRPM());
         SmartDashboard.putNumber("intake lift voltage", cubeIntakeLiftMotor.getMotorOutputVoltage());
 
 

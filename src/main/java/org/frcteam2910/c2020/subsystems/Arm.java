@@ -26,7 +26,7 @@ public class Arm implements Subsystem{
     private TalonFX armTranslationMotor;
 
     //sensors
-    private CANCoder armExternalCANCoder = new CANCoder(Constants.ARM_EXTERNAL_CANCODER_PORT);
+    //private CANCoder armExternalCANCoder = new CANCoder(Constants.ARM_EXTERNAL_CANCODER_PORT);
 
     //conversions
     private double DRUM_DIAMETER = 0.54134;
@@ -70,7 +70,7 @@ public class Arm implements Subsystem{
 
         CANCoderConfiguration config = new CANCoderConfiguration();
         config.sensorDirection =  false;
-        armExternalCANCoder.configAllSettings(config);
+        //armExternalCANCoder.configAllSettings(config);
 
         final StatorCurrentLimitConfiguration statorCurrentConfigs = new StatorCurrentLimitConfiguration();
         statorCurrentConfigs.currentLimit = 40.0;
@@ -129,9 +129,9 @@ public class Arm implements Subsystem{
         return (armRotationMotor.getSelectedSensorPosition() / Constants.ARM_ROTATOR_ONE_DEGREE_TO_INTEGRATED_ENCODER_TICKS) + degreesOffset;
     }
 
-    public double getArmDegreesExternal(){
-        return (armExternalCANCoder.getPosition() / Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS) + degreesOffset;
-    }
+    // public double getArmDegreesExternal(){
+    //     return (armExternalCANCoder.getPosition() / Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS) + degreesOffset;
+    // }
 
     public double getArmDegreesEncoderTicks(double degrees){
         return degrees * Constants.ARM_ROTATOR_ONE_DEGREE_TO_INTEGRATED_ENCODER_TICKS;
@@ -141,7 +141,7 @@ public class Arm implements Subsystem{
         degreesOffset = offset;
         targetDegreesTicks = 0;
         armRotationMotor.setSelectedSensorPosition(0);
-        armExternalCANCoder.setPosition(0);
+        // armExternalCANCoder.setPosition(0);
     }
 
     public double limitArmDegrees(double targetDegrees){
@@ -309,7 +309,7 @@ public class Arm implements Subsystem{
         SmartDashboard.putString("closest score mode", ScoreMode.getClosestMode(getArmDegreesIntegrated()).name());
 
         SmartDashboard.putNumber("arm degrees internal", getArmDegreesIntegrated());
-        SmartDashboard.putNumber("arm degrees ext", getArmDegreesExternal());
+        // SmartDashboard.putNumber("arm degrees ext", getArmDegreesExternal());
         SmartDashboard.putNumber("arm inches", getArmInches());
 
         SmartDashboard.putNumber("target arm degrees", getTargetDegrees());
