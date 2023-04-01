@@ -14,6 +14,7 @@ import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import org.frcteam2910.c2020.util.ScoreMode;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -35,10 +36,12 @@ public class OneObjectMidMobilityBalance extends AutonCommandBase {
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
             new InstantCommand(()->{
                 intake.stopRollingOnTriggeredCubeIntakeDIO = true;
-                intake.setCubeIntakeDeployTargetPosition(110);
                 intake.setCubeRollerRPM(2000);
             }),
-            new InstantCommand(()->drive.setBridgeDriveVoltage(-3.5)),
+            new ParallelCommandGroup(
+                new SetIntakeDeployPosition(intake, 110),
+                new InstantCommand(()->drive.setBridgeDriveVoltage(-3.5))
+            ),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
             new WaitCommand(1.1),
             new InstantCommand(()->drive.setBridgeDriveVoltage(0)),

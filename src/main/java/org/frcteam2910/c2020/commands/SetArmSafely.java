@@ -3,6 +3,7 @@ package org.frcteam2910.c2020.commands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
@@ -80,7 +81,7 @@ public class SetArmSafely extends SequentialCommandGroup {
             }
             else{
                 this.addCommands(
-                    new InstantCommand(()->Intake.getInstance().setCubeIntakeDeployTargetPosition(0)),  
+                    new SetIntakeDeployPosition(Intake.getInstance(), 0), 
                     new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(0)),
                     new SetArmExtender(arm, 0)
                 );
