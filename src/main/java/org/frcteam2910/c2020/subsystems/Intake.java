@@ -150,7 +150,7 @@ public class Intake implements Subsystem{
 
         /** @see SetIntakeDeployPosition */
         public void setCubeRollerRPM(double rpm) {
-            if(Math.floor(rpm) < 1){
+            if(Math.floor(rpm) != 0){
                 cubeIntakeRollerMotor.selectProfileSlot(kIntakeVelocitySlot, 0);
                 cubeIntakeRollerMotor.set(TalonFXControlMode.Velocity, this.CubeRoller_RpmToVelocityTicks(rpm));
             }

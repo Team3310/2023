@@ -127,8 +127,8 @@ public class RobotContainer {
 
 
         primaryController.getXButton().onTrue(
-            new InstantCommand(() -> DrivetrainSubsystem.getInstance().zeroGyro())
-            // new ChangeDriveMode(drivetrain, DriveControlMode.HOLD)
+            // new InstantCommand(() -> DrivetrainSubsystem.getInstance().zeroGyro())
+            new ChangeDriveMode(drivetrain, DriveControlMode.HOLD)
         );
 
         primaryController.getLeftBumperButton().onTrue(
