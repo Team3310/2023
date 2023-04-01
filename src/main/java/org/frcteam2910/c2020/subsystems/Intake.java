@@ -90,14 +90,14 @@ public class Intake implements Subsystem{
         intakeMotor.config_kD(kIntakePositionSlot, 0.0);
 
         cubeIntakeRollerMotor.config_kF(kIntakeVelocitySlot, 0.0);
-        cubeIntakeRollerMotor.config_kP(kIntakeVelocitySlot, 0.10);
+        cubeIntakeRollerMotor.config_kP(kIntakeVelocitySlot, -0.10);
         cubeIntakeRollerMotor.config_kI(kIntakeVelocitySlot, 0.0004);
         cubeIntakeRollerMotor.config_kD(kIntakeVelocitySlot, 0.0);
         //cubeIntakeMotor.config_IntegralZone(kIntakeVelocitySlot, (int)this.CubeRoller_RpmToVelocityTicks(200));
 
         cubeIntakeRollerMotor.config_kF(kIntakePositionSlot, 0.0);
-        cubeIntakeRollerMotor.config_kP(kIntakePositionSlot, 0.05);
-        cubeIntakeRollerMotor.config_kI(kIntakePositionSlot, 0.0);
+        cubeIntakeRollerMotor.config_kP(kIntakePositionSlot, -0.07);
+        cubeIntakeRollerMotor.config_kI(kIntakePositionSlot, -0.00007);
         cubeIntakeRollerMotor.config_kD(kIntakePositionSlot, 0.0);
 
         cubeIntakeLiftMotor.config_kF(kIntakePositionSlot, 0.00);

@@ -135,7 +135,7 @@ public class RobotContainer {
                 intake.stopRollingOnTriggeredCubeIntakeDIO = true;
                 intake.setCubeIntakeDeployTargetPosition(110);
                 intake.resetIntakeDIOTimestamp();
-                intake.setCubeRollerRPM(2000);
+                intake.setCubeRollerRPM(1500);
             })
         );
 
