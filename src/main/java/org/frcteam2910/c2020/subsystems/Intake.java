@@ -257,12 +257,14 @@ public class Intake implements Subsystem{
         // }
         if(stopRollingOnTriggeredCubeIntakeDIO){
             double delayFactorSec = 0.25;
-            if(cubeRollerSensor.get() && !setRPMZero){
+            if(cubeRollerSensor.get()){
                 // if(lastSysMillisTriggeredDIO <= 0){
                 //     lastSysMillisTriggeredDIO = System.currentTimeMillis();
                 // }
-                setCubeRollerRPM(0);
-                setRPMZero = true;
+                if(!setRPMZero) {
+                    setCubeRollerRPM(0);
+                    setRPMZero = true;
+                }
             }
             else {
                 setRPMZero = false;
@@ -276,14 +278,16 @@ public class Intake implements Subsystem{
         if(stopRollingOnTriggeredArmIntakeDIO) {
             // While holding right trigger (cube intake), if detect something where the cone would go,
             // override any commands to move intake rollers.
-                double delayFactorSec = 0.25;
-            if(cubeSensor.get() && !setRPMZero){
+            double delayFactorSec = 0.25;
+            if(cubeSensor.get()){
                 // if(lastSysMillisTriggeredDIO <= 0){
                 //     lastSysMillisTriggeredDIO = System.currentTimeMillis();
                 // }
-                setCubeRollerRPM(0);
-                setArmIntakeHold();
-                setRPMZero = true;
+                if(!setRPMZero) {
+                    setCubeRollerRPM(0);
+                    setArmIntakeHold();
+                    setRPMZero = true;
+                }
             }
             else {
                 setRPMZero = false;
