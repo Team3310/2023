@@ -17,8 +17,6 @@ import org.frcteam2910.common.io.PathReader;
 import org.frcteam2910.common.math.Rotation2;
 import org.frcteam2910.common.math.Vector2;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-
 public class AutonomousTrajectories {
 
     private static final double SAMPLE_DISTANCE = 0.1;

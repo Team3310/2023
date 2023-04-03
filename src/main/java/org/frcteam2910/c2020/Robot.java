@@ -11,7 +11,6 @@ import org.frcteam2910.c2020.subsystems.Arm.ArmControlMode;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.AutonomousChooser.AutonomousMode;
-import org.frcteam2910.c2020.util.SideChooser.SideMode;
 import org.frcteam2910.common.Logger;
 import org.frcteam2910.common.robot.UpdateManager;
 
@@ -19,7 +18,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {

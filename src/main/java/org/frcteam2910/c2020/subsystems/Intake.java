@@ -1,7 +1,6 @@
 package org.frcteam2910.c2020.subsystems;
 
 import org.frcteam2910.c2020.Constants;
-import org.frcteam2910.c2020.Robot;
 import org.frcteam2910.c2020.Servo;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;

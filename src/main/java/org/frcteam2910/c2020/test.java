@@ -1,7 +1,5 @@
 package org.frcteam2910.c2020;
 
-import javax.swing.text.Segment;
-
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import org.frcteam2910.c2020.util.SideChooser.SideMode;

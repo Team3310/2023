@@ -1,19 +1,14 @@
 package org.frcteam2910.c2020;
 
 import org.frcteam2910.c2020.commands.*;
-import org.frcteam2910.c2020.commands.auton.OnToBridge;
-import org.frcteam2910.c2020.commands.auton.OneObjectMid;
 import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.*;
 import org.frcteam2910.common.robot.input.*;
-import org.frcteam2910.common.robot.input.DPadButton.Direction;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 

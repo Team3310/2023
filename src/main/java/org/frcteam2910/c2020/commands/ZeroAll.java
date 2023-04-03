@@ -1,5 +1,4 @@
 package org.frcteam2910.c2020.commands;
-import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.common.math.Rotation2;
 

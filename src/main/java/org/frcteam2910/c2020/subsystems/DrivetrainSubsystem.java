@@ -1108,17 +1108,17 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 // On the ground, update odometry
                 this.pose = swerveOdometry.update(swerveKinematics, angle, dt, moduleVelocities);
             }
-            else {
-                // Not on the ground
-                double xacc = gyroscope.getAccels()[0]/(double)Short.MAX_VALUE;
-                double yacc = gyroscope.getAccels()[1]/(double)Short.MAX_VALUE;
-                if((xacc < .12 && getPitchDegreesOffLevel()>Constants.BALANCE_DEADBAND+2)
-                    || (yacc < .12 && getRollDegreesOffLevel()>Constants.BALANCE_DEADBAND+2)) {
-                    Vector2[] zeros = {new Vector2(0,0),new Vector2(0,0),new Vector2(0,0),new Vector2(0,0)};
-                    this.pose = swerveOdometry.update(swerveKinematics, angle, dt, zeros);
-                }
-                else this.pose = swerveOdometry.update(swerveKinematics, angle, dt, moduleVelocities);
-            }    
+            // else {
+            //     // Not on the ground
+            //     double xacc = gyroscope.getAccels()[0]/(double)Short.MAX_VALUE;
+            //     double yacc = gyroscope.getAccels()[1]/(double)Short.MAX_VALUE;
+            //     if((xacc < .12 && getPitchDegreesOffLevel()>Constants.BALANCE_DEADBAND+2)
+            //         || (yacc < .12 && getRollDegreesOffLevel()>Constants.BALANCE_DEADBAND+2)) {
+            //         Vector2[] zeros = {new Vector2(0,0),new Vector2(0,0),new Vector2(0,0),new Vector2(0,0)};
+            //         this.pose = swerveOdometry.update(swerveKinematics, angle, dt, zeros);
+            //     }
+            //     else this.pose = swerveOdometry.update(swerveKinematics, angle, dt, moduleVelocities);
+            // }    
             if (latencyCompensationMap.size() > MAX_LATENCY_COMPENSATION_MAP_ENTRIES) {
                 latencyCompensationMap.remove(latencyCompensationMap.firstKey());
             }
