@@ -245,6 +245,7 @@ public class Intake implements Subsystem{
         // SmartDashboard.putBoolean("set intake zero", hasSetIntakeZero);
         SmartDashboard.putNumber("intake motor current", intakeMotor.getStatorCurrent());
         SmartDashboard.putNumber("intake motor position", intakeMotor.getSelectedSensorPosition());
+        SmartDashboard.putNumber("cube intake motor position", cubeIntakeRollerMotor.getSelectedSensorPosition());
         SmartDashboard.putNumber("intake deploy position", getCubeIntakeDeployDegrees());
         SmartDashboard.putNumber("cube intake roller rpm", getCubeRollerRPM());
         SmartDashboard.putNumber("intake lift voltage", cubeIntakeLiftMotor.getMotorOutputVoltage());

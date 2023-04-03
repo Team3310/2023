@@ -38,7 +38,7 @@ public final class XboxController extends Controller {
 	private final Axis rightXAxis;
 	private final Axis rightYAxis;
 
-	private final DPadButton[] dpadButtons;
+	private final Trigger[] dpadButtons;
 
 	/**
 	 * @param port The port the controller is on
@@ -67,15 +67,11 @@ public final class XboxController extends Controller {
 		rightYAxis = new JoystickAxis(joystick, 5);
 		rightYAxis.setInverted(true);
 
-		dpadButtons = new DPadButton[DPadButton.Direction.values().length];
+		dpadButtons = new Trigger[DPadButton.Direction.values().length];
 
 		for (DPadButton.Direction dir : DPadButton.Direction.values()) {
-			dpadButtons[dir.ordinal()] = new DPadButton(joystick, dir);
+			dpadButtons[dir.ordinal()] = new Trigger(() -> joystick.getPOV(0) == dir.getAngle());
 		}
-	}
-
-	public double getDPadPOV(int index){
-		return dpadButtons[index].get();
 	}
 
 	@Override
@@ -159,7 +155,7 @@ public final class XboxController extends Controller {
 	}
 
 	@Override
-	public Button getDPadButton(DPadButton.Direction direction) {
+	public Trigger getDPadButton(DPadButton.Direction direction) {
 		return dpadButtons[direction.ordinal()];
 	}
 

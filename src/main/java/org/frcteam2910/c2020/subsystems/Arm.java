@@ -92,7 +92,7 @@ public class Arm implements Subsystem{
 
         armRotationMotor.config_kF(0, 0.0);
         armRotationMotor.config_kP(0, 0.03);
-        armRotationMotor.config_kI(0, 0.00000001);
+        armRotationMotor.config_kI(0, 0.00001);
         armRotationMotor.config_kD(0, 0.0);
 
         armTranslationMotor.config_kF(0, 0.0);
@@ -157,6 +157,7 @@ public class Arm implements Subsystem{
     public synchronized void setArmDegreesPositionAbsolute(double degrees) {
         rotationControlMode = ArmControlMode.HOLD;
         armRotationMotor.selectProfileSlot(0, 0);
+        armRotationMotor.setIntegralAccumulator(0);
         targetDegreesTicks = getArmDegreesEncoderTicks(limitArmDegrees(degrees));
         // armRotationMotor.set(ControlMode.Position, targetDegreesTicks, DemandType.ArbitraryFeedForward, 0.03);
         armRotationMotor.set(ControlMode.MotionMagic, targetDegreesTicks);

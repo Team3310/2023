@@ -12,7 +12,7 @@ public class SetArmRotatorSmall extends CommandBase {
     private double startingDegrees = Double.MIN_VALUE;
     private double targetDegrees = Double.MIN_VALUE;
 
-    private final double ARM_DEGREES_TOLERANCE = 0.5;
+    private final double ARM_DEGREES_TOLERANCE = 1.5;
 
     public SetArmRotatorSmall(Arm arm, double targetDegrees) {
         this(arm, targetDegrees, true);

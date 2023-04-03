@@ -178,15 +178,15 @@ public class RobotContainer {
         // secondaryController.getRightJoystickButton().onTrue(
         //         new InstantCommand(()-> DrivetrainSubsystem.getInstance().setLimelightOverride(false))
         // );
-        secondaryController.getDPadButton(Direction.UP).onTrue(
-                new InstantCommand(()-> Arm.getInstance().setTargetArmInchesPositionAbsolute(Arm.getInstance().getArmInches()+0.25))
-        );
-        secondaryController.getDPadButton(Direction.DOWN).onTrue(
-                new InstantCommand(()-> Arm.getInstance().setTargetArmInchesPositionAbsolute(Arm.getInstance().getArmInches()-0.25))
-        );
-        secondaryController.getDPadButton(Direction.UP).onTrue(
-                new InstantCommand(()-> Arm.getInstance().setTargetArmInchesPositionAbsolute(Arm.getInstance().getArmInches()+0.25))
-        );
+        // secondaryController.getDPadButton(Direction.UP).onTrue(
+        //         new InstantCommand(()-> Arm.getInstance().setTargetArmInchesPositionAbsolute(Arm.getInstance().getArmInches()+0.25))
+        // );
+        // secondaryController.getDPadButton(Direction.DOWN).onTrue(
+        //         new InstantCommand(()-> Arm.getInstance().setTargetArmInchesPositionAbsolute(Arm.getInstance().getArmInches()-0.25))
+        // );
+        // secondaryController.getDPadButton(Direction.UP).onTrue(
+        //         new InstantCommand(()-> Arm.getInstance().setTargetArmInchesPositionAbsolute(Arm.getInstance().getArmInches()+0.25))
+        // );
 
         secondaryController.getStartButton().onTrue(
             new ArmExtenderZero(Arm.getInstance())
