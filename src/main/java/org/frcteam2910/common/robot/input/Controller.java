@@ -120,5 +120,5 @@ public abstract class Controller extends GenericHID {
 	 * @return The D-Pad button of the specified direction
 	 * @since 1.0
 	 */
-	public abstract Button getDPadButton(DPadButton.Direction direction);
+	public abstract Trigger getDPadButton(DPadButton.Direction direction);
 }

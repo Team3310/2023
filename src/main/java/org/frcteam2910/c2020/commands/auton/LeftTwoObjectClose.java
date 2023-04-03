@@ -36,7 +36,7 @@ public class LeftTwoObjectClose extends AutonCommandBase {
             new WaitCommand(0.5),
             new FollowTrajectoryCommand(drive, trajectories.getThreeObjectClosePart2(isBlue)),
             new WaitCommand(0.5),
-            new FollowTrajectoryCommand(drive, trajectories.geTthreeObjectCloseEnd1(isBlue))
+            new FollowTrajectoryCommand(drive, trajectories.getThreeObjectCloseEnd1(isBlue))
         );
     }
 }

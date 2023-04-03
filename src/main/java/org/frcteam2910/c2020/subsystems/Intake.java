@@ -1,7 +1,6 @@
 package org.frcteam2910.c2020.subsystems;
 
 import org.frcteam2910.c2020.Constants;
-import org.frcteam2910.c2020.Robot;
 import org.frcteam2910.c2020.Servo;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -245,6 +244,7 @@ public class Intake implements Subsystem{
         // SmartDashboard.putBoolean("set intake zero", hasSetIntakeZero);
         SmartDashboard.putNumber("intake motor current", intakeMotor.getStatorCurrent());
         SmartDashboard.putNumber("intake motor position", intakeMotor.getSelectedSensorPosition());
+        SmartDashboard.putNumber("cube intake motor position", cubeIntakeRollerMotor.getSelectedSensorPosition());
         SmartDashboard.putNumber("intake deploy position", getCubeIntakeDeployDegrees());
         SmartDashboard.putNumber("cube intake roller rpm", getCubeRollerRPM());
         SmartDashboard.putNumber("intake lift voltage", cubeIntakeLiftMotor.getMotorOutputVoltage());
@@ -256,12 +256,14 @@ public class Intake implements Subsystem{
         // }
         if(stopRollingOnTriggeredCubeIntakeDIO){
             double delayFactorSec = 0.25;
-            if(cubeRollerSensor.get() && !setRPMZero){
+            if(cubeRollerSensor.get()){
                 // if(lastSysMillisTriggeredDIO <= 0){
                 //     lastSysMillisTriggeredDIO = System.currentTimeMillis();
                 // }
-                setCubeRollerRPM(0);
-                setRPMZero = true;
+                if(!setRPMZero) {
+                    setCubeRollerRPM(0);
+                    setRPMZero = true;
+                }
             }
             else {
                 setRPMZero = false;
@@ -275,14 +277,16 @@ public class Intake implements Subsystem{
         if(stopRollingOnTriggeredArmIntakeDIO) {
             // While holding right trigger (cube intake), if detect something where the cone would go,
             // override any commands to move intake rollers.
-                double delayFactorSec = 0.25;
-            if(cubeSensor.get() && !setRPMZero){
+            double delayFactorSec = 0.25;
+            if(cubeSensor.get()){
                 // if(lastSysMillisTriggeredDIO <= 0){
                 //     lastSysMillisTriggeredDIO = System.currentTimeMillis();
                 // }
-                setCubeRollerRPM(0);
-                setArmIntakeHold();
-                setRPMZero = true;
+                if(!setRPMZero) {
+                    setCubeRollerRPM(0);
+                    setArmIntakeHold();
+                    setRPMZero = true;
+                }
             }
             else {
                 setRPMZero = false;
