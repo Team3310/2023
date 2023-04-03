@@ -23,12 +23,12 @@ public class RightSideTwoCone extends AutonCommandBase {
     }
 
     public RightSideTwoCone(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
-        boolean isBlue = false;//getSide(container);
+        boolean isBlue = getSide(container);
         SmartDashboard.putBoolean("isBlue", isBlue);
         resetRobotPose(container, trajectories.getConeBridgeToPickup1(isBlue));
         this.addCommands(
             new SetArmExtender(arm, 0.0),
-            new SetArmRotator(arm, ScoreMode.MID.getAngle()-6.0),
+            new SetArmRotator(arm, ScoreMode.MID.getAngle()-3.0),
             new SetArmExtender(arm, ScoreMode.MID.getInches()),
             new SetIntakeRPM(intake, Constants.ARM_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
@@ -40,16 +40,19 @@ public class RightSideTwoCone extends AutonCommandBase {
             ),
             new ParallelCommandGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup1(isBlue)),
-                new InstantCommand(()->intake.setCubeIntakeDeployTargetPosition(111)),
-                new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
-                new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false)
+                new SequentialCommandGroup(
+                    new SetIntakeDeployPosition(intake, 110),
+                    new WaitCommand(0.75),
+                    new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
+                    new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false)
+                )
             ),
             new WaitCommand(0.1),
             new ParallelCommandGroup(
                 new InstantCommand(()->intake.setCubeRollerRPM(0)),
                 new InstantCommand(()->intake.setArmIntakeHold()),
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPlace1(isBlue)),
-                new InstantCommand(()->intake.setCubeIntakeDeployTargetPosition(0)),
+                new SetIntakeDeployPosition(intake, 0),
                 new SequentialCommandGroup(
                     new SetArmExtender(arm, 0.0),
                     new SetArmRotator(arm, ScoreMode.MID.getAngle()+1),

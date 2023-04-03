@@ -8,6 +8,10 @@ public abstract class PathSegment {
         return calculate(0.0);
     }
 
+    public Vector2 getCenter(){
+        return new Vector2(0, 0);
+    }
+
     public State getEnd() {
         return calculate(getLength());
     }

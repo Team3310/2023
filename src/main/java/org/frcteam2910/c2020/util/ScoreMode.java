@@ -1,13 +1,13 @@
 package org.frcteam2910.c2020.util;
 
 public enum ScoreMode{
-    ZERO(0.001, 0.25), 
+    ZERO(10.0, 0.25), 
     CONE_INTAKE(15, 0.1), //17, 3.375 practice : 15 , 0.1
     
     MID(85, 0.875),
     HIGH(103, 14.5), // "money" - paul
     LOW(40, 0.1),
-    CUBE_INTAKE(10, 4); //33, 9.5 practice : 24.5, 5.25
+    CUBE_INTAKE(4.0, 3.0); //33, 9.5 practice : 24.5, 5.25
 
     ScoreMode(double angle, double inches){
         this.angle = angle;

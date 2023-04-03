@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
@@ -57,6 +58,10 @@ public class RobotContainer {
         instance = this;
     }
 
+    public AutonomousTrajectories getTrajectories(){
+        return autonomousTrajectories;
+    }
+
     public void recreateTrajectoriesBasedOnSide(){
         autonomousTrajectories = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, sideChooser.getSide());
         autonomousChooser.updateTrajectories(autonomousTrajectories);
@@ -93,8 +98,8 @@ public class RobotContainer {
                 new InstantCommand(()->Intake.getInstance().setServoPosition(-1))
         );
         primaryController.getXButton().onTrue(
-            new InstantCommand(() -> DrivetrainSubsystem.getInstance().zeroGyro())
-            // new ChangeDriveMode(drivetrain, DriveControlMode.HOLD)
+            // new InstantCommand(() -> DrivetrainSubsystem.getInstance().zeroGyro())
+            new ChangeDriveMode(drivetrain, DriveControlMode.HOLD)
         );
 
 
@@ -131,18 +136,25 @@ public class RobotContainer {
         );
 
         primaryController.getLeftBumperButton().onTrue(
-            new InstantCommand(()->{
-                intake.stopRollingOnTriggeredCubeIntakeDIO = true;
-                intake.setCubeIntakeDeployTargetPosition(110);
-                intake.setCubeRollerRPM(2000);
-            })
+            new SequentialCommandGroup(
+                new InstantCommand(()->{
+                    intake.stopRollingOnTriggeredCubeIntakeDIO = true;
+                    // intake.setCubeIntakeDeployTargetPosition(110);
+                    intake.resetIntakeDIOTimestamp();
+                    intake.setCubeRollerRPM(1500);
+                }),
+                new SetIntakeDeployPosition(intake, 110)
+            )
         );
         primaryController.getLeftBumperButton().onFalse(
-            new InstantCommand(()->{
-                intake.stopRollingOnTriggeredCubeIntakeDIO = false;
-                intake.setCubeIntakeDeployTargetPosition(0);
-                intake.setCubeRollerRPM(0);
-            })
+            new SequentialCommandGroup(
+                new InstantCommand(()->{
+                    intake.stopRollingOnTriggeredCubeIntakeDIO = false;
+                    intake.resetIntakeDIOTimestamp();
+                    intake.setCubeRollerRPM(0);
+                }),
+                new SetIntakeDeployPosition(intake, 0)
+            )
         );
 
         primaryController.getLeftTriggerAxis().onTrue(
@@ -184,7 +196,6 @@ public class RobotContainer {
         secondaryController.getBackButton().onTrue(
             new InstantCommand(()->Arm.getInstance().setArmDegreesZero(0))
         );
-        
 
         secondaryController.getBButton().onTrue(
             new SetArmSafely( ScoreMode.ZERO)
@@ -226,7 +237,7 @@ public class RobotContainer {
                     // This flag is set so that we can force stuff to stop moving once cone/cube is in arm intake
                     Intake.getInstance().stopRollingOnTriggeredCubeIntakeDIO = false;
                     Intake.getInstance().stopRollingOnTriggeredArmIntakeDIO = true;
-                    intake.resetIntakeDIOTimestamp();
+                    Intake.getInstance().resetIntakeDIOTimestamp();
                 })
                 
                 
@@ -268,10 +279,12 @@ public class RobotContainer {
         // Outtake Cube
         secondaryController.getLeftTriggerAxis().onTrue(
             new SequentialCommandGroup(
-                new SetArmExtender(arm, ScoreMode.getClosestMode(arm.getArmDegreesIntegrated()).getInches()+6),
+                // new CubeExtend(arm, true),
+                new CubeExtend(arm, true),
                 new InstantCommand(() -> {
                     Intake.getInstance().stopRollingOnTriggeredCubeIntakeDIO = false;
                     Intake.getInstance().stopRollingOnTriggeredArmIntakeDIO = false;
+                    Intake.getInstance().resetIntakeDIOTimestamp();
                 }),
                 new SetIntakeRPM(Intake.getInstance(), Constants.ARM_CUBE_INTAKE_SPIT_RPM)
             )
@@ -285,6 +298,9 @@ public class RobotContainer {
         // SmartDashboard.putData("Turn to Goal", new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurnToTarget()));
         //SmartDashboard.putData("set drive control mode voltage", new InstantCommand(() -> {drivetrain.setBridgeDriveVoltage(1.0); drivetrain.setDriveControlMode(DriveControlMode.BRIDGE_VOLTAGE);}));
         SmartDashboard.putData("extendo zero", new ArmExtenderZero(Arm.getInstance()));
+        SmartDashboard.putData("cancel all command", new InstantCommand(()->CommandScheduler.getInstance().cancelAll()));
+        SmartDashboard.putData("arm to zero", new SetArmSafely(ScoreMode.ZERO));
+        SmartDashboard.putData("arm to high", new SetArmSafely(ScoreMode.HIGH));
         // SmartDashboard.putData("roller rpm to 1000", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(1000)));
         // SmartDashboard.putData("roller rpm to 2000", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(2000)));
         // SmartDashboard.putData("roller rpm to 100", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(100)));
@@ -292,8 +308,8 @@ public class RobotContainer {
         SmartDashboard.putData("lift zero", new InstantCommand(() -> Intake.getInstance().setCubeIntakeDeployHome(0)));
         // SmartDashboard.putData("lift degrees to 30", new InstantCommand(() -> Intake.getInstance().setCubeIntakeDeployTargetPosition(30)));
         // SmartDashboard.putData("lift degrees to 70", new InstantCommand(() -> Intake.getInstance().setCubeIntakeDeployTargetPosition(70)));
-        SmartDashboard.putData("lift degrees to 111", new InstantCommand(() -> Intake.getInstance().setCubeIntakeDeployTargetPosition(111)));
-        SmartDashboard.putData("lift degrees to 0", new InstantCommand(() -> Intake.getInstance().setCubeIntakeDeployTargetPosition(0)));
+        SmartDashboard.putData("lift degrees to 111", new SetIntakeDeployPosition(intake, 111));
+        SmartDashboard.putData("lift degrees to 0", new SetIntakeDeployPosition(intake, 0));
         //SmartDashboard.putData("Zero Gyro", new InstantCommand(() -> DrivetrainSubsystem.getInstance().zeroGyro()));
         // SmartDashboard.putData("Limelight working", new InstantCommand(() -> DrivetrainSubsystem.getInstance().setLimelightOverride(false)));
         // SmartDashboard.putData("set Arm.getInstance() to 30 degrees", new InstantCommand(() -> Arm.getInstance().setArmDegreesPositionAbsolute(30)));
@@ -334,9 +350,9 @@ public class RobotContainer {
     public Boolean getIntakeAxis() {
         return secondaryController.getRightTriggerAxis().getAsBoolean();
     }
-    public Boolean getOuttakeAxis() {
-        return secondaryController.getLeftTriggerAxis().getAsBoolean();
-    }
+    // public Boolean getOuttakeAxis() {
+    //     return secondaryController.getLeftTriggerAxis().getAsBoolean();
+    // }
 
     public void runCommand(Command command){
         command.schedule();

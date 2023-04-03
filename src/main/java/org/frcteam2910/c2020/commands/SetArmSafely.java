@@ -3,9 +3,11 @@ package org.frcteam2910.c2020.commands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
+import java.time.Instant;
 import java.util.function.BooleanSupplier;
 
 import org.frcteam2910.c2020.subsystems.Arm;
@@ -41,8 +43,10 @@ public class SetArmSafely extends SequentialCommandGroup {
         this.startMode = arm.getScoreMode();
         wasUnsafeManeuver = true;
 
-        arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO);
-        // arm.setScoreMode(targetScoreMode);
+        // arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO);
+        this.addCommands(
+            new InstantCommand(()->arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO))
+        );
 
         addRequirements(arm);
 
@@ -72,12 +76,12 @@ public class SetArmSafely extends SequentialCommandGroup {
                     new SetArmExtender(arm, 4.5, true),
                     new SetArmRotator(arm, 35.0, true),
                     new SetArmExtender(arm, 0, true),
-                    new SetArmRotator(arm, 0, true)    
+                    new SetArmRotator(arm, 10, true)    
                 );
             }
             else{
                 this.addCommands(
-                    new InstantCommand(()->Intake.getInstance().setCubeIntakeDeployTargetPosition(0)),  
+                    new SetIntakeDeployPosition(Intake.getInstance(), 0), 
                     new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(0)),
                     new SetArmExtender(arm, 0)
                 );

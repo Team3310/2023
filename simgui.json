@@ -1,0 +1,38 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Driver Readout/Autonomous Mode": "String Chooser",
+      "/Shuffleboard/Driver Readout/Gyro Auto Correct": "String Chooser",
+      "/Shuffleboard/Driver Readout/Side": "String Chooser",
+      "/Shuffleboard/Driver Readout/Zero Gyroscope": "Command",
+      "/SmartDashboard/arm to high": "Command",
+      "/SmartDashboard/arm to zero": "Command",
+      "/SmartDashboard/cancel all command": "Command",
+      "/SmartDashboard/extendo zero": "Command",
+      "/SmartDashboard/lift degrees to 0": "Command",
+      "/SmartDashboard/lift degrees to 111": "Command",
+      "/SmartDashboard/lift zero": "Command"
+    },
+    "windows": {
+      "/Shuffleboard/Driver Readout/Autonomous Mode": {
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "Shuffleboard": {
+        "Drivetrain": {
+          "open": true
+        },
+        "open": true
+      }
+    }
+  },
+  "NetworkTables View": {
+    "visible": false
+  }
+}

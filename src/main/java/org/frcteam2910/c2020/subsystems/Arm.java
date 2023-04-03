@@ -26,7 +26,7 @@ public class Arm implements Subsystem{
     private TalonFX armTranslationMotor;
 
     //sensors
-    private CANCoder armExternalCANCoder = new CANCoder(Constants.ARM_EXTERNAL_CANCODER_PORT);
+    //private CANCoder armExternalCANCoder = new CANCoder(Constants.ARM_EXTERNAL_CANCODER_PORT);
 
     //conversions
     private double DRUM_DIAMETER = 0.54134;
@@ -41,7 +41,7 @@ public class Arm implements Subsystem{
     private double degreesOffset;
     private double targetDegreesTicks;
     private double manualRotationSpeed;
-    private ScoreMode scoreMode = ScoreMode.ZERO;
+    public ScoreMode scoreMode = ScoreMode.ZERO;
 
     private ArmControlMode extenderControlMode = ArmControlMode.HOLD;
     private ArmControlMode rotationControlMode = ArmControlMode.HOLD;
@@ -70,7 +70,7 @@ public class Arm implements Subsystem{
 
         CANCoderConfiguration config = new CANCoderConfiguration();
         config.sensorDirection =  false;
-        armExternalCANCoder.configAllSettings(config);
+        //armExternalCANCoder.configAllSettings(config);
 
         final StatorCurrentLimitConfiguration statorCurrentConfigs = new StatorCurrentLimitConfiguration();
         statorCurrentConfigs.currentLimit = 40.0;
@@ -91,7 +91,7 @@ public class Arm implements Subsystem{
         armTranslationMotor.configMotionSCurveStrength(4);
 
         armRotationMotor.config_kF(0, 0.0);
-        armRotationMotor.config_kP(0, 0.0375);
+        armRotationMotor.config_kP(0, 0.03);
         armRotationMotor.config_kI(0, 0.00000001);
         armRotationMotor.config_kD(0, 0.0);
 
@@ -107,6 +107,10 @@ public class Arm implements Subsystem{
         // SmartDashboard.putNumber("angle checking", angle);
         // SmartDashboard.putNumber("result", Math.abs(getArmDegreesIntegrated()-angle));
         return Math.abs(getArmDegreesIntegrated()-angle) < tolerance;
+    }
+
+    public boolean withinCubeTarget(){
+        return Math.abs(getArmInches()-targetInches)<0.75;
     }
 
     public void setRotationControlMode(ArmControlMode mode){
@@ -125,9 +129,9 @@ public class Arm implements Subsystem{
         return (armRotationMotor.getSelectedSensorPosition() / Constants.ARM_ROTATOR_ONE_DEGREE_TO_INTEGRATED_ENCODER_TICKS) + degreesOffset;
     }
 
-    public double getArmDegreesExternal(){
-        return (armExternalCANCoder.getPosition() / Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS) + degreesOffset;
-    }
+    // public double getArmDegreesExternal(){
+    //     return (armExternalCANCoder.getPosition() / Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS) + degreesOffset;
+    // }
 
     public double getArmDegreesEncoderTicks(double degrees){
         return degrees * Constants.ARM_ROTATOR_ONE_DEGREE_TO_INTEGRATED_ENCODER_TICKS;
@@ -137,7 +141,7 @@ public class Arm implements Subsystem{
         degreesOffset = offset;
         targetDegreesTicks = 0;
         armRotationMotor.setSelectedSensorPosition(0);
-        armExternalCANCoder.setPosition(0);
+        // armExternalCANCoder.setPosition(0);
     }
 
     public double limitArmDegrees(double targetDegrees){
@@ -233,6 +237,7 @@ public class Arm implements Subsystem{
 
     public synchronized void setTargetArmInchesPositionAbsolute(double targetInches) {
         extenderControlMode = ArmControlMode.HOLD;
+        SmartDashboard.putNumber("TARGET ARM INCHES", targetInches);
         this.targetInches = targetInches;
         targetInchesTicks = getArmInchesEncoderTicksAbsolute(targetInches);
         armTranslationMotor.set(TalonFXControlMode.Position, targetInchesTicks);
@@ -272,6 +277,19 @@ public class Arm implements Subsystem{
         armTranslationMotor.set(ControlMode.PercentOutput, curSpeed);
     }
 
+    public void cubeExtend(){
+        if(getScoreMode()!=ScoreMode.LOW){
+            double target = getArmInches()+6;
+            setTargetArmInchesPositionAbsolute(target);
+            // if(getScoreMode()==ScoreMode.HIGH){
+            //     setArmDegreesPositionAbsolute(113);
+            // }
+        }else{
+            double target = getArmDegreesIntegrated()+10;
+            setArmDegreesPositionAbsolute(target);
+        }
+    }
+
     public synchronized void setTranslationalHold(){
         // if(firstHoldSet){
         //     firstHoldSet = false;
@@ -286,13 +304,15 @@ public class Arm implements Subsystem{
 
     @Override
     public void periodic(){
-        SmartDashboard.putString("score mode", scoreMode.name());
+        SmartDashboard.putString("score mode", Arm.getInstance().scoreMode.name());
+        SmartDashboard.putString("arm control mode", rotationControlMode.name());
         SmartDashboard.putString("closest score mode", ScoreMode.getClosestMode(getArmDegreesIntegrated()).name());
 
         SmartDashboard.putNumber("arm degrees internal", getArmDegreesIntegrated());
-        SmartDashboard.putNumber("arm degrees ext", getArmDegreesExternal());
+        // SmartDashboard.putNumber("arm degrees ext", getArmDegreesExternal());
         SmartDashboard.putNumber("arm inches", getArmInches());
 
+        SmartDashboard.putNumber("target arm degrees", getTargetDegrees());
         SmartDashboard.putNumber("extendo voltage", armTranslationMotor.getMotorOutputVoltage());
         SmartDashboard.putNumber("extendo current", armTranslationMotor.getStatorCurrent());
 
