@@ -25,7 +25,7 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
     }
 
     public SetArmSafelyAuton(boolean afterIntake){
-        this(afterIntake?null:ScoreMode.ZERO, afterIntake, false);
+        this(afterIntake?null:ScoreMode.HOME, afterIntake, false);
     }
 
     public SetArmSafelyAuton(ScoreMode targetScoreMode, boolean afterIntake, boolean isCube) {
@@ -38,7 +38,7 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
         this.startMode = arm.getScoreMode();
         wasUnsafeManeuver = true;
 
-        arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO);
+        arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.HOME);
 
         addRequirements(arm);
 

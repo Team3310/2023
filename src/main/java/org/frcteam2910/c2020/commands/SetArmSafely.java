@@ -22,7 +22,7 @@ public class SetArmSafely extends SequentialCommandGroup {
     }
 
     public SetArmSafely(boolean afterIntake, boolean isCone){
-        this(afterIntake?null:ScoreMode.ZERO, afterIntake, isCone);
+        this(afterIntake?null:ScoreMode.HOME, afterIntake, isCone);
     }
 
     public SetArmSafely(ScoreMode targetScoreMode, boolean afterIntake, boolean isCone) {
@@ -37,7 +37,7 @@ public class SetArmSafely extends SequentialCommandGroup {
 
         // arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO);
         this.addCommands(
-            new InstantCommand(()->arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO))
+            new InstantCommand(()->arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.HOME))
         );
 
         addRequirements(arm);

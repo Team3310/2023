@@ -96,7 +96,7 @@ public class Constants {
     public static final double ARM_ROTATOR_MAX_ROTATION_DEGREES = 110.0;
     
     public static final double ARM_EXTENDER_MIN_EXTEND_INCHES = 0.0;
-    public static final double ARM_EXTENDER_MAX_EXTEND_INCHES = 17.5;
+    public static final double ARM_EXTENDER_MAX_EXTEND_INCHES = 18.0;
 
     public static final double ARM_EXTENDER_ZEROING_SPEED = 0.25;
     public static final double ARM_EXTENDER_HOME_INCHES = 0.0;
