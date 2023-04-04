@@ -46,7 +46,11 @@ public final class Falcon500DriveControllerFactoryBuilder {
         public ControllerImplementation create(Integer driveConfiguration, ModuleConfiguration moduleConfiguration) {
             TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
 
+            // Multiply with sensor ticks by this to convert to linear distance in meters.
+            // [ticks] * coefficient [meters/ticks] = meters
             double sensorPositionCoefficient = Math.PI * moduleConfiguration.getWheelDiameter() * moduleConfiguration.getDriveReduction() / TICKS_PER_ROTATION;
+            // Multiply with sensor ticks per 100 ms to convert to meters per second.
+            // [ticks/100ms] * coefficient [meters/ticks] * (10*100ms / 1 sec) = meters/sec
             double sensorVelocityCoefficient = sensorPositionCoefficient * 10.0;
 
             if (hasVoltageCompensation()) {
@@ -83,17 +87,19 @@ public final class Falcon500DriveControllerFactoryBuilder {
                     "Failed to configure Falcon status frame period"
             );
 
-            return new ControllerImplementation(motor, sensorVelocityCoefficient);
+            return new ControllerImplementation(motor, sensorPositionCoefficient, sensorVelocityCoefficient);
         }
     }
 
     private class ControllerImplementation implements DriveController {
         private final TalonFX motor;
+        private final double sensorPositionCoefficient;
         private final double sensorVelocityCoefficient;
         private final double nominalVoltage = hasVoltageCompensation() ? Falcon500DriveControllerFactoryBuilder.this.nominalVoltage : 12.0;
 
-        private ControllerImplementation(TalonFX motor, double sensorVelocityCoefficient) {
+        private ControllerImplementation(TalonFX motor, double sensorPositionCoefficient, double sensorVelocityCoefficient) {
             this.motor = motor;
+            this.sensorPositionCoefficient = sensorPositionCoefficient;
             this.sensorVelocityCoefficient = sensorVelocityCoefficient;
         }
 
@@ -120,6 +126,17 @@ public final class Falcon500DriveControllerFactoryBuilder {
         @Override
         public double getReferenceVoltage() {
             return motor.getMotorOutputVoltage();
+        }
+
+        @Override
+        public void setDriveVelocity(double linearVelocityMeterPerSec) {
+            // [ticks/100ms] = ([meters/sec]) * (1 sec / 10*100 ms) -> [meters/100 ms] / [meter/ticks] -> [ticks/100 ms]
+            motor.config_kF(0, 0.0, CAN_TIMEOUT_MS);
+            motor.config_kP(0, 0.1, CAN_TIMEOUT_MS);
+            motor.config_kI(0, 0.0, CAN_TIMEOUT_MS);
+            motor.config_kD(0, 0.0, CAN_TIMEOUT_MS);
+            motor.selectProfileSlot(0, 0);
+            motor.set(TalonFXControlMode.Velocity, (linearVelocityMeterPerSec/10.0)*sensorPositionCoefficient);
         }
     }
 }

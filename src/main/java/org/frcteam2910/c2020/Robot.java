@@ -194,16 +194,13 @@ public class Robot extends TimedRobot {
 
         robotContainer.getDrivetrainSubsystem().resetSteerAbsoluteAngle();
         robotContainer.getDrivetrainSubsystem().setDriveCoast();
+        robotContainer.getDrivetrainSubsystem().setSteerBrake();
         robotContainer.getDrivetrainSubsystem().resetGyroAngle(robotContainer.getDrivetrainSubsystem().getPose().rotation);
 
         // robotContainer.getDrivetrainSubsystem().alignWheels();
 
         // robotContainer.getArm().setArmInchesZero(Constants.ARM_EXTEND_HOME_INCHES);
         // robotContainer.getArm().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
-
-        robotContainer.updateSide();
-        robotContainer.getDrivetrainSubsystem().setDriveCoast();
-        robotContainer.getDrivetrainSubsystem().setSteerBrake();
         
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.JOYSTICKS);
         //robotContainer.getClimbElevator().setElevatorMotionMagicPositionAbsolute(27.0);

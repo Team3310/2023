@@ -3,6 +3,7 @@ package org.frcteam2910.c2020;
 import org.frcteam2910.c2020.commands.*;
 import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
+import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.LimelightMode;
 import org.frcteam2910.c2020.util.*;
 import org.frcteam2910.common.robot.input.*;
 import org.frcteam2910.common.robot.input.DPadButton.Direction;
@@ -63,10 +64,6 @@ public class RobotContainer {
         autonomousTrajectories = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, sideChooser.getSide());
         autonomousChooser.updateTrajectories(autonomousTrajectories);
         // SmartDashboard.putString("Side", sideChooser.getSide().toString());
-    }
-
-    public void updateSide(){
-        DrivetrainSubsystem.getInstance().setSide(sideChooser.getSide());
     }
 
     private void configureButtonBindings() {

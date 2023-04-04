@@ -30,7 +30,7 @@ public class DriveBalanceCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        drive.setStartDegrees(drive.getRollDegreesOffLevel());
+        drive.setBalanceStartDegrees(drive.getRollDegreesOffLevel());
         drive.setSlowBalance(isSlow);
         drive.setDriveControlMode(DriveControlMode.BALANCE);
         //drive.setBalanceInitialPos(start);
