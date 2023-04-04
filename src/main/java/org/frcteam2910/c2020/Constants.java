@@ -3,6 +3,7 @@ package org.frcteam2910.c2020;
 public class Constants
 {
     public static final double ENCODER_TICKS_PER_MOTOR_REVOLUTION = 2048.0;
+    public static final double INCHES_PER_METER = 39.37008;
     public static final int PRIMARY_CONTROLLER_PORT = 0;
     public static final int SECONDARY_CONTROLLER_PORT = 1;
 

@@ -66,10 +66,6 @@ public class RobotContainer {
         // SmartDashboard.putString("Side", sideChooser.getSide().toString());
     }
 
-    public void updateSide(){
-        DrivetrainSubsystem.getInstance().setSide(sideChooser.getSide());
-    }
-
     private void configureButtonBindings() {
         //#region Primary/Driver Controller
         primaryController.getStartButton()

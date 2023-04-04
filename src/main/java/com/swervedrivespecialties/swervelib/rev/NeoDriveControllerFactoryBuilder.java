@@ -102,5 +102,10 @@ public final class NeoDriveControllerFactoryBuilder {
         public double getReferenceVoltage() {
             return motor.getBusVoltage();
         }
+
+        @Override
+        public void setDriveVelocity(double linearVelocityMetersPerSec) {
+            
+        }
     }
 }

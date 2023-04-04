@@ -13,6 +13,8 @@ public interface SwerveModule {
 
     void set(double driveVoltage, double steerAngle);
 
+    void setVelocity(double metersPerSec, double steerAngle);
+
     void setVoltageRamp(double rampTime);
 
     void resetAbsoluteSteerAngle();
