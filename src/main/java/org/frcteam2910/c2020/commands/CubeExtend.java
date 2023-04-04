@@ -9,8 +9,6 @@ public class CubeExtend extends CommandBase {
     private final Arm arm;
     private boolean waitUntilReachedTarget = false;
 
-    private final double ARM_INCHES_TOLERANCE = 1.5;
-
     public CubeExtend(Arm arm, boolean waitToFinishUntilTargetReached) {
         this.arm = arm;
         this.waitUntilReachedTarget = waitToFinishUntilTargetReached;

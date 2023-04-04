@@ -155,8 +155,12 @@ public class Intake implements Subsystem{
             }
             else{
                 cubeIntakeRollerMotor.selectProfileSlot(kIntakePositionSlot, 0);
-                cubeIntakeRollerMotor.set(TalonFXControlMode.Position, this.cubeIntakeRollerMotor.getSelectedSensorPosition());
+                cubeIntakeRollerMotor.set(TalonFXControlMode.Position, this.cubeIntakeRollerMotor.getSelectedSensorPosition()+getArmIntakeTicksforDegrees(90));
             }
+        }
+
+        public double getArmIntakeTicksforDegrees(double degrees){
+            return (degrees/360.0)*(((24/11)*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION));
         }
 
         public void clearDeployIntegrator() {
