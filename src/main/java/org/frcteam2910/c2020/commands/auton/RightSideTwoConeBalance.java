@@ -23,7 +23,7 @@ public class RightSideTwoConeBalance extends AutonCommandBase {
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getToBridge1(getSide(container))),
                 new SetArmSafely(ScoreMode.HOME),
-                new SetIntakeRPM(intake, 0)
+                new SetArmIntakeRPM(intake, 0)
             ),
             new OnToBridge(container, trajectories, -5),
             new InstantCommand(()->SmartDashboard.putNumber("finished auton Time", DriverStation.getMatchTime()))

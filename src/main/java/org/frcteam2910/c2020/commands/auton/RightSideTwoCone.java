@@ -30,7 +30,7 @@ public class RightSideTwoCone extends AutonCommandBase {
             new SetArmExtender(arm, 0.0),
             new SetArmRotator(arm, ScoreMode.CONE_MID.getAngle()-3.0),
             new SetArmExtender(arm, ScoreMode.CONE_MID.getInches()),
-            new SetIntakeRPM(intake, Constants.ARM_INTAKE_SPIT_RPM),
+            new SetArmIntakeRPM(intake, Constants.ARM_CONE_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
                     new WaitUntilCommand(()->!intake.getConeSensor().get()),
@@ -41,9 +41,9 @@ public class RightSideTwoCone extends AutonCommandBase {
             new ParallelCommandGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup1(isBlue)),
                 new SequentialCommandGroup(
-                    new SetIntakeDeployPosition(intake, 110),
+                    new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES),
                     new WaitCommand(0.75),
-                    new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
+                    new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
                     new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false)
                 )
             ),
@@ -52,14 +52,14 @@ public class RightSideTwoCone extends AutonCommandBase {
                 new InstantCommand(()->intake.setCubeRollerRPM(0)),
                 new InstantCommand(()->intake.setArmIntakeHold()),
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPlace1(isBlue)),
-                new SetIntakeDeployPosition(intake, 0),
+                new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
                 new SequentialCommandGroup(
                     new SetArmExtender(arm, 0.0),
                     new SetArmRotator(arm, ScoreMode.CONE_MID.getAngle()+1),
                     new SetArmExtender(arm, 10)
                 )
             ),
-            new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_SPIT_RPM),
+            new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
                     new WaitUntilCommand(()->!intake.getCubeSensor().get()),

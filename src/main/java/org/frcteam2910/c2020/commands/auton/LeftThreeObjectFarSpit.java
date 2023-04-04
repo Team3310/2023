@@ -18,18 +18,18 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class LeftThreeObjectFarSpit extends AutonCommandBase {
     public LeftThreeObjectFarSpit(RobotContainer container, AutonomousTrajectories trajectories){
-        this(container, trajectories, container.getDrivetrainSubsystem());
+        this(container, trajectories, container.getDrivetrainSubsystem(), container.getIntake());
     }
 
-    public LeftThreeObjectFarSpit(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive) {
+    public LeftThreeObjectFarSpit(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Intake intake) {
         boolean isBlue = getSide(container);
         resetRobotPose(container, trajectories.getThreeObjectFarPart1(false));
         this.addCommands(
             new SetArmSafely(ScoreMode.CONE_MID),
-            new SetIntakeRPM(Intake.getInstance(), Constants.ARM_INTAKE_SPIT_RPM),
+            new SetArmIntakeRPM(intake, Constants.ARM_CONE_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
-                    new WaitUntilCommand(()->!Intake.getInstance().getConeSensor().get()),
+                    new WaitUntilCommand(()->!intake.getConeSensor().get()),
                     new WaitCommand(0.3)
                 ),
                 new WaitCommand(0.75)
@@ -37,34 +37,34 @@ public class LeftThreeObjectFarSpit extends AutonCommandBase {
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart1(false)),
                 new SequentialCommandGroup(
-                    new SetIntakeDeployPosition(Intake.getInstance(), 110),
-                    new SetIntakeRPM(Intake.getInstance(), 0)
+                    new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES),
+                    new SetArmIntakeRPM(intake, 0)
                 ),
                 new SetArmSafely(ScoreMode.HOME),
                 new InstantCommand(()->{
-                    Intake.getInstance().setCubeRollerRPM(2000);
-                    Intake.getInstance().stopRollingOnTriggeredCubeIntakeDIO = true;
+                    intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM);
+                    intake.stopRollingOnTriggeredCubeIntakeDIO = true;
                 }) 
             ),
             new WaitCommand(0.5),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart2(false)),
-                new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(0)),
-                new SetIntakeDeployPosition(Intake.getInstance(), 110)
+                new InstantCommand(()->intake.setCubeRollerRPM(0)),
+                new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES)
             ),
             new ParallelDeadlineGroup(
                 new WaitCommand(0.5),
-                new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(-2000))
+                new InstantCommand(()->intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM))
             ),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart3(false)),
                 new SetArmSafely(ScoreMode.CUBE_INTAKE),
-                new SetIntakeDeployPosition(Intake.getInstance(), 110),
-                new SetIntakeRPM(Intake.getInstance(), Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
+                new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES),
+                new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
                 new InstantCommand(()->{
-                    Intake.getInstance().setCubeRollerRPM(2000);
-                    Intake.getInstance().stopRollingOnTriggeredCubeIntakeDIO = false;
-                    Intake.getInstance().stopRollingOnTriggeredArmIntakeDIO = true;
+                    intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM);
+                    intake.stopRollingOnTriggeredCubeIntakeDIO = false;
+                    intake.stopRollingOnTriggeredArmIntakeDIO = true;
                 })
             ),
             new WaitCommand(0.5),
@@ -75,18 +75,18 @@ public class LeftThreeObjectFarSpit extends AutonCommandBase {
                     new WaitCommand(0.6),
                     new SetArmSafely(ScoreMode.CUBE_MID)
                 ),  
-                new SetIntakeDeployPosition(Intake.getInstance(), 0),
-                new SetIntakeRPM(Intake.getInstance(), 0),
+                new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
+                new SetArmIntakeRPM(intake, 0),
                 new InstantCommand(()->{
-                    Intake.getInstance().setCubeRollerRPM(0);
-                    Intake.getInstance().stopRollingOnTriggeredCubeIntakeDIO = false;
-                    Intake.getInstance().stopRollingOnTriggeredArmIntakeDIO = false;
+                    intake.setCubeRollerRPM(0);
+                    intake.stopRollingOnTriggeredCubeIntakeDIO = false;
+                    intake.stopRollingOnTriggeredArmIntakeDIO = false;
                 })
             ),
-            new SetIntakeRPM(Intake.getInstance(), Constants.ARM_CUBE_INTAKE_SPIT_RPM),
+            new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_SPIT_RPM),
             new WaitCommand(0.3),
             new SetArmSafely(ScoreMode.HOME),
-            new SetIntakeRPM(Intake.getInstance(), 0)
+            new SetArmIntakeRPM(intake, 0)
         );
     }
 }

@@ -26,7 +26,7 @@ public class OneObjectMid extends AutonCommandBase {
             //new ArmExtenderZero(Arm.getInstance()),
             new SetArmSafely(ScoreMode.CONE_HIGH),
             new WaitCommand(0.125),
-            new SetIntakeRPM(intake, Constants.ARM_INTAKE_SPIT_RPM),
+            new SetArmIntakeRPM(intake, Constants.ARM_CONE_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
                     new WaitUntilCommand(()->!intake.getConeSensor().get()),
@@ -36,7 +36,7 @@ public class OneObjectMid extends AutonCommandBase {
             ),
             new ParallelCommandGroup(
                 new SetArmSafely(ScoreMode.HOME),
-                new SetIntakeRPM(intake, 0)
+                new SetArmIntakeRPM(intake, 0)
             )
         );
     }
