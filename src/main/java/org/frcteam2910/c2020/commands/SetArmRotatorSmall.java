@@ -6,19 +6,19 @@ import org.frcteam2910.c2020.util.ScoreMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class SetArmRotator extends CommandBase {
+public class SetArmRotatorSmall extends CommandBase {
     private final Arm arm;
     private boolean waitUntilReachedTarget = false;
     private double startingDegrees = Double.MIN_VALUE;
     private double targetDegrees = Double.MIN_VALUE;
 
-    private final double ARM_DEGREES_TOLERANCE = 5.0;
+    private final double ARM_DEGREES_TOLERANCE = 1.5;
 
-    public SetArmRotator(Arm arm, double targetDegrees) {
+    public SetArmRotatorSmall(Arm arm, double targetDegrees) {
         this(arm, targetDegrees, true);
     }
 
-    public SetArmRotator(Arm arm, double targetDegrees, boolean waitToFinishUntilTargetReached) {
+    public SetArmRotatorSmall(Arm arm, double targetDegrees, boolean waitToFinishUntilTargetReached) {
         this.arm = arm;
         this.waitUntilReachedTarget = waitToFinishUntilTargetReached;
         this.startingDegrees = arm.getArmDegreesIntegrated();

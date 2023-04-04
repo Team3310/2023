@@ -18,10 +18,13 @@ public class PutIntakeZeroAfterOuttake extends SequentialCommandGroup {
         addRequirements(intake);
         addRequirements(arm);
         
-        this.addCommands(new InstantCommand(()->intake.setRollerSpeed(0)));
+        this.addCommands(new InstantCommand(()->intake.setArmIntakeSpeed(0)));
         if(!intake.getConeSensor().get() && !intake.getCubeSensor().get()){
             // We no longer possess an object (and are likely in a LOW/MID/HIGH ScoreMode), return to zero
-            this.addCommands(new SetArmSafely(ScoreMode.ZERO, false));
+            this.addCommands(
+                new SetArmExtender(arm, 0),
+                new SetArmRotator(arm, 10)
+            );
         }
     }
 }

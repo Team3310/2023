@@ -25,9 +25,9 @@ public class RightSideOneConeBalance extends AutonCommandBase {
 
     public RightSideOneConeBalance(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
         this.addCommands(
-            new RightSideOneCone(container, trajectories),
-            new FollowTrajectoryCommand(drive, trajectories.getToBridge(drive.getPose().translation, drive.getPose().rotation)),
-            new OnToBridge(container, trajectories)
+            new RightSideTwoCone(container, trajectories),
+            new FollowTrajectoryCommand(drive, trajectories.getToBridge1(getSide(container))),
+            new OnToBridge(container, trajectories,-5)
         );
     }
 }

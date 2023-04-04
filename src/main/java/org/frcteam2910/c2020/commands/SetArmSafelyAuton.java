@@ -1,7 +1,5 @@
 package org.frcteam2910.c2020.commands;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
@@ -27,7 +25,7 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
     }
 
     public SetArmSafelyAuton(boolean afterIntake){
-        this(afterIntake?null:ScoreMode.ZERO, afterIntake, false);
+        this(afterIntake?null:ScoreMode.HOME, afterIntake, false);
     }
 
     public SetArmSafelyAuton(ScoreMode targetScoreMode, boolean afterIntake, boolean isCube) {
@@ -40,7 +38,7 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
         this.startMode = arm.getScoreMode();
         wasUnsafeManeuver = true;
 
-        arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO);
+        arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.HOME);
 
         addRequirements(arm);
 

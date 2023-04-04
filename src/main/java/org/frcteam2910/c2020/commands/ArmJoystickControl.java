@@ -30,7 +30,7 @@ public class ArmJoystickControl extends CommandBase {
 
         double rotationSpeed = rotationAxis.get(true);
         if (Math.abs(rotationSpeed) > 0.1) {
-            arm.setRotationSpeed(rotationSpeed / 2.0);
+            arm.setRotationSpeed(rotationSpeed / 3.0);
         } else {
             arm.setRotationHold();
         }

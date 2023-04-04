@@ -3,8 +3,6 @@ package org.frcteam2910.c2020.commands.auton;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-import java.util.function.BooleanSupplier;
-
 import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.RobotContainer;
 import org.frcteam2910.c2020.commands.*;
@@ -12,8 +10,9 @@ import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import org.frcteam2910.c2020.util.ScoreMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -25,56 +24,87 @@ public class RightSideTwoCone extends AutonCommandBase {
 
     public RightSideTwoCone(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
         boolean isBlue = getSide(container);
+        SmartDashboard.putBoolean("isBlue", isBlue);
+        resetRobotPose(container, trajectories.getConeBridgeToPickup1(isBlue));
         this.addCommands(
-            new RightSideOneCone(container, trajectories),
-            new ParallelDeadlineGroup(     
-                new FollowTrajectoryCommand(drive, trajectories.getConeBridgeLoadToPickup2(isBlue)),
-                new SetArmSafely(ScoreMode.CONE_INTAKE, false),
-                new InstantCommand(()->{
-                    intake.setRollerRPM(Constants.INTAKE_COLLECT_RPM); 
-                    intake.setServoPosition(-1.0);
-                })
-            ),
-            new ParallelRaceGroup( 
-                //waits until cone sensor says it has a cone or 1.5 seconds has elasped in case it doesn't get cone   
-                new WaitUntilCommand(new BooleanSupplier() {
-                    @Override
-                    public boolean getAsBoolean() {
-                        return intake.getConeSensor().get();
-                    }  
-                }),
-                new WaitCommand(1.5)
-            ),
-            new ParallelDeadlineGroup(
-                new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromPickUp2ToLoad(isBlue)),
+            new SetArmExtender(arm, 0.0),
+            new SetArmRotator(arm, ScoreMode.CONE_MID.getAngle()-3.0),
+            new SetArmExtender(arm, ScoreMode.CONE_MID.getInches()),
+            new SetIntakeRPM(intake, Constants.ARM_INTAKE_SPIT_RPM),
+            new ParallelRaceGroup(
                 new SequentialCommandGroup(
-                    new SetArmSafely(ScoreMode.ZERO, false),
-                    new InstantCommand(()->{
-                        intake.setRollerSpeed(0);
-                        intake.setServoPosition(1.0);
-                    })
+                    new WaitUntilCommand(()->!intake.getConeSensor().get()),
+                    new WaitCommand(0.05)
+                ),
+                new WaitCommand(0.5)
+            ),
+            new ParallelCommandGroup(
+                new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup1(isBlue)),
+                new SequentialCommandGroup(
+                    new SetIntakeDeployPosition(intake, 110),
+                    new WaitCommand(0.75),
+                    new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
+                    new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false)
                 )
             ),
-            new ParallelDeadlineGroup(
-                new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromLoadtoPlace(isBlue)),
-                new SetArmSafely(ScoreMode.HIGH, false)
+            new WaitCommand(0.1),
+            new ParallelCommandGroup(
+                new InstantCommand(()->intake.setCubeRollerRPM(0)),
+                new InstantCommand(()->intake.setArmIntakeHold()),
+                new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPlace1(isBlue)),
+                new SetIntakeDeployPosition(intake, 0),
+                new SequentialCommandGroup(
+                    new SetArmExtender(arm, 0.0),
+                    new SetArmRotator(arm, ScoreMode.CONE_MID.getAngle()+1),
+                    new SetArmExtender(arm, 10)
+                )
             ),
-            new ParallelDeadlineGroup(  
-                new ParallelRaceGroup( 
-                  //waits until cone is out or 1.0 seconds has elasped in case
-                    new SequentialCommandGroup(   
-                        new WaitUntilCommand(new BooleanSupplier() {
-                            @Override
-                            public boolean getAsBoolean() {
-                                return intake.getConeSensor().get();
-                            }  
-                        }),
-                        new WaitCommand(0.25) //TODO test timing for object outtake
-                    ),
-                    new WaitCommand(1.0)
+            new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_SPIT_RPM),
+            new ParallelRaceGroup(
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(()->!intake.getCubeSensor().get()),
+                    new WaitCommand(0.2)
                 ),
-                new InstantCommand(()->intake.setRollerRPM(Constants.INTAKE_SPIT_RPM))
+                new WaitCommand(0.75)
             )
+        //     new SetArmSafelyAuton(ScoreMode.HIGH),
+        //     new SetIntakeRPM(intake, Constants.INTAKE_SPIT_RPM),
+        //     new ParallelRaceGroup(
+        //         new SequentialCommandGroup(
+        //             new WaitUntilCommand(()->!intake.getConeSensor().get()),
+        //             new WaitCommand(0.3)
+        //         ),
+        //         new WaitCommand(1.0)
+        //     ),
+        //     new ParallelDeadlineGroup(
+        //         new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup1(isBlue)),  
+        //         new SetIntakeRPM(intake, 0),
+        //         new SequentialCommandGroup(
+        //             new SetArmSafely(ScoreMode.CUBE_INTAKE), //TODO once they add the cube intake to back change
+        //             new SetIntakeRPM(intake, -Constants.INTAKE_COLLECT_RPM)
+        //         )
+        //     ),
+        //     new ParallelRaceGroup(
+        //         new SequentialCommandGroup(
+        //             new WaitUntilCommand(()->intake.getCubeSensor().get()),
+        //             new WaitCommand(0.3)
+        //         ),
+        //         new WaitCommand(1.0)
+        //     ),
+        //     new ParallelDeadlineGroup(
+        //         new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPlace1(isBlue)),  
+        //         new SetArmSafely(ScoreMode.ZERO)
+        //     ),
+        //     new SetArmSafely(ScoreMode.HIGH),
+        //     new SetIntakeRPM(intake, -Constants.INTAKE_SPIT_RPM),
+        //     new ParallelRaceGroup(
+        //         new SequentialCommandGroup(
+        //             new WaitUntilCommand(()->!intake.getCubeSensor().get()),
+        //             new WaitCommand(0.3)
+        //         ),
+        //         new WaitCommand(1.0)
+        //     ),
+        //     new SetArmSafely(ScoreMode.ZERO)
         );
     }
 }

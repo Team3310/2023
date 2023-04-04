@@ -58,7 +58,7 @@ public class TwoObjectMidBalance extends AutonCommandBase {
             this.addCommands(
                 new ParallelDeadlineGroup(
                     new FollowTrajectoryCommand(drive, trajectories.getFromOverBridgeToCone()),
-                    new SetIntakeRPM(intake, Constants.INTAKE_COLLECT_RPM),
+                    new SetIntakeRPM(intake, Constants.ARM_INTAKE_COLLECT_RPM),
                     new SetServosOut(intake),
                     new SetArmSafelyAuton(ScoreMode.CONE_INTAKE)
                 ),

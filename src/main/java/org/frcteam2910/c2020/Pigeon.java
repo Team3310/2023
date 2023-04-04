@@ -6,6 +6,8 @@ import org.frcteam2910.common.math.Rotation2;
 
 public class Pigeon extends Gyroscope {
     private final Pigeon2 handle;
+    private double XAxisGyroError=0;
+    private double YAxisGyroError=0;
 
     public Pigeon(int id) {
         this.handle = new Pigeon2(id, "Drivetrain");
@@ -15,13 +17,26 @@ public class Pigeon extends Gyroscope {
     public void calibrate() {
     }
 
+    public void zeroGyro(){
+        XAxisGyroError = 0;
+        YAxisGyroError = 0;
+        XAxisGyroError = handle.getRoll();
+        YAxisGyroError = handle.getPitch();
+    }
+
     @Override
     public Rotation2 getUnadjustedAngle() {
         return Rotation2.fromDegrees(handle.getYaw());
     }
 
-    public Rotation2 getPitch(){
-        return Rotation2.fromDegrees(handle.getPitch());
+    public double getPitch(){
+        return Rotation2.fromDegrees(handle.getPitch()).toDegrees()-YAxisGyroError;
+    }
+
+    public double[] getGravityVector(){
+        double[] vectors = new double[3];
+        handle.getGravityVector(vectors);
+        return vectors;
     }
 
     public short[] getAccels(){
@@ -30,8 +45,8 @@ public class Pigeon extends Gyroscope {
         return refAccels;
     }
 
-    public Rotation2 getRoll(){
-        return Rotation2.fromDegrees(handle.getRoll());
+    public double getRoll(){
+        return Rotation2.fromDegrees(handle.getRoll()).toDegrees()-XAxisGyroError;
     }
 
     @Override

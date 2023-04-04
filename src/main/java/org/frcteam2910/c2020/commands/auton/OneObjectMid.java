@@ -24,27 +24,23 @@ public class OneObjectMid extends AutonCommandBase {
     }
 
     public OneObjectMid(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
-        //resetRobotPose(container, trajectories.getOnToBridge());
+        resetRobotPose(container, trajectories.getOnToBridge());
         this.addCommands(
             //new ArmExtenderZero(Arm.getInstance()),
-            new SetArmSafelyAuton(ScoreMode.HIGH),
-            new SetIntakeRPM(intake, -1*Constants.INTAKE_SPIT_RPM),
+            new SetArmSafely(ScoreMode.CONE_HIGH),
+            new WaitCommand(0.125),
+            new SetIntakeRPM(intake, Constants.ARM_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
-                    new WaitUntilCommand(new BooleanSupplier() {
-                        @Override
-                        public boolean getAsBoolean(){
-                            return !intake.getConeSensor().get();
-                        }
-                    }),
+                    new WaitUntilCommand(()->!intake.getConeSensor().get()),
                     new WaitCommand(0.3)
                 ),
                 new WaitCommand(1.0)
             ),
             new ParallelCommandGroup(
-                new SetArmSafelyAuton(ScoreMode.ZERO),
+                new SetArmSafely(ScoreMode.HOME),
                 new SetIntakeRPM(intake, 0)
-            )    
+            )
         );
     }
 }

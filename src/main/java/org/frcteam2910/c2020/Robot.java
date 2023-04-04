@@ -11,7 +11,6 @@ import org.frcteam2910.c2020.subsystems.Arm.ArmControlMode;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.AutonomousChooser.AutonomousMode;
-import org.frcteam2910.c2020.util.SideChooser.SideMode;
 import org.frcteam2910.common.Logger;
 import org.frcteam2910.common.robot.UpdateManager;
 
@@ -19,7 +18,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
@@ -147,8 +145,9 @@ public class Robot extends TimedRobot {
         updateManager.startLoop(0.02);
         robotContainer.getDrivetrainSubsystem().setDriveBrake();
         robotContainer.getDrivetrainSubsystem().setSteerBrake();
-        robotContainer.getArm().setArmInchesZero(1.875);
+        robotContainer.getArm().setArmInchesZero(0.5);
         robotContainer.getArm().setArmDegreesZero(0.0);
+        robotContainer.getIntake().setCubeIntakeDeployHome(0.0);
 //        PortForwarder.add(5800, "limelight.local", 5800);
 //        PortForwarder.add(5801, "limelight.local", 5801);
 //        PortForwarder.add(5802, "limelight.local", 5802);
@@ -170,9 +169,17 @@ public class Robot extends TimedRobot {
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.TRAJECTORY);
 
         // Would it be better for these to be in robotInit? Probably, once we get the lightgate to zero the arm.
-        robotContainer.getArm().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
+        // robotContainer.getArm().setArmDegreesZero(Constants.ARM_ROTATOR_HOME_DEGREES);
 
         robotContainer.getAutonomousCommand().schedule();
+    }
+
+    //we can use this to run test code that doesn't need the robot 
+    //by running the WPIlib command Simulate Robot Code
+    @Override
+    public void simulationPeriodic(){
+        // test.printCoords(RobotContainer.getInstance().getTrajectories().getConeBridgeToPickup1(false),
+                        //  RobotContainer.getInstance().getTrajectories().getConeBridgeToPlace1(false));
     }
 
     @Override
@@ -186,16 +193,14 @@ public class Robot extends TimedRobot {
         
 
         robotContainer.getDrivetrainSubsystem().resetSteerAbsoluteAngle();
+        robotContainer.getDrivetrainSubsystem().setDriveCoast();
+        robotContainer.getDrivetrainSubsystem().setSteerBrake();
         robotContainer.getDrivetrainSubsystem().resetGyroAngle(robotContainer.getDrivetrainSubsystem().getPose().rotation);
 
         // robotContainer.getDrivetrainSubsystem().alignWheels();
 
         // robotContainer.getArm().setArmInchesZero(Constants.ARM_EXTEND_HOME_INCHES);
         // robotContainer.getArm().setArmDegreesZero(Constants.ARM_HOME_DEGREES);
-
-        robotContainer.updateSide();
-        robotContainer.getDrivetrainSubsystem().setDriveCoast();
-        robotContainer.getDrivetrainSubsystem().setSteerBrake();
         
         robotContainer.getDrivetrainSubsystem().setDriveControlMode(DrivetrainSubsystem.DriveControlMode.JOYSTICKS);
         //robotContainer.getClimbElevator().setElevatorMotionMagicPositionAbsolute(27.0);

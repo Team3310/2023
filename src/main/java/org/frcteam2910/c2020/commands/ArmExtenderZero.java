@@ -21,14 +21,14 @@ public class ArmExtenderZero extends CommandBase {
 
     @Override
     public void initialize() {
-        arm.setTranslationalSpeed(-Constants.ARM_EXTEND_ZEROING_SPEED, true);
-        lastPosition = Constants.ARM_MAX_EXTEND_INCHES;
+        arm.setTranslationalSpeed(-Constants.ARM_EXTENDER_ZEROING_SPEED, true);
+        lastPosition = Constants.ARM_EXTENDER_MAX_EXTEND_INCHES;
         timer.start();
     }
 
     @Override
     public void execute() {
-        arm.setTranslationalSpeed(-Constants.ARM_EXTEND_ZEROING_SPEED, true);
+        arm.setTranslationalSpeed(-Constants.ARM_EXTENDER_ZEROING_SPEED, true);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ArmExtenderZero extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        arm.setArmInchesZero(Constants.ARM_EXTEND_HOME_INCHES);
+        arm.setArmInchesZero(Constants.ARM_EXTENDER_HOME_INCHES);
         arm.setTranslationalHold();
     }
 }

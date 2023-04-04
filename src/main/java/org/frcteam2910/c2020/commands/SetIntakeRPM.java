@@ -15,7 +15,7 @@ public class SetIntakeRPM extends CommandBase {
 
     @Override
     public void execute() {
-        intake.setRollerRPM(rpm);
+        intake.setArmIntakeRPM(rpm);
     }
 
     @Override

@@ -1,9 +1,9 @@
 package org.frcteam2910.c2020;
 
 import org.frcteam2910.c2020.commands.*;
-import org.frcteam2910.c2020.commands.auton.OneObjectMid;
 import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
+import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.LimelightMode;
 import org.frcteam2910.c2020.util.*;
 import org.frcteam2910.common.robot.input.*;
 import org.frcteam2910.common.robot.input.DPadButton.Direction;
@@ -12,7 +12,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 
 public class RobotContainer {
@@ -54,68 +56,119 @@ public class RobotContainer {
         instance = this;
     }
 
+    public AutonomousTrajectories getTrajectories(){
+        return autonomousTrajectories;
+    }
+
     public void recreateTrajectoriesBasedOnSide(){
         autonomousTrajectories = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, sideChooser.getSide());
         autonomousChooser.updateTrajectories(autonomousTrajectories);
         // SmartDashboard.putString("Side", sideChooser.getSide().toString());
     }
 
-    public void updateSide(){
-        DrivetrainSubsystem.getInstance().setSide(sideChooser.getSide());
-    }
-
     private void configureButtonBindings() {
         //#region Primary/Driver Controller
-        primaryController.getStartButton().onTrue(
+        primaryController.getStartButton()
+            .onTrue(
                 new InstantCommand(()->DrivetrainSubsystem.getInstance().resetSteerAbsoluteAngle())
-        );
-        primaryController.getBackButton().onTrue(
+            );
+        primaryController.getBackButton()
+            .onTrue(
                 new ZeroAll(DrivetrainSubsystem.getInstance())
-        );
+            );
 
-        primaryController.getBButton().onTrue(
+        primaryController.getBButton()
+            .onTrue(
                 new InstantCommand(()->Intake.getInstance().setServoPosition(1))
-        );
-        primaryController.getAButton().onTrue(
-            //new DriveBalanceCommand(DrivetrainSubsystem.getInstance(), false,true)
-            new DriveBalanceCommand(DrivetrainSubsystem.getInstance(), false, true)
-        );
-        primaryController.getYButton().onTrue(
+            );
+        primaryController.getAButton()
+            .onTrue(
+                new SequentialCommandGroup(
+                    new ChangeDriveMode(drivetrain, DriveControlMode.BRIDGE_VOLTAGE),
+                    new InstantCommand(()->drivetrain.setBridgeDriveVoltage(-5)),
+                    new WaitUntilCommand(() -> drivetrain.getRollDegreesOffLevel()>20),
+                    new WaitUntilCommand(() -> drivetrain.getRollDegreesOffLevel()<12.25),
+                    new DriveBalanceCommand(drivetrain, true, false, false),
+                    new DriveBalanceCommand(drivetrain, true, false, true)
+                )
+            );
+        primaryController.getYButton()
+            .onTrue(
                 new InstantCommand(()->Intake.getInstance().setServoPosition(-1))
+            );
+        primaryController.getXButton()
+            .onTrue(
+                // new InstantCommand(() -> DrivetrainSubsystem.getInstance().zeroGyro())
+                new ChangeDriveMode(drivetrain, DriveControlMode.HOLD)
+            );
+
+        // Cube intake
+        primaryController.getLeftBumperButton()
+        .onTrue(
+            new SequentialCommandGroup(
+                new SetArmSafely(ScoreMode.CUBE_INTAKE),
+                new InstantCommand(()->{
+                    intake.stopRollingOnTriggeredCubeIntakeDIO = false;
+                    intake.stopRollingOnTriggeredArmIntakeDIO = true;
+                    // intake.setCubeIntakeDeployTargetPosition(110);
+                    intake.resetIntakeDIOTimestamp();
+                    intake.setCubeRollerRPM(1500);
+                }),
+                new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
+                new SetIntakeDeployPosition(intake, 110)
+            )
+        ).onFalse(
+            new SequentialCommandGroup(
+                new SetArmSafely(true, false),
+                new InstantCommand(()->{
+                    intake.stopRollingOnTriggeredCubeIntakeDIO = false;
+                    intake.stopRollingOnTriggeredArmIntakeDIO = false;
+                    intake.resetIntakeDIOTimestamp();
+                    intake.setCubeRollerRPM(0);
+                }),
+                new SetIntakeRPM(intake, 0),
+                new SetIntakeDeployPosition(intake, 0)
+            )
         );
 
+        // Cube outtake
+        primaryController.getLeftTriggerAxis()
+            .onTrue(
+                new SequentialCommandGroup(
+                    new SetArmSafely(ScoreMode.CUBE_INTAKE),
+                    new ParallelCommandGroup(
+                        new InstantCommand(()->{
+                            intake.stopRollingOnTriggeredCubeIntakeDIO = false;
+                            intake.setCubeRollerRPM(-2000);
+                        }),
+                        new SetIntakeRPM(intake, 1000)
+                    )
+                )
+            )
+            .onFalse(
+                new ParallelCommandGroup(
+                    new SetArmSafely(true, false),
+                    new InstantCommand(()->{
+                        intake.setCubeRollerRPM(0);
+                    }),
+                    new SetIntakeRPM(intake, 0)
+                )
+            );
 
-        
-        primaryController.getLeftBumperButton().onTrue(
+        primaryController.getRightBumperButton()
+            .onTrue(
+                new ParallelCommandGroup(
+                    new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.JOYSTICKS),
+                    new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(true))
+                ))
+            .onFalse(
+                new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(false))
+            );
+
+        primaryController.getRightTriggerAxis()
+            .onFalse(
                 new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
-        );
-        primaryController.getLeftBumperButton().onFalse(
-                new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
-        );
-
-        primaryController.getRightBumperButton().onTrue(
-            new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(true))
-        );
-
-        primaryController.getRightBumperButton().onFalse(
-            new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(false))
-        );
-
-
-        primaryController.getRightTriggerAxis().onFalse(
-                new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
-        );
-        // primaryController.getRightTriggerAxis().onTrue(
-        //     new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(true))
-        // );
-        // primaryController.getRightTriggerAxis().onFalse(
-        //     new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurbo(false))
-        // );
-
-
-        primaryController.getXButton().onTrue(
-            new ChangeDriveMode(drivetrain, DriveControlMode.HOLD)
-        );
+            );    
         //#endregion
 
         //#region Second/Operator Controller
@@ -128,100 +181,155 @@ public class RobotContainer {
         // secondaryController.getRightJoystickButton().onTrue(
         //         new InstantCommand(()-> DrivetrainSubsystem.getInstance().setLimelightOverride(false))
         // );
-        secondaryController.getDPadButton(Direction.UP).onTrue(
-                new InstantCommand(()-> Arm.getInstance().setTargetArmInchesPositionAbsolute(Arm.getInstance().getArmInches()+0.25))
-        );
-        secondaryController.getDPadButton(Direction.DOWN).onTrue(
-                new InstantCommand(()-> Arm.getInstance().setTargetArmInchesPositionAbsolute(Arm.getInstance().getArmInches()-0.25))
-        );
-        secondaryController.getDPadButton(Direction.UP).onTrue(
-                new InstantCommand(()-> Arm.getInstance().setTargetArmInchesPositionAbsolute(Arm.getInstance().getArmInches()+0.25))
-        );
+        // secondaryController.getDPadButton(Direction.UP).onTrue(
+        //         new InstantCommand(()-> Arm.getInstance().setTargetArmInchesPositionAbsolute(Arm.getInstance().getArmInches()+0.25))
+        // );
+        // secondaryController.getDPadButton(Direction.DOWN).onTrue(
+        //         new InstantCommand(()-> Arm.getInstance().setTargetArmInchesPositionAbsolute(Arm.getInstance().getArmInches()-0.25))
+        // );
+        secondaryController.getDPadButton(Direction.UP)
+            .onTrue(
+                new SetArmSafely(ScoreMode.CUBE_HIGH)
+            );
+
+        secondaryController.getDPadButton(Direction.LEFT)
+            .onTrue(
+                new SetArmSafely(ScoreMode.CUBE_MID)
+            );
+
+        secondaryController.getDPadButton(Direction.DOWN)
+            .onTrue(
+                new SetArmSafely(ScoreMode.CUBE_LOW)
+            );
+
+        secondaryController.getStartButton()
+            .onTrue(
+                new ArmExtenderZero(Arm.getInstance())
+            );
+        secondaryController.getBackButton()
+            .onTrue(
+                new InstantCommand(()->Arm.getInstance().setArmDegreesZero(0))
+            );
+
+        secondaryController.getBButton()
+            .onTrue(
+                new SetArmSafely(ScoreMode.HOME)
+            );
+        secondaryController.getAButton()
+            .onTrue(
+                new SetArmSafely(ScoreMode.CONE_LOW)
+            );
+        secondaryController.getXButton()
+            .onTrue(
+                new SetArmSafely(ScoreMode.CONE_MID)
+            );
+        secondaryController.getYButton()
+            .onTrue(
+                new SetArmSafely(ScoreMode.CONE_HIGH)
+            );
 
 
-        secondaryController.getBButton().onTrue(
-            new SetArmSafely( ScoreMode.ZERO)
-        );
-        secondaryController.getAButton().onTrue(
-            new SetArmSafely( ScoreMode.LOW)
-        );
-        secondaryController.getXButton().onTrue(
-            new SetArmSafely( ScoreMode.MID)
-        );
-        secondaryController.getYButton().onTrue(
-            new SetArmSafely( ScoreMode.HIGH)
-        );
-
-
-        secondaryController.getRightTriggerAxis().onTrue(
-            new SequentialCommandGroup(
-                new SetIntakeRPM(Intake.getInstance(), Constants.INTAKE_COLLECT_RPM),
-                new SetArmSafely(ScoreMode.CUBE_INTAKE)
-                // For now, it's up to the operator to stop intaking to not pop the cube
-                
-                // Hasn't been tested, but an idea: need to stop intaking when intake.getCubeSensor().get() is true
-                // new SequentialCommandGroup(
-                //     new ParallelRaceGroup(
-                //         new WaitCommand(5.0), // Ya got 5 seconds to intake that cube, man.
-                //         new WaitUntilCommand(() -> intake.getCubeSensor().get())
-                //     ),
-                //     new InstantCommand(()->intake.setIntakeHold()),
-                // )
-            )    
-        );
-
-        secondaryController.getRightTriggerAxis().onFalse(
-            // If we grabbed a cube, we want to continue intaking until we're back at ZERO
-            // CommandScheduler.getInstance().clearButtons();
-            new SequentialCommandGroup(
-                new InstantCommand(()->intake.setIntakeHold()),
-                new SetArmSafely(true, false)
-           )
-        );
-
-        secondaryController.getRightBumperButton().onTrue(
-            new SequentialCommandGroup(
-                new SetServosOut(Intake.getInstance()),
-                new SetIntakeRPM(Intake.getInstance(), -1*Constants.INTAKE_COLLECT_RPM),
-                new SetArmSafely(ScoreMode.CONE_INTAKE)
-            )    
-        );
-
-        secondaryController.getRightBumperButton().onFalse(
+        // Cone Intake
+        secondaryController.getRightBumperButton()
+            .onTrue(
+                new SequentialCommandGroup(
+                    new SetServosOut(Intake.getInstance()),
+                    new SetIntakeRPM(Intake.getInstance(), Constants.ARM_INTAKE_COLLECT_RPM),
+                    new SetArmSafely(ScoreMode.CONE_INTAKE)
+                )    
+            ).onFalse(
             // If we grabbed a cone, we want to continue intaking until we're back at ZERO
             new SequentialCommandGroup(
                 new SetArmSafely(true, true),
                 new SetIntakeRPM(Intake.getInstance(), 0),
                 new SetServosIn(Intake.getInstance())
-            )    
+            )
+            );
+
+        // Cube Intake
+        secondaryController.getRightTriggerAxis()
+            .onTrue(
+                new SequentialCommandGroup(
+                    new SetIntakeRPM(Intake.getInstance(), Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
+                    new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false),
+                    new InstantCommand(() -> {
+                        // This flag is set so that we can force stuff to stop moving once cone/cube is in arm intake
+                        Intake.getInstance().stopRollingOnTriggeredCubeIntakeDIO = false;
+                        Intake.getInstance().stopRollingOnTriggeredArmIntakeDIO = true;
+                        Intake.getInstance().resetIntakeDIOTimestamp();
+                    })
+                    
+                    
+                    // For now, it's up to the operator to stop intaking to not pop the cube
+                    
+                    // Hasn't been tested, but an idea: need to stop intaking when intake.getCubeSensor().get() is true
+                    // new SequentialCommandGroup(
+                    //     new ParallelRaceGroup(
+                    //         new WaitCommand(5.0), // Ya got 5 seconds to intake that cube, man.
+                    //         new WaitUntilCommand(() -> intake.getCubeSensor().get())
+                    //     ),
+                    //     new InstantCommand(()->intake.setIntakeHold()),
+                    // )
+                )    
+            )
+            .onFalse(
+            // If we grabbed a cube, we want to continue intaking until we're back at ZERO
+            // CommandScheduler.getInstance().clearButtons();
+            new SequentialCommandGroup(
+                new InstantCommand(() -> {
+                    // This flag is set so that we can force stuff to stop moving once cone/cube is in arm intake
+                    Intake.getInstance().stopRollingOnTriggeredCubeIntakeDIO = false;
+                    Intake.getInstance().stopRollingOnTriggeredArmIntakeDIO = false;
+                    intake.resetIntakeDIOTimestamp();
+                }),
+                new InstantCommand(()->intake.setArmIntakeHold()),
+                new SetArmSafely(true, false)
+           )
         );
         
-        secondaryController.getLeftBumperButton().onTrue(
-            // Outtake Cone
-            new SetIntakeRPM(Intake.getInstance(), -1*Constants.INTAKE_SPIT_RPM)
+        // Outtake Cone
+        secondaryController.getLeftBumperButton()
+            .onTrue(
+                new SetIntakeRPM(Intake.getInstance(), Constants.ARM_INTAKE_SPIT_RPM)
+            )
+            .onFalse(
+                new PutIntakeZeroAfterOuttake(Intake.getInstance(), Arm.getInstance())
         );
 
-        secondaryController.getLeftBumperButton().onFalse(
-            new PutIntakeZeroAfterOuttake(Intake.getInstance(), Arm.getInstance())
-        );
+        // Outtake Cube
+        secondaryController.getLeftTriggerAxis()
+            .onTrue(
+                new SequentialCommandGroup(
+                    // new CubeExtend(arm, true),
+                    new InstantCommand(() -> {
+                        Intake.getInstance().stopRollingOnTriggeredCubeIntakeDIO = false;
+                        Intake.getInstance().stopRollingOnTriggeredArmIntakeDIO = false;
+                        Intake.getInstance().resetIntakeDIOTimestamp();
+                    }),
+                    new SetIntakeRPM(Intake.getInstance(), Constants.ARM_CUBE_INTAKE_SPIT_RPM)
+                ))
+            .onFalse(
+                new PutIntakeZeroAfterOuttake(Intake.getInstance(), Arm.getInstance())
+            );
 
-        secondaryController.getLeftTriggerAxis().onTrue(
-            // Outtake Cube
-            new SetIntakeRPM(Intake.getInstance(), Constants.INTAKE_SPIT_RPM)
-        );
-
-        secondaryController.getLeftTriggerAxis().onFalse(
-            new PutIntakeZeroAfterOuttake(Intake.getInstance(), Arm.getInstance())
-        );
-
-        
-        secondaryController.getStartButton().onTrue(new ArmExtenderZero(Arm.getInstance()));
-        secondaryController.getBackButton().onTrue(new InstantCommand(()->Arm.getInstance().setArmDegreesZero(0)));
         //#endregion
 
         // SmartDashboard.putData("Turn to Goal", new InstantCommand(() -> DrivetrainSubsystem.getInstance().setTurnToTarget()));
-        SmartDashboard.putData("set drive control mode voltage", new InstantCommand(() -> {drivetrain.setBridgeDriveVoltage(1.0); drivetrain.setDriveControlMode(DriveControlMode.BRIDGE_VOLTAGE);}));
-        // SmartDashboard.putData("Limelight broken", new InstantCommand(() -> DrivetrainSubsystem.getInstance().setLimelightOverride(true)));
+        //SmartDashboard.putData("set drive control mode voltage", new InstantCommand(() -> {drivetrain.setBridgeDriveVoltage(1.0); drivetrain.setDriveControlMode(DriveControlMode.BRIDGE_VOLTAGE);}));
+        SmartDashboard.putData("extendo zero", new ArmExtenderZero(Arm.getInstance()));
+        SmartDashboard.putData("cancel all command", new InstantCommand(()->CommandScheduler.getInstance().cancelAll()));
+        SmartDashboard.putData("arm to zero", new SetArmSafely(ScoreMode.HOME));
+        SmartDashboard.putData("arm to high", new SetArmSafely(ScoreMode.CONE_HIGH));
+        // SmartDashboard.putData("roller rpm to 1000", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(1000)));
+        // SmartDashboard.putData("roller rpm to 2000", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(2000)));
+        // SmartDashboard.putData("roller rpm to 100", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(100)));
+        // SmartDashboard.putData("roller rpm to 0", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(0)));
+        SmartDashboard.putData("lift zero", new InstantCommand(() -> Intake.getInstance().setCubeIntakeDeployHome(0)));
+        // SmartDashboard.putData("lift degrees to 30", new InstantCommand(() -> Intake.getInstance().setCubeIntakeDeployTargetPosition(30)));
+        // SmartDashboard.putData("lift degrees to 70", new InstantCommand(() -> Intake.getInstance().setCubeIntakeDeployTargetPosition(70)));
+        SmartDashboard.putData("lift degrees to 111", new SetIntakeDeployPosition(intake, 111));
+        SmartDashboard.putData("lift degrees to 0", new SetIntakeDeployPosition(intake, 0));
+        //SmartDashboard.putData("Zero Gyro", new InstantCommand(() -> DrivetrainSubsystem.getInstance().zeroGyro()));
         // SmartDashboard.putData("Limelight working", new InstantCommand(() -> DrivetrainSubsystem.getInstance().setLimelightOverride(false)));
         // SmartDashboard.putData("set Arm.getInstance() to 30 degrees", new InstantCommand(() -> Arm.getInstance().setArmDegreesPositionAbsolute(30)));
         // SmartDashboard.putData("set Arm.getInstance() to 60 degrees", new InstantCommand(() -> Arm.getInstance().setArmDegreesPositionAbsolute(60)));
@@ -229,7 +337,7 @@ public class RobotContainer {
         // SmartDashboard.putData("set Arm.getInstance() to 0 degrees", new InstantCommand(() -> Arm.getInstance().setArmDegreesPositionAbsolute(0)));
     }
     public Command getAutonomousCommand() {
-        return new OneObjectMid(this, autonomousTrajectories);
+        return autonomousChooser.getCommand(instance);
     }
 
     public DrivetrainSubsystem getDrivetrainSubsystem() {
@@ -261,9 +369,9 @@ public class RobotContainer {
     public Boolean getIntakeAxis() {
         return secondaryController.getRightTriggerAxis().getAsBoolean();
     }
-    public Boolean getOuttakeAxis() {
-        return secondaryController.getLeftTriggerAxis().getAsBoolean();
-    }
+    // public Boolean getOuttakeAxis() {
+    //     return secondaryController.getLeftTriggerAxis().getAsBoolean();
+    // }
 
     public void runCommand(Command command){
         command.schedule();
