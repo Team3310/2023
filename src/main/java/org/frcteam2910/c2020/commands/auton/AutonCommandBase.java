@@ -1,13 +1,11 @@
 package org.frcteam2910.c2020.commands.auton;
 
-import org.frcteam2910.c2020.Robot;
 import org.frcteam2910.c2020.RobotContainer;
 import org.frcteam2910.c2020.commands.FollowTrajectoryCommand;
 import org.frcteam2910.c2020.util.SideChooser.SideMode;
 import org.frcteam2910.common.control.Trajectory;
 import org.frcteam2910.common.math.RigidTransform2;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 

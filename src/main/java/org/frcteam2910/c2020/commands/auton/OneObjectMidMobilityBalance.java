@@ -1,22 +1,14 @@
 package org.frcteam2910.c2020.commands.auton;
 
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
-import java.util.function.BooleanSupplier;
-
 import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.RobotContainer;
 import org.frcteam2910.c2020.commands.*;
 import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.AutonomousTrajectories;
-import org.frcteam2910.c2020.util.ScoreMode;
-
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
@@ -36,10 +28,10 @@ public class OneObjectMidMobilityBalance extends AutonCommandBase {
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
             new InstantCommand(()->{
                 intake.stopRollingOnTriggeredCubeIntakeDIO = true;
-                intake.setCubeRollerRPM(2000);
+                intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM);
             }),
             new ParallelCommandGroup(
-                new SetIntakeDeployPosition(intake, 110),
+                new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES),
                 new InstantCommand(()->drive.setBridgeDriveVoltage(-3.5))
             ),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),

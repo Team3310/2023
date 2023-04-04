@@ -3,8 +3,6 @@ package org.frcteam2910.c2020.commands.auton;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-import java.util.function.BooleanSupplier;
-
 import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.RobotContainer;
 import org.frcteam2910.c2020.commands.*;
@@ -13,7 +11,6 @@ import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import org.frcteam2910.c2020.util.ScoreMode;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -29,7 +26,7 @@ public class OneObjectMid extends AutonCommandBase {
             //new ArmExtenderZero(Arm.getInstance()),
             new SetArmSafely(ScoreMode.CONE_HIGH),
             new WaitCommand(0.125),
-            new SetIntakeRPM(intake, Constants.ARM_INTAKE_SPIT_RPM),
+            new SetArmIntakeRPM(intake, Constants.ARM_CONE_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
                     new WaitUntilCommand(()->!intake.getConeSensor().get()),
@@ -39,7 +36,7 @@ public class OneObjectMid extends AutonCommandBase {
             ),
             new ParallelCommandGroup(
                 new SetArmSafely(ScoreMode.HOME),
-                new SetIntakeRPM(intake, 0)
+                new SetArmIntakeRPM(intake, 0)
             )
         );
     }

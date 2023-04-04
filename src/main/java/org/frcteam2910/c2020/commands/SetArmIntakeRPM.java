@@ -4,11 +4,11 @@ import org.frcteam2910.c2020.subsystems.Intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class SetIntakeRPM extends CommandBase {
+public class SetArmIntakeRPM extends CommandBase {
     private final Intake intake;
     private final double rpm;
 
-    public SetIntakeRPM(Intake intake, double rpm) {
+    public SetArmIntakeRPM(Intake intake, double rpm) {
         this.intake = intake;
         this.rpm = rpm;
     }

@@ -2,6 +2,7 @@ package org.frcteam2910.common.robot.input;
 
 import edu.wpi.first.wpilibj2.command.button.Button;
 
+@SuppressWarnings("deprecation")
 public final class NullButton extends Button {
 	private boolean value;
 

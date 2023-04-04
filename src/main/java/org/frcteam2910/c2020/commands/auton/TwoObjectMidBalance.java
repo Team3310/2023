@@ -3,8 +3,6 @@ package org.frcteam2910.c2020.commands.auton;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-import java.util.function.BooleanSupplier;
-
 import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.RobotContainer;
 import org.frcteam2910.c2020.commands.*;
@@ -12,13 +10,7 @@ import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import org.frcteam2910.c2020.util.ScoreMode;
-import org.frcteam2910.common.math.RigidTransform2;
-import org.frcteam2910.common.math.Rotation2;
-import org.frcteam2910.common.math.Vector2;
-
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -58,9 +50,9 @@ public class TwoObjectMidBalance extends AutonCommandBase {
             this.addCommands(
                 new ParallelDeadlineGroup(
                     new FollowTrajectoryCommand(drive, trajectories.getFromOverBridgeToCone()),
-                    new SetIntakeRPM(intake, Constants.ARM_INTAKE_COLLECT_RPM),
+                    new SetArmIntakeRPM(intake, Constants.ARM_CONE_INTAKE_COLLECT_RPM),
                     new SetServosOut(intake),
-                    new SetArmSafelyAuton(ScoreMode.CONE_INTAKE)
+                    new SetArmSafely(ScoreMode.CONE_INTAKE)
                 ),
                 new ParallelRaceGroup(
                     new WaitUntilCommand(()->intake.getConeSensor().get()),
@@ -70,9 +62,9 @@ public class TwoObjectMidBalance extends AutonCommandBase {
                     new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
                     new InstantCommand(()->drive.setBridgeDriveVoltage(-5)), // set voltage first in case of any previous value
                     new ChangeDriveMode(drive, DriveControlMode.BRIDGE_VOLTAGE),
-                    new SetIntakeRPM(intake, 0),
+                    new SetArmIntakeRPM(intake, 0),
                     new SequentialCommandGroup(
-                        new SetArmSafelyAuton(true),
+                        new SetArmSafely(ScoreMode.HOME),
                         new SetServosIn(intake)
                     )
                 ),

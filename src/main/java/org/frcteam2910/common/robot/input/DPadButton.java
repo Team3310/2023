@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
  * @author Jacob Bublitz
  * @since 1.0
  */
+@SuppressWarnings("deprecation")
 public class DPadButton extends Button {
 
 	public enum Direction {

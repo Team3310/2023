@@ -19,7 +19,6 @@ public class Constants
     public static final double DRIVE_ROTATION_JOYSTICK_DEADBAND = 0.15;
     public static final double BALANCE_DEADBAND = 0.5;
 
-
     public static final int PIGEON_PORT = 0;
     
 
@@ -109,19 +108,30 @@ public class Constants
     public static final double ARM_EXTENDER_HOME_INCHES = 0.0;
 
     // Intake Constants
-    public static final double ARM_INTAKE_COLLECT_RPM = 1500.0;
-    public static final double ARM_CUBE_INTAKE_COLLECT_RPM = -350.0;
-    public static final double ARM_INTAKE_SPIT_RPM = -1300.0;
-    public static final double ARM_CUBE_INTAKE_SPIT_RPM = 400.0;
 
+    // ARM INTAKE
     public static final double ARM_INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 50.0 / 11.0;
     public static final double ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = ARM_INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * ENCODER_TICKS_PER_MOTOR_REVOLUTION;
 
+    public static final double ARM_CONE_INTAKE_COLLECT_RPM = 1500.0;
+    public static final double ARM_CUBE_INTAKE_COLLECT_RPM = -350.0;
+    public static final double ARM_CONE_INTAKE_SPIT_RPM = -1300.0;
+    public static final double ARM_CUBE_INTAKE_SPIT_RPM = 400.0;
+
+    // CUBE INTAKE DEPLOY
     public static final double CUBE_INTAKE_DEPLOY_MOTOR_RATIO = (64.0/11.0)*
                                                                 (36.0/18.0);
     public static final double CUBE_INTAKE_DEPLOY_ONE_REVOLUTION_IN_ENCODER_TICKS = CUBE_INTAKE_DEPLOY_MOTOR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION;
     public static final double CUBE_INTAKE_DEPLOY_ONE_DEGREE_IN_ENCODER_TICKS = CUBE_INTAKE_DEPLOY_ONE_REVOLUTION_IN_ENCODER_TICKS/360.0;
+    
+    public static final double CUBE_INTAKE_DEPLOY_HOME_DEGREES = 0;
+    public static final double CUBE_INTAKE_DEPLOY_MAX_DEGREES = 111;
 
+    // CUBE INTAKE ROLLER
     public static final double CUBE_INTAKE_ROLLER_MOTOR_RATIO = (18.0/12.0);
+
+    public static final double CUBE_INTAKE_ROLLER_COLLECT_RPM = 2000;
+    public static final double CUBE_INTAKE_ROLLER_SPIT_RPM = -2000;
+    public static final double CUBE_INTAKE_ROLLER_HANDOFF_RPM = 800;
     //#endregion
 }

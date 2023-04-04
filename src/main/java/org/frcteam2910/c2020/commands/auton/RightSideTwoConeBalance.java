@@ -1,11 +1,6 @@
 package org.frcteam2910.c2020.commands.auton;
 
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
-import java.util.function.BooleanSupplier;
-
-import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.RobotContainer;
 import org.frcteam2910.c2020.commands.*;
 import org.frcteam2910.c2020.subsystems.*;
@@ -16,9 +11,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class RightSideTwoConeBalance extends AutonCommandBase {
     public RightSideTwoConeBalance(RobotContainer container, AutonomousTrajectories trajectories){
@@ -31,7 +23,7 @@ public class RightSideTwoConeBalance extends AutonCommandBase {
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getToBridge1(getSide(container))),
                 new SetArmSafely(ScoreMode.HOME),
-                new SetIntakeRPM(intake, 0)
+                new SetArmIntakeRPM(intake, 0)
             ),
             new OnToBridge(container, trajectories, -5),
             new InstantCommand(()->SmartDashboard.putNumber("finished auton Time", DriverStation.getMatchTime()))

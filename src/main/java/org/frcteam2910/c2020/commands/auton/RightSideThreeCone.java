@@ -30,7 +30,7 @@ public class RightSideThreeCone extends AutonCommandBase {
                 new SetArmSafely(true, false) 
             ),
             new SetArmSafely(ScoreMode.CONE_MID),
-            new SetIntakeRPM(intake, -Constants.ARM_INTAKE_SPIT_RPM)
+            new SetArmIntakeRPM(intake, -Constants.ARM_CONE_INTAKE_SPIT_RPM)
             // new ParallelDeadlineGroup(     
             //     new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup2(isBlue)),
             //     new SetArmSafely(ScoreMode.CONE_INTAKE, false),

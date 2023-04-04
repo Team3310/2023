@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * @see XboxController
  * @since 1.0
  */
+@SuppressWarnings("deprecation")
 public abstract class Controller extends GenericHID {
 	/**
 	 * Construct an instance of a device.

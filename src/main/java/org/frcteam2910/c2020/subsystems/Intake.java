@@ -139,7 +139,7 @@ public class Intake implements Subsystem{
             this.intakeMotor.set(ControlMode.PercentOutput, speed);
         }
         
-        /** @see SetIntakeRPM */
+        /** @see SetArmIntakeRPM */
         public void setArmIntakeRPM(double rpm) {
             firstSet = false;
             controlMode = IntakeControlMode.MANUAL;
@@ -186,7 +186,7 @@ public class Intake implements Subsystem{
             return Math.abs(getCubeIntakeDeployDegrees() - position) < tolerance;
         }
 
-        public void setCubeIntakeDeployHome(double deployPosDegreesOffset) {
+        public void setCubeIntakeDeployZeroReference(double deployPosDegreesOffset) {
             _deployPosDegreesOffset = deployPosDegreesOffset;
             cubeIntakeLiftMotor.selectProfileSlot(kIntakePositionSlot, 0);
             cubeIntakeLiftMotor.setSelectedSensorPosition(0);

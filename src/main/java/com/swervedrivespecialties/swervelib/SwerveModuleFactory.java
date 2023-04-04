@@ -2,7 +2,6 @@ package com.swervedrivespecialties.swervelib;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import org.frcteam2910.c2020.Constants;
 
 public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
     private final ModuleConfiguration moduleConfiguration;
