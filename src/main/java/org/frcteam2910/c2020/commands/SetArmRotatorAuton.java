@@ -1,15 +1,14 @@
 package org.frcteam2910.c2020.commands;
 
 import org.frcteam2910.c2020.subsystems.Arm;
-import org.frcteam2910.c2020.util.ScoreMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
+@Deprecated
 public class SetArmRotatorAuton extends CommandBase {
     private final Arm arm;
     private boolean waitUntilReachedTarget = false;
-    private boolean withinToleranceOfTarget = false;
     private double startingDegrees = Double.MIN_VALUE;
     private double targetDegrees = Double.MIN_VALUE;
 
@@ -22,7 +21,6 @@ public class SetArmRotatorAuton extends CommandBase {
     public SetArmRotatorAuton(Arm arm, double targetDegrees, boolean waitToFinishUntilTargetReached) {
         this.arm = arm;
         this.waitUntilReachedTarget = waitToFinishUntilTargetReached;
-        this.withinToleranceOfTarget = false;
         this.startingDegrees = arm.getArmDegreesIntegrated();
         this.targetDegrees = targetDegrees;
 
@@ -41,8 +39,6 @@ public class SetArmRotatorAuton extends CommandBase {
 
     @Override
     public boolean isFinished(){
-        if((!waitUntilReachedTarget) || arm.withinAngle(ARM_DEGREES_TOLERANCE, targetDegrees))
-            arm.setScoreMode(ScoreMode.getClosestMode(arm.getArmDegreesIntegrated()));
         return (!waitUntilReachedTarget) || arm.withinAngle(ARM_DEGREES_TOLERANCE, targetDegrees);
     }
 

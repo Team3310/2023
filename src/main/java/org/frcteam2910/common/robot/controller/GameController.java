@@ -227,6 +227,7 @@ public class GameController extends Joystick {
 		return getAxisWithDeadZoneCheck(this.getRawAxis(axis)); 
 	}
 
+	@SuppressWarnings("deprecation")
 	private class AxisTriggerButton extends Trigger {
 		private GameController m_controller;
 		private int m_axis;
@@ -238,11 +239,13 @@ public class GameController extends Joystick {
 			m_tolerance = tolerance;
 		}
 
-		public boolean get() {
+		@Override
+		public boolean getAsBoolean() {
 			return (m_controller.getTriggerAxis(m_axis) > m_tolerance);
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private class DPadTriggerButton extends Trigger {
 
 		private int buttonAngle;

@@ -9,6 +9,7 @@ import org.frcteam2910.c2020.subsystems.Arm;
 import org.frcteam2910.c2020.subsystems.Intake;
 import org.frcteam2910.c2020.util.ScoreMode;
 
+@Deprecated
 public class SetArmSafelyAuton extends SequentialCommandGroup {
 
     private Arm arm;
