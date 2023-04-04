@@ -278,7 +278,7 @@ public class Arm implements Subsystem{
     }
 
     public void cubeExtend(){
-        if(getScoreMode()!=ScoreMode.LOW){
+        if(getScoreMode()!=ScoreMode.CONE_LOW){
             double target = getArmInches()+6;
             setTargetArmInchesPositionAbsolute(target);
             // if(getScoreMode()==ScoreMode.HIGH){

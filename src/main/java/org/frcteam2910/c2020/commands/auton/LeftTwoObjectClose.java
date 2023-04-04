@@ -23,7 +23,7 @@ public class LeftTwoObjectClose extends AutonCommandBase {
         boolean isBlue = getSide(container);
         resetRobotPose(container, trajectories.getThreeObjectClosePart1(isBlue));
         this.addCommands(
-            new SetArmSafelyAuton(ScoreMode.HIGH),
+            new SetArmSafelyAuton(ScoreMode.CONE_HIGH),
             new SetIntakeRPM(intake, Constants.ARM_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(

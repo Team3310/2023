@@ -36,7 +36,7 @@ public class RightSideThreeCone extends AutonCommandBase {
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPlace2(isBlue)),
                 new SetArmSafely(true, false) 
             ),
-            new SetArmSafely(ScoreMode.MID),
+            new SetArmSafely(ScoreMode.CONE_MID),
             new SetIntakeRPM(intake, -Constants.ARM_INTAKE_SPIT_RPM)
             // new ParallelDeadlineGroup(     
             //     new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup2(isBlue)),

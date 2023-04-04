@@ -220,15 +220,15 @@ public class RobotContainer {
             );
         secondaryController.getAButton()
             .onTrue(
-                new SetArmSafely(ScoreMode.LOW)
+                new SetArmSafely(ScoreMode.CONE_LOW)
             );
         secondaryController.getXButton()
             .onTrue(
-                new SetArmSafely(ScoreMode.MID)
+                new SetArmSafely(ScoreMode.CONE_MID)
             );
         secondaryController.getYButton()
             .onTrue(
-                new SetArmSafely(ScoreMode.HIGH)
+                new SetArmSafely(ScoreMode.CONE_HIGH)
             );
 
 
@@ -322,7 +322,7 @@ public class RobotContainer {
         SmartDashboard.putData("extendo zero", new ArmExtenderZero(Arm.getInstance()));
         SmartDashboard.putData("cancel all command", new InstantCommand(()->CommandScheduler.getInstance().cancelAll()));
         SmartDashboard.putData("arm to zero", new SetArmSafely(ScoreMode.HOME));
-        SmartDashboard.putData("arm to high", new SetArmSafely(ScoreMode.HIGH));
+        SmartDashboard.putData("arm to high", new SetArmSafely(ScoreMode.CONE_HIGH));
         // SmartDashboard.putData("roller rpm to 1000", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(1000)));
         // SmartDashboard.putData("roller rpm to 2000", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(2000)));
         // SmartDashboard.putData("roller rpm to 100", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(100)));
