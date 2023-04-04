@@ -7,8 +7,6 @@ import com.revrobotics.RelativeEncoder;
 import com.swervedrivespecialties.swervelib.DriveController;
 import com.swervedrivespecialties.swervelib.DriveControllerFactory;
 import com.swervedrivespecialties.swervelib.ModuleConfiguration;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import static com.swervedrivespecialties.swervelib.rev.RevUtils.checkNeoError;
 
 public final class NeoDriveControllerFactoryBuilder {

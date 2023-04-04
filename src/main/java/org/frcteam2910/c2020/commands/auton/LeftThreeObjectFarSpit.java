@@ -8,7 +8,6 @@ import org.frcteam2910.c2020.commands.*;
 import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import org.frcteam2910.c2020.util.ScoreMode;
-import org.frcteam2910.c2020.util.SideChooser.SideMode;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;

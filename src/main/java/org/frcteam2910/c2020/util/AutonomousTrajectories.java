@@ -9,7 +9,6 @@ import java.util.Arrays;
 import org.frcteam2910.c2020.util.SideChooser.SideMode;
 import org.frcteam2910.common.control.MaxAccelerationConstraint;
 import org.frcteam2910.common.control.MaxVelocityConstraint;
-import org.frcteam2910.common.control.CentripetalAccelerationConstraint;
 import org.frcteam2910.common.control.Path;
 import org.frcteam2910.common.control.SimplePathBuilder;
 import org.frcteam2910.common.control.Trajectory;
