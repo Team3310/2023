@@ -28,7 +28,7 @@ public class Arm implements Subsystem{
     //private CANCoder armExternalCANCoder = new CANCoder(Constants.ARM_EXTERNAL_CANCODER_PORT);
 
     //conversions
-    private double DRUM_DIAMETER = 0.54134;
+    private double DRUM_DIAMETER = .58;//(0.68414+old:0.54134)/2.0*0.9;
     private double TRANSLATIONAL_ROTATIONS_TO_INCHES = Math.PI * DRUM_DIAMETER;
     private double ARM_INCHES_TO_ENCODER_TICKS = Constants.ARM_EXTENDER_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION/TRANSLATIONAL_ROTATIONS_TO_INCHES;//Constants.ARM_TRANSLATIONAL_GEAR_RATIO * Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION * TRANSLATIONAL_ROTATIONS_TO_INCHES;
 
@@ -40,7 +40,7 @@ public class Arm implements Subsystem{
     private double degreesOffset;
     private double targetDegreesTicks;
     private double manualRotationSpeed;
-    public ScoreMode scoreMode = ScoreMode.ZERO;
+    public ScoreMode scoreMode = ScoreMode.HOME;
 
     private ArmControlMode extenderControlMode = ArmControlMode.HOLD;
     private ArmControlMode rotationControlMode = ArmControlMode.HOLD;
@@ -278,7 +278,7 @@ public class Arm implements Subsystem{
     }
 
     public void cubeExtend(){
-        if(getScoreMode()!=ScoreMode.LOW){
+        if(getScoreMode()!=ScoreMode.CONE_LOW){
             double target = getArmInches()+6;
             setTargetArmInchesPositionAbsolute(target);
             // if(getScoreMode()==ScoreMode.HIGH){

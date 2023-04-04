@@ -28,8 +28,8 @@ public class RightSideTwoCone extends AutonCommandBase {
         resetRobotPose(container, trajectories.getConeBridgeToPickup1(isBlue));
         this.addCommands(
             new SetArmExtender(arm, 0.0),
-            new SetArmRotator(arm, ScoreMode.MID.getAngle()-3.0),
-            new SetArmExtender(arm, ScoreMode.MID.getInches()),
+            new SetArmRotator(arm, ScoreMode.CONE_MID.getAngle()-3.0),
+            new SetArmExtender(arm, ScoreMode.CONE_MID.getInches()),
             new SetIntakeRPM(intake, Constants.ARM_INTAKE_SPIT_RPM),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
@@ -55,7 +55,7 @@ public class RightSideTwoCone extends AutonCommandBase {
                 new SetIntakeDeployPosition(intake, 0),
                 new SequentialCommandGroup(
                     new SetArmExtender(arm, 0.0),
-                    new SetArmRotator(arm, ScoreMode.MID.getAngle()+1),
+                    new SetArmRotator(arm, ScoreMode.CONE_MID.getAngle()+1),
                     new SetArmExtender(arm, 10)
                 )
             ),

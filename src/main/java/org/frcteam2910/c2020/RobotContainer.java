@@ -106,38 +106,57 @@ public class RobotContainer {
                 new ChangeDriveMode(drivetrain, DriveControlMode.HOLD)
             );
 
+        // Cube intake
         primaryController.getLeftBumperButton()
         .onTrue(
             new SequentialCommandGroup(
+                new SetArmSafely(ScoreMode.CUBE_INTAKE),
                 new InstantCommand(()->{
-                    intake.stopRollingOnTriggeredCubeIntakeDIO = true;
+                    intake.stopRollingOnTriggeredCubeIntakeDIO = false;
+                    intake.stopRollingOnTriggeredArmIntakeDIO = true;
                     // intake.setCubeIntakeDeployTargetPosition(110);
                     intake.resetIntakeDIOTimestamp();
                     intake.setCubeRollerRPM(1500);
                 }),
+                new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
                 new SetIntakeDeployPosition(intake, 110)
             )
         ).onFalse(
             new SequentialCommandGroup(
+                new SetArmSafely(true, false),
                 new InstantCommand(()->{
                     intake.stopRollingOnTriggeredCubeIntakeDIO = false;
+                    intake.stopRollingOnTriggeredArmIntakeDIO = false;
                     intake.resetIntakeDIOTimestamp();
                     intake.setCubeRollerRPM(0);
                 }),
+                new SetIntakeRPM(intake, 0),
                 new SetIntakeDeployPosition(intake, 0)
             )
         );
 
+        // Cube outtake
         primaryController.getLeftTriggerAxis()
             .onTrue(
-                new InstantCommand(()->{
-                    intake.stopRollingOnTriggeredCubeIntakeDIO = false;
-                    intake.setCubeRollerRPM(-2000);
-                }))
+                new SequentialCommandGroup(
+                    new SetArmSafely(ScoreMode.CUBE_INTAKE),
+                    new ParallelCommandGroup(
+                        new InstantCommand(()->{
+                            intake.stopRollingOnTriggeredCubeIntakeDIO = false;
+                            intake.setCubeRollerRPM(-2000);
+                        }),
+                        new SetIntakeRPM(intake, 1000)
+                    )
+                )
+            )
             .onFalse(
-                new InstantCommand(()->{
-                    intake.setCubeRollerRPM(0);
-                })
+                new ParallelCommandGroup(
+                    new SetArmSafely(true, false),
+                    new InstantCommand(()->{
+                        intake.setCubeRollerRPM(0);
+                    }),
+                    new SetIntakeRPM(intake, 0)
+                )
             );
 
         primaryController.getRightBumperButton()
@@ -153,7 +172,7 @@ public class RobotContainer {
         primaryController.getRightTriggerAxis()
             .onFalse(
                 new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
-            );
+            );    
         //#endregion
 
         //#region Second/Operator Controller
@@ -174,7 +193,17 @@ public class RobotContainer {
         // );
         secondaryController.getDPadButton(Direction.UP)
             .onTrue(
-                new InstantCommand(() -> SmartDashboard.putBoolean("up?", true))
+                new SetArmSafely(ScoreMode.CUBE_HIGH)
+            );
+
+        secondaryController.getDPadButton(Direction.LEFT)
+            .onTrue(
+                new SetArmSafely(ScoreMode.CUBE_MID)
+            );
+
+        secondaryController.getDPadButton(Direction.DOWN)
+            .onTrue(
+                new SetArmSafely(ScoreMode.CUBE_LOW)
             );
 
         secondaryController.getStartButton()
@@ -188,19 +217,19 @@ public class RobotContainer {
 
         secondaryController.getBButton()
             .onTrue(
-                new SetArmSafely(ScoreMode.ZERO)
+                new SetArmSafely(ScoreMode.HOME)
             );
         secondaryController.getAButton()
             .onTrue(
-                new SetArmSafely(ScoreMode.LOW)
+                new SetArmSafely(ScoreMode.CONE_LOW)
             );
         secondaryController.getXButton()
             .onTrue(
-                new SetArmSafely(ScoreMode.MID)
+                new SetArmSafely(ScoreMode.CONE_MID)
             );
         secondaryController.getYButton()
             .onTrue(
-                new SetArmSafely(ScoreMode.HIGH)
+                new SetArmSafely(ScoreMode.CONE_HIGH)
             );
 
 
@@ -276,7 +305,6 @@ public class RobotContainer {
             .onTrue(
                 new SequentialCommandGroup(
                     // new CubeExtend(arm, true),
-                    new CubeExtend(arm, true),
                     new InstantCommand(() -> {
                         Intake.getInstance().stopRollingOnTriggeredCubeIntakeDIO = false;
                         Intake.getInstance().stopRollingOnTriggeredArmIntakeDIO = false;
@@ -294,8 +322,8 @@ public class RobotContainer {
         //SmartDashboard.putData("set drive control mode voltage", new InstantCommand(() -> {drivetrain.setBridgeDriveVoltage(1.0); drivetrain.setDriveControlMode(DriveControlMode.BRIDGE_VOLTAGE);}));
         SmartDashboard.putData("extendo zero", new ArmExtenderZero(Arm.getInstance()));
         SmartDashboard.putData("cancel all command", new InstantCommand(()->CommandScheduler.getInstance().cancelAll()));
-        SmartDashboard.putData("arm to zero", new SetArmSafely(ScoreMode.ZERO));
-        SmartDashboard.putData("arm to high", new SetArmSafely(ScoreMode.HIGH));
+        SmartDashboard.putData("arm to zero", new SetArmSafely(ScoreMode.HOME));
+        SmartDashboard.putData("arm to high", new SetArmSafely(ScoreMode.CONE_HIGH));
         // SmartDashboard.putData("roller rpm to 1000", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(1000)));
         // SmartDashboard.putData("roller rpm to 2000", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(2000)));
         // SmartDashboard.putData("roller rpm to 100", new InstantCommand(() -> Intake.getInstance().setCubeRollerRPM(100)));

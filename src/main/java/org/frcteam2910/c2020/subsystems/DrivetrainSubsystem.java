@@ -236,7 +236,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private final HolonomicMotionProfiledTrajectoryFollower follower =
         new HolonomicMotionProfiledTrajectoryFollower(
             new PidConstants(0.4, 0.0, 0.025),
-            new PidConstants(5.0, 0.0, 0.0),
+            new PidConstants(15.0, 0.0, 0.0),
             new HolonomicFeedforward(FEEDFORWARD_CONSTANTS)
         );
 

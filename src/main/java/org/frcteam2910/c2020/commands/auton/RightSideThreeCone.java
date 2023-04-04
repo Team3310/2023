@@ -1,10 +1,6 @@
 package org.frcteam2910.c2020.commands.auton;
 
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
-import java.util.function.BooleanSupplier;
-
 import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.RobotContainer;
 import org.frcteam2910.c2020.commands.*;
@@ -12,11 +8,8 @@ import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import org.frcteam2910.c2020.util.ScoreMode;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class RightSideThreeCone extends AutonCommandBase {
     public RightSideThreeCone(RobotContainer container, AutonomousTrajectories trajectories){
@@ -36,8 +29,8 @@ public class RightSideThreeCone extends AutonCommandBase {
                 new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPlace2(isBlue)),
                 new SetArmSafely(true, false) 
             ),
-            new SetArmSafely(ScoreMode.MID),
-            new SetIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_SPIT_RPM)
+            new SetArmSafely(ScoreMode.CONE_MID),
+            new SetIntakeRPM(intake, -Constants.ARM_INTAKE_SPIT_RPM)
             // new ParallelDeadlineGroup(     
             //     new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup2(isBlue)),
             //     new SetArmSafely(ScoreMode.CONE_INTAKE, false),
