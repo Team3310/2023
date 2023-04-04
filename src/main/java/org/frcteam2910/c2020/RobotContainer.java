@@ -166,9 +166,18 @@ public class RobotContainer {
             );
 
         primaryController.getRightTriggerAxis()
+            .onTrue(
+                new ParallelCommandGroup(
+                    new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.LIMELIGHT),
+                    new InstantCommand(() -> drivetrain.setLimelightMode(LimelightMode.RETROREFLECTIVE))
+                )
+            )
             .onFalse(
-                new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
-            );    
+                new ParallelCommandGroup(
+                    new ChangeDriveMode(DrivetrainSubsystem.getInstance(), DrivetrainSubsystem.DriveControlMode.JOYSTICKS),
+                    new InstantCommand(() -> drivetrain.setLimelightMode(LimelightMode.NONE))
+                )
+            );
         //#endregion
 
         //#region Second/Operator Controller
