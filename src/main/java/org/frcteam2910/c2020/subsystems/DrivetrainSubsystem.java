@@ -113,6 +113,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         JOYSTICKS,
         ROBOT_CENTRIC,
         LIMELIGHT,
+        LIMELIGHT_AUTON,
         TRAJECTORY,
         HOLD,
         BALANCE, 
@@ -127,7 +128,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         NONE(0, true),
         RETROREFLECTIVE(0, true),
         APRIL_TAG(1, true),
-        CUBE_INTAKE(0, false);
+        CUBE_INTAKE(0, false),
+        AUTON_CUBE_TRACK(0, false);
 
         private int pipelineNum;
         private boolean isForward;
@@ -205,7 +207,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public TrapezoidProfile.Constraints constraints = new Constraints(20.0, 6.0);
     public ProfiledPIDController rotationController = new ProfiledPIDController(2.0, 0.03, 0.02, constraints, 0.02);
     public ProfiledPIDController profiledLimelightController = new ProfiledPIDController(1.0, 0.03, 0.02, constraints, 0.02);
-    public PIDController limelightController = new PIDController(2.0, 0.03, 0.25, 0.02); //(3.0, 0.03, 0.02) (1.7, 0.03, 0.25) 0.02
+    public PidController limelightForwardAxisController = new PidController(new PidConstants(1.0, 0.002, 0.0));
     public PIDController ballTrackController = new PIDController(1.0, 0.03, 0.25, 0.02);
     private PidController balanceController = new PidController(new PidConstants(0.45, 0.0, 0.0));
     private PidController joystickRotateGyroController = new PidController(new PidConstants(.01, 0.002, 0.0));
@@ -284,8 +286,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             i.setVoltageRamp(0.6);
         }
 
-        limelightController.setTolerance(0.1);
-        limelightController.setIntegratorRange(-1.0, 1.0);
+        limelightForwardAxisController.setOutputRange(-1, 1);
+        limelightForwardAxisController.setShouldClearIntegralOnErrorSignChange(true);
+        // limelightForwardAxisController.setTolerance(0.1);
+        // limelightForwardAxisController.setIntegratorRange(-1.0, 1.0);
 
         // TODO change these pi values
         balanceController.setInputRange(0, Math.PI);
@@ -646,6 +650,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         else {
             if(limelightBack.hasTarget()) {
                 // This page intentionally left blank
+                
             }
             else {
                 // Set the drive signal to a field-centric joystick-based input when we don't see a target.
@@ -653,6 +658,70 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 drive(new Vector2(driveForwardOutput, strafeOutput), rotationOutputCommanded, true);
                 primaryController.setRumble(RumbleType.kLeftRumble, 0.0);
                 primaryController.setRumble(RumbleType.kRightRumble, 0.0);
+            }
+        }
+    }
+
+    public void autonLimelightDrive(){
+        // DriveControlMode is LIMELIGHT
+
+        primaryController.getLeftXAxis().setInverted(true);
+        primaryController.getRightXAxis().setInverted(true);
+
+        double driveForwardOutput = 0.0;
+        double strafeOutput = 0.0;
+        commandedPoseAngleDeg = getPose().rotation.toDegrees();
+        double rotationOutputCommanded = getGyroRotationOutput(0.0);
+
+        if(limelightMode == LimelightMode.NONE) {
+            // Set the drive signal to a field-centric joystick-based input when we don't see a ball.
+            // Also allow rotation from the right joystick on the driver controller.
+            drive(new Vector2(driveForwardOutput, strafeOutput), rotationOutputCommanded, true);
+            return;
+        }
+
+        boolean forward = limelightMode.isForwardPipeline();
+        if(forward) {
+            limelightForward.setPipeline(limelightMode.getPipelineNum());
+        }
+        else {
+            limelightBack.setPipeline(limelightMode.getPipelineNum());
+        }
+
+        // Set the drive signal to a field-centric joystick-based input when we see a target.
+        if(forward) {
+            // if(limelightForward.hasTarget()) {
+            //     limelightStrafeController.setSetpoint(0.0);
+    
+            //     // Last boolean in drive() is true for field-oriented or false for robot-centric left joystick
+            //     commandedPoseAngleDeg = 0;
+            //     // We must modify the above parameter to lock to 0 so strafing while rotated is not allowed
+            //     rotationOutputCommanded = getGyroRotationOutput(0);
+            //     strafeOutput = limelightStrafeController.calculate(limelightForward.getTargetHorizOffset(), 0.02);
+            //     drive(new Vector2(driveForwardOutput, strafeOutput), rotationOutputCommanded, true);
+            // }
+            // else {
+            //     // Set the drive signal to a field-centric joystick-based input when we don't see a target.
+            //     // Also allow rotation from the right joystick on the driver controller.
+            //     drive(new Vector2(driveForwardOutput, strafeOutput), rotationOutputCommanded, true);
+            // }
+        }
+        else {
+            if(limelightBack.hasTarget()) {
+                if(limelightMode == LimelightMode.CUBE_INTAKE) {
+                    // limelightForwardAxisController.setSetpoint(-15);
+                    // driveForwardOutput = limelightForwardAxisController.calculate(limelightBack.getTargetVertOffset(), 0.02);
+                    driveForwardOutput = -0.2;
+                    strafeOutput = 0.0;
+                    joystickRotateGyroController.setSetpoint(0);
+                    rotationOutputCommanded = joystickRotateGyroController.calculate(limelightBack.getTargetHorizOffset(), 0.02); 
+                    drive(new Vector2(driveForwardOutput, strafeOutput), rotationOutputCommanded, false);
+                }
+            }
+            else {
+                // Set the drive signal to a field-centric joystick-based input when we don't see a target.
+                // Also allow rotation from the right joystick on the driver controller.
+                drive(new Vector2(driveForwardOutput, strafeOutput), rotationOutputCommanded, true);
             }
         }
     }
@@ -960,6 +1029,12 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 break;    
             case LIMELIGHT:
                 limelightDrive();
+                synchronized (stateLock) {
+                    currentDriveSignal = this.driveSignal;
+                }
+                break;
+            case LIMELIGHT_AUTON:
+                autonLimelightDrive();
                 synchronized (stateLock) {
                     currentDriveSignal = this.driveSignal;
                 }

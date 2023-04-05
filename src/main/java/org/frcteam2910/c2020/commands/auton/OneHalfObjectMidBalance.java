@@ -5,6 +5,7 @@ import org.frcteam2910.c2020.RobotContainer;
 import org.frcteam2910.c2020.commands.*;
 import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
+import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.LimelightMode;
 import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -25,13 +26,8 @@ public class OneHalfObjectMidBalance extends AutonCommandBase {
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
-            new InstantCommand(()->drive.setBridgeDriveVoltage(4)),
-            new InstantCommand(()->drive.setBridgeDriveAngle(-10)),
-            new WaitCommand(1.0),
-            new InstantCommand(()->drive.setBridgeDriveAngle(0)),
-            new InstantCommand(()->drive.setBridgeDriveVoltage(-6)),
-            new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
-            new ChangeDriveMode(drive, DriveControlMode.BALANCE)
+            new ChangeDriveMode(drive, DriveControlMode.LIMELIGHT_AUTON),
+            new InstantCommand(()->drive.setLimelightMode(LimelightMode.CUBE_INTAKE))
             // new FollowTrajectoryCommand(drive, trajectories.getOnToBridge()),
             // new WaitCommand(2.0),
             // new FollowTrajectoryCommand(drive, trajectories.getPastBridge())

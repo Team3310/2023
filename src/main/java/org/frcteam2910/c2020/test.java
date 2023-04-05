@@ -11,7 +11,7 @@ public class test {
     public static void main(String[] args){
         AutonomousTrajectories test = new AutonomousTrajectories(DrivetrainSubsystem.getInstance().TRAJECTORY_CONSTRAINTS, SideMode.BLUE);
 
-        printCoords(test.getConeBridgeToPickup1(false), test.getConeBridgeToPickup1(true)); 
+        printCoords(test.getEasySideConeToPickup1(false), test.getEasySideConeToPickup1(true)); 
     }
 
     public static void printCoords(Trajectory trajectory, Trajectory trajectory2){

@@ -16,9 +16,9 @@ public class RightSide2HalfBalance extends AutonCommandBase {
         boolean isBlue = false;//getSide(container);
         this.addCommands(
             new RightSideTwoCone(container, trajectories),
-            new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup2(isBlue)),
+            new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPickup2(isBlue)),
             new WaitCommand(1.0),
-            new FollowTrajectoryCommand(drive, trajectories.getToBridge2Half()),
+            new FollowTrajectoryCommand(drive, trajectories.getEasySideToBridge2Half()),
             new WaitCommand(0.2),
             new OnToBridge(container, trajectories, 5)
             // new ParallelDeadlineGroup(     
