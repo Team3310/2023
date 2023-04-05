@@ -195,8 +195,8 @@ public class Intake implements Subsystem{
         }
         
         /** @see SetArmIntakeRPM */
-        public void setArmIntakeRPM(double rpm) {
-            if(rpm!=0){
+        public void setArmIntakeRPM(double rpm, boolean override) {
+            if(rpm!=0 || override){
                 controlMode = IntakeControlMode.MANUAL;
                 intakeMotor.selectProfileSlot(kIntakeVelocitySlot, 0);
                 intakeMotor.set(ControlMode.Velocity, this.ArmRoller_RpmToVelocityTicks(rpm));
@@ -210,8 +210,8 @@ public class Intake implements Subsystem{
         }
 
         /** @see SetIntakeDeployPosition */
-        public void setCubeRollerRPM(double rpm) {
-            if(Math.floor(rpm) != 0){
+        public void setCubeRollerRPM(double rpm, boolean override) {
+            if(Math.floor(rpm) != 0 || override){
                 cubeIntakeRollerMotor.selectProfileSlot(kIntakeVelocitySlot, 0);
                 cubeIntakeRollerMotor.set(TalonFXControlMode.Velocity, this.CubeRoller_RpmToVelocityTicks(rpm));
             }
@@ -313,7 +313,7 @@ public class Intake implements Subsystem{
             if(cubeRollerSensor.get()){
                 if(!setIntakeHold){
                     intakeCubeStop.start();
-                    setCubeRollerRPM(0);
+                    setCubeRollerRPM(0, false);
                 }else{
                     intakeCubeStop.stop();
                 }
@@ -331,8 +331,8 @@ public class Intake implements Subsystem{
                 if(!setIntakeHold) {
                     intakeArmStop.start();
                     intakeCubeStop.start();
-                    setCubeRollerRPM(0);
-                    setArmIntakeRPM(0);
+                    setCubeRollerRPM(0, true);
+                    setArmIntakeRPM(0, false);
                 }else{
                     intakeArmStop.stop();
                     intakeCubeStop.stop();

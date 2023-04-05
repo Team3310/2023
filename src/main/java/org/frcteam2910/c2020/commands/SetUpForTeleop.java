@@ -13,7 +13,7 @@ public class SetUpForTeleop extends ParallelCommandGroup{
             // new SetArmSafely(ScoreMode.HOME),
             // new SetArmIntakeRPM(intake, 0),
             new InstantCommand(()->{
-                    intake.setCubeRollerRPM(0);
+                    intake.setCubeRollerRPM(0, true);
                     intake.setCubeIntakeDeployTargetPosition(Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES);
                     intake.stopRollingOnTriggeredCubeIntakeDIO = false;
                     intake.stopRollingOnTriggeredArmIntakeDIO = false;

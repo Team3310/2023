@@ -20,7 +20,7 @@ public class RightSideTwoConeBalance extends AutonCommandBase {
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getEasySideToBridge1(getSide(container))),
                 new SetArmSafelyAuton(ScoreMode.HOME, false, false),
-                new SetArmIntakeRPM(intake, 0)
+                new SetArmIntakeRPM(intake, 0, true)
             ),
             new OnToBridge(container, trajectories, -5)
         );

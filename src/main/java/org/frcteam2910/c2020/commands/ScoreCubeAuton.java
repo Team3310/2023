@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 public class ScoreCubeAuton extends SequentialCommandGroup{
     public ScoreCubeAuton(Intake intake){
         this.addCommands(
-            new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_SPIT_RPM),
+            new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_SPIT_RPM, true),
             new ParallelRaceGroup(
                 new SequentialCommandGroup(
                     new WaitUntilCommand(()->!intake.getCubeSensor().get()),

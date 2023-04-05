@@ -20,7 +20,7 @@ public class SetArmSafely extends SequentialCommandGroup {
     }
 
     public SetArmSafely(boolean afterIntake, boolean isCone){
-        this(afterIntake?null:ScoreMode.HOME, afterIntake, isCone);
+        this(ScoreMode.HOME, afterIntake, isCone);
     }
 
     public SetArmSafely(ScoreMode targetScoreMode, boolean afterIntake, boolean isCone) {
@@ -47,10 +47,10 @@ public class SetArmSafely extends SequentialCommandGroup {
             else if(targetScoreMode==ScoreMode.CUBE_INTAKE){
                 this.addCommands(
                     // new InstantCommand(()->Intake.getInstance().setCubeIntakeDeployTargetPosition(111)),
-                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_HANDOFF_RPM)),
                     new SetArmExtender(arm, 0.0, true),
                     new SetArmRotator(arm, targetScoreMode.getAngle(), true),
-                    new SetArmExtender(arm, targetScoreMode.getInches(), true)
+                    new SetArmExtender(arm, targetScoreMode.getInches(), true),
+                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_HANDOFF_RPM, true))
                 );
             }
         }else{
@@ -70,8 +70,8 @@ public class SetArmSafely extends SequentialCommandGroup {
                         intake.stopRollingOnTriggeredCubeIntakeDIO = false;
                         intake.stopRollingOnTriggeredArmIntakeDIO = false;
                         intake.resetIntakeDIOTimestamp();
-                        intake.setCubeRollerRPM(0);
-                        intake.setArmIntakeRPM(0);
+                        intake.setCubeRollerRPM(0, true);
+                        intake.setArmIntakeRPM(0, true);
                     })
                 );
             }

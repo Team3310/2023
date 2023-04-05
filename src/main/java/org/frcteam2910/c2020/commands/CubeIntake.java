@@ -18,9 +18,9 @@ public class CubeIntake extends SequentialCommandGroup{
                     new SetArmSafely(ScoreMode.CUBE_INTAKE),
                     new WaitCommand(2.0)    
                 ),
-                new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
+                new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM, true),
                 new InstantCommand(()->{
-                    intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM);
+                    intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM, true);
                     intake.stopRollingOnTriggeredCubeIntakeDIO = false;
                     intake.stopRollingOnTriggeredArmIntakeDIO = true;
                 })
@@ -29,7 +29,7 @@ public class CubeIntake extends SequentialCommandGroup{
             this.addCommands(
                 new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES),
                 new InstantCommand(()->{
-                    intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM);
+                    intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM, true);
                     intake.stopRollingOnTriggeredCubeIntakeDIO = true;
                     intake.stopRollingOnTriggeredArmIntakeDIO = true;
                 })
@@ -37,10 +37,10 @@ public class CubeIntake extends SequentialCommandGroup{
         }
 
         this.handleInterrupt(()->{
-            intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM);
+            intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM, true);
             intake.stopRollingOnTriggeredCubeIntakeDIO = false;
             intake.stopRollingOnTriggeredArmIntakeDIO = true;
-            intake.setArmIntakeRPM(Constants.ARM_CUBE_INTAKE_COLLECT_RPM);
+            intake.setArmIntakeRPM(Constants.ARM_CUBE_INTAKE_COLLECT_RPM, true);
             intake.setCubeIntakeDeployTargetPosition(Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES);
         });
     }

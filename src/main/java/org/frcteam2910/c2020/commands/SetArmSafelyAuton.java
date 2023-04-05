@@ -55,7 +55,7 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
             else{
                 this.addCommands(
                     new SetIntakeDeployPosition(Intake.getInstance(), Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES), 
-                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(0)),
+                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(0, true)),
                     new SetArmExtender(arm, 0)
                 );
             }
