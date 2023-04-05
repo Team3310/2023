@@ -82,6 +82,7 @@ public class AutonomousTrajectories
 
     private TrajectoryConstraint[] bridgeConstraints;
     private TrajectoryConstraint[] mediumConstraints;
+    private TrajectoryConstraint[] mediumSlowConstraints;
     private TrajectoryConstraint[] slowConstraints;
     private TrajectoryConstraint[] bumpConstraints;
 
@@ -94,6 +95,10 @@ public class AutonomousTrajectories
         mediumConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
         mediumConstraints[mediumConstraints.length - 1] = new MaxVelocityConstraint(16.0 * 12.0); //9
         mediumConstraints[mediumConstraints.length - 2] = new MaxAccelerationConstraint(7 * 12.0);//4
+
+        mediumSlowConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
+        mediumSlowConstraints[mediumConstraints.length - 1] = new MaxVelocityConstraint(10.0 * 12.0); //9
+        mediumSlowConstraints[mediumConstraints.length - 2] = new MaxAccelerationConstraint(7 * 12.0);//4
 
 
         bridgeConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
@@ -119,22 +124,24 @@ public class AutonomousTrajectories
         //#region Red - Three Object Far
         threeObjectFarPart1 = new Trajectory(
                 new SimplePathBuilder(new Vector2(0,0), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(223, 0))
+                        .lineTo(new Vector2(160, 0))
                         .lineTo(new Vector2(243, -15))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
         threeObjectFarPart2 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart1), getEndRotation(threeObjectFarPart1))
-                        .lineTo(new Vector2(173, -15), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(188, -15), Rotation2.fromDegrees(-5))
+                        .lineTo(new Vector2(160, -15))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
         threeObjectFarPart3 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart2), getEndRotation(threeObjectFarPart2))
-                        .lineTo(new Vector2(231, -63), Rotation2.fromDegrees(160))
+                        .lineTo(new Vector2(197, -15), Rotation2.fromDegrees(160))
+                        .lineTo(new Vector2(231, -73))
                         .build(),
-                mediumConstraints, SAMPLE_DISTANCE
+                mediumSlowConstraints, SAMPLE_DISTANCE
         );
         threeObjectFarPart4A = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart3), getEndRotation(threeObjectFarPart3))
@@ -146,7 +153,7 @@ public class AutonomousTrajectories
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart3), getEndRotation(threeObjectFarPart3))
                         .lineTo(new Vector2(173, -15), Rotation2.fromDegrees(180))
                         .lineTo(new Vector2(15, -30))
-                        .lineTo(new Vector2(5, -40), Rotation2.fromDegrees(195))
+                        .lineTo(new Vector2(15, -40), Rotation2.fromDegrees(195))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
@@ -154,22 +161,24 @@ public class AutonomousTrajectories
         //#region Blue - Three Object Far
         threeObjectFarPart1Blue = new Trajectory(
                 new SimplePathBuilder(new Vector2(0,0), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(223, 0))
+                        .lineTo(new Vector2(160, 0))
                         .lineTo(new Vector2(243, 15))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
         threeObjectFarPart2Blue = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart1Blue), getEndRotation(threeObjectFarPart1Blue))
-                        .lineTo(new Vector2(173, 15), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(188, 15), Rotation2.fromDegrees(-5))
+                        .lineTo(new Vector2(160, 15))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
         threeObjectFarPart3Blue = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart2Blue), getEndRotation(threeObjectFarPart2Blue))
-                        .lineTo(new Vector2(231, 63), Rotation2.fromDegrees(160))
+                        .lineTo(new Vector2(197, 15), Rotation2.fromDegrees(160))
+                        .lineTo(new Vector2(231, 73))
                         .build(),
-                mediumConstraints, SAMPLE_DISTANCE
+                mediumSlowConstraints, SAMPLE_DISTANCE
         );
         threeObjectFarPart4ABlue = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart3Blue), getEndRotation(threeObjectFarPart3Blue))
@@ -181,7 +190,7 @@ public class AutonomousTrajectories
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart3Blue), getEndRotation(threeObjectFarPart3Blue))
                         .lineTo(new Vector2(173, 15), Rotation2.fromDegrees(180))
                         .lineTo(new Vector2(15, 30))
-                        .lineTo(new Vector2(5, 40), Rotation2.fromDegrees(195))
+                        .lineTo(new Vector2(15, 40), Rotation2.fromDegrees(195))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );

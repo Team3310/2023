@@ -10,10 +10,10 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 public class SetUpForTeleop extends ParallelCommandGroup{
     public SetUpForTeleop(Intake intake){
         this.addCommands(
-            new SetArmSafely(ScoreMode.HOME),
-            new SetArmIntakeRPM(intake, 0),
+            // new SetArmSafely(ScoreMode.HOME),
+            // new SetArmIntakeRPM(intake, 0),
             new InstantCommand(()->{
-                    intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM);
+                    intake.setCubeRollerRPM(0);
                     intake.setCubeIntakeDeployTargetPosition(Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES);
                     intake.stopRollingOnTriggeredCubeIntakeDIO = false;
                     intake.stopRollingOnTriggeredArmIntakeDIO = false;

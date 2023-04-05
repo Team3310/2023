@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class LeftThreeObjectFarSpit extends AutonCommandBase {
     public LeftThreeObjectFarSpit(RobotContainer container, AutonomousTrajectories trajectories){
@@ -30,18 +31,17 @@ public class LeftThreeObjectFarSpit extends AutonCommandBase {
                 new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart1(isBlue)),
                 new CubeIntake(intake, true)
             ),
-            new WaitCommand(0.5),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart2(isBlue)),
                 new InstantCommand(()->intake.setCubeRollerRPM(0)),
                 new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
                 new WaitForEndOfTrajectory(
                     trajectories.getThreeObjectFarPart2(isBlue),
-                    1,
+                    1.0,
                     new CubeSpit(intake)
                 )
             ),
-            new WaitCommand(0.2),
+            new WaitCommand(0.3),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart3(isBlue)),
                 new CubeIntake(intake, true)
