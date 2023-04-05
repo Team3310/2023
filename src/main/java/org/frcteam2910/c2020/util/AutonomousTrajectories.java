@@ -125,7 +125,7 @@ public class AutonomousTrajectories
                 new SimplePathBuilder(new Vector2(0, 0), Rotation2.ZERO)
                         .lineTo(new Vector2(48, 0), Rotation2.fromDegrees(180))
                         .build(), 
-                trajectoryConstraints, SAMPLE_DISTANCE);     
+                bumpConstraints, SAMPLE_DISTANCE);     
 
 //#region Three Object Far
         //#region Red - Three Object Far
