@@ -1116,6 +1116,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         return Math.abs(getLeastAngleDifference(pitch, 0));
     }
 
+    public double getZGravityVector(){
+        return gyroscope.getGravityVector()[2];
+    }
+
     public double getRollDegreesOffLevel(){
         double roll = getRoll();
         return Math.abs(getLeastAngleDifference(roll, 0));
