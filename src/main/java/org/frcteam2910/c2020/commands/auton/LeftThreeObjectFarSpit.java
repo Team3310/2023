@@ -21,7 +21,7 @@ public class LeftThreeObjectFarSpit extends AutonCommandBase {
     }
 
     public LeftThreeObjectFarSpit(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Intake intake) {
-        boolean isBlue = false;//getSide(container);
+        boolean isBlue = getSide(container);
         resetRobotPose(container, trajectories.getThreeObjectFarPart1(isBlue));
         this.addCommands(
             new SetArmSafelyAuton(ScoreMode.CONE_MID, false, false),

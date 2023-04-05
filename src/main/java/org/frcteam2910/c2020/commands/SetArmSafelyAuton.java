@@ -10,7 +10,7 @@ import org.frcteam2910.c2020.util.ScoreMode;
 
 public class SetArmSafelyAuton extends SequentialCommandGroup {
     private Arm arm;
-    private final double DEGREES_DOWN = 9;
+    private final double DEGREES_DOWN = 8.5;
 
     public SetArmSafelyAuton(ScoreMode targetScoreMode, boolean afterIntake, boolean isCone) {
         this.arm = Arm.getInstance();
