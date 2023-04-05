@@ -26,11 +26,10 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
         // this.addCommands(new PutString(targetScoreMode.name(), "target mode "));
 
         if(!afterIntake){
-            if(targetScoreMode!=ScoreMode.CUBE_INTAKE){
+            if(targetScoreMode == ScoreMode.HOME){
                 this.addCommands(
-                    new SetArmExtender(arm, 0.0, true),
-                    new SetArmRotator(arm, targetScoreMode.getAngle()-DEGREES_DOWN, true),
-                    new SetArmExtender(arm, targetScoreMode.getInches(), true)
+                    new SetArmExtender(arm, targetScoreMode.getInches(), true),
+                    new SetArmRotator(arm, targetScoreMode.getAngle(), true)
                 );
             }
             else if(targetScoreMode==ScoreMode.CUBE_INTAKE){
@@ -39,6 +38,13 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
                     // new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_HANDOFF_RPM)),
                     new SetArmExtender(arm, 0.0, true),
                     new SetArmRotator(arm, targetScoreMode.getAngle(), true),
+                    new SetArmExtender(arm, targetScoreMode.getInches(), true)
+                );
+            }
+            else{
+                this.addCommands(
+                    new SetArmExtender(arm, 0.0, true),
+                    new SetArmRotator(arm, targetScoreMode.getAngle()-DEGREES_DOWN, true),
                     new SetArmExtender(arm, targetScoreMode.getInches(), true)
                 );
             }
