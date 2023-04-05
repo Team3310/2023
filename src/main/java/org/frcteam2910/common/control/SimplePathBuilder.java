@@ -60,7 +60,12 @@ public final class SimplePathBuilder {
     }
 
     private void addSegment(PathSegment segment, Rotation2 rotation) {
-        addSegment(segment);
+        segmentList.add(segment);
+        //makes the rotation map so that it "finishes" the turn half way through
+        length += segment.getLength()*0.5;
+        lastPosition = segment.getEnd().getPosition();
+        rotationMap.put(length, rotation);
+        length += segment.getLength()*0.5;
         rotationMap.put(length, rotation);
     }
 
@@ -113,10 +118,11 @@ public final class SimplePathBuilder {
             double angle = Vector2.getAngleBetween(deltaStart, deltaEnd).toRadians() *
                     (clockwise ? -1.0 : 1.0) * percentage;
             return new State(
-                    center.add(deltaStart.rotateBy(Rotation2.fromRadians(angle))),
-                    // TODO: Use cross product instead of just adding 90deg when calculating heading
-                    deltaStart.rotateBy(Rotation2.fromRadians(angle + (clockwise ? -1.0 : 1.0) * 0.5 * Math.PI)).getAngle(),
-                    1.0 / deltaStart.length
+                center.add(deltaStart.rotateBy(Rotation2.fromRadians(angle))),
+                deltaStart.cross(clockwise ? deltaEnd : deltaStart) < 0 ?
+                    Rotation2.fromDegrees(-Vector2.getAngleBetween(deltaStart, deltaEnd).toDegrees()) :
+                    Vector2.getAngleBetween(deltaStart, deltaEnd),
+                1.0 / deltaStart.length
             );
         }
 
