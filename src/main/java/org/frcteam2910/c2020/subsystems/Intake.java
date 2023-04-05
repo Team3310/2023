@@ -35,7 +35,6 @@ public class Intake implements Subsystem{
     //misc
     private int kIntakeVelocitySlot = 0;
     private int kIntakePositionSlot = 1;
-    private boolean firstSet = false;
     private double _deployPosDegreesOffset = 0.0;
     public boolean stopRollingOnTriggeredCubeIntakeDIO = false;
     public boolean stopRollingOnTriggeredArmIntakeDIO = false;
@@ -130,18 +129,15 @@ public class Intake implements Subsystem{
                 controlMode = IntakeControlMode.HOLD;
                 intakeMotor.selectProfileSlot(kIntakePositionSlot, 0);
                 intakeMotor.set(TalonFXControlMode.Position, intakeMotor.getSelectedSensorPosition());
-                SmartDashboard.putNumber("set position", intakeMotor.getSelectedSensorPosition());
         }
 
         public void setArmIntakeSpeed(double speed) {
-            firstSet = false;
             controlMode = IntakeControlMode.MANUAL;
             this.intakeMotor.set(ControlMode.PercentOutput, speed);
         }
         
         /** @see SetArmIntakeRPM */
         public void setArmIntakeRPM(double rpm) {
-            firstSet = false;
             controlMode = IntakeControlMode.MANUAL;
             intakeMotor.selectProfileSlot(kIntakeVelocitySlot, 0);
             intakeMotor.set(ControlMode.Velocity, this.ArmRoller_RpmToVelocityTicks(rpm));
@@ -245,21 +241,24 @@ public class Intake implements Subsystem{
         SmartDashboard.putBoolean("DIO Cone", coneSensor.get());
         SmartDashboard.putBoolean("DIO Cube", cubeSensor.get());
         SmartDashboard.putBoolean("DIO Cube Roll", cubeRollerSensor.get());
-        // SmartDashboard.putBoolean("set intake zero", hasSetIntakeZero);
-        SmartDashboard.putNumber("intake motor current", intakeMotor.getStatorCurrent());
-        SmartDashboard.putNumber("intake motor position", intakeMotor.getSelectedSensorPosition());
-        SmartDashboard.putNumber("cube intake motor position", cubeIntakeRollerMotor.getSelectedSensorPosition());
         SmartDashboard.putNumber("intake deploy position", getCubeIntakeDeployDegrees());
-        SmartDashboard.putNumber("cube intake roller rpm", getCubeRollerRPM());
-        SmartDashboard.putNumber("intake lift voltage", cubeIntakeLiftMotor.getMotorOutputVoltage());
-        SmartDashboard.putNumber("cube intake current", cubeIntakeLiftMotor.getStatorCurrent());
+
+        //debug prints
+        // SmartDashboard.putBoolean("set intake zero", hasSetIntakeZero);
+        // SmartDashboard.putNumber("intake motor current", intakeMotor.getStatorCurrent());
+        // SmartDashboard.putNumber("intake motor position", intakeMotor.getSelectedSensorPosition());
+        // SmartDashboard.putNumber("cube intake motor position", cubeIntakeRollerMotor.getSelectedSensorPosition());
+        // SmartDashboard.putNumber("cube intake roller rpm", getCubeRollerRPM());
+        // SmartDashboard.putNumber("intake lift voltage", cubeIntakeLiftMotor.getMotorOutputVoltage());
+        // SmartDashboard.putNumber("cube intake current", cubeIntakeLiftMotor.getStatorCurrent());
+
 
 
         // if(cubeSensor.get()){
         //     setArmIntakeHold();
         // }
         if(stopRollingOnTriggeredCubeIntakeDIO){
-            double delayFactorSec = 0.25;
+            // double delayFactorSec = 0.25;
             if(cubeRollerSensor.get()){
                 // if(lastSysMillisTriggeredDIO <= 0){
                 //     lastSysMillisTriggeredDIO = System.currentTimeMillis();
@@ -281,7 +280,7 @@ public class Intake implements Subsystem{
         if(stopRollingOnTriggeredArmIntakeDIO) {
             // While holding right trigger (cube intake), if detect something where the cone would go,
             // override any commands to move intake rollers.
-            double delayFactorSec = 0.25;
+            // double delayFactorSec = 0.25;
             if(cubeSensor.get()){
                 // if(lastSysMillisTriggeredDIO <= 0){
                 //     lastSysMillisTriggeredDIO = System.currentTimeMillis();

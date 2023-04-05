@@ -2,7 +2,6 @@ package org.frcteam2910.c2020.commands;
 
 import org.frcteam2910.common.control.Trajectory;
 import org.frcteam2910.common.math.Rotation2;
-import org.frcteam2910.common.math.Vector2;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;

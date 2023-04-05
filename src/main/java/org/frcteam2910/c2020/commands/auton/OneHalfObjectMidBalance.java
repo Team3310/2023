@@ -40,8 +40,8 @@ public class OneHalfObjectMidBalance extends AutonCommandBase {
             new InstantCommand(()->drive.setBridgeDriveVoltage(-6)),
             new ChangeDriveMode(drive, DriveControlMode.BRIDGE_VOLTAGE),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
-            new DriveBalanceCommand(drive, true, false, false),
-            new DriveBalanceCommand(drive, true, false, true)
+            new DriveBalanceCommand(drive, false),
+            new DriveBalanceCommand(drive, true)
             // new FollowTrajectoryCommand(drive, trajectories.getOnToBridge()),
             // new WaitCommand(2.0),
             // new FollowTrajectoryCommand(drive, trajectories.getPastBridge())

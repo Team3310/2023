@@ -1,6 +1,5 @@
 package org.frcteam2910.c2020.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import java.util.ArrayList;
@@ -13,16 +12,12 @@ import org.frcteam2910.common.math.Vector2;
 public class DriveBalanceCommand extends CommandBase {
     private final DrivetrainSubsystem drive;
 
-    private final boolean isAuton;
-    private final boolean setHold;
     private final boolean isSlow;
     private Vector2 start;
     private ArrayList<Double> lastAngles = new ArrayList<Double>();
 
-    public DriveBalanceCommand(DrivetrainSubsystem drivetrain, boolean isAuton, boolean setHold, boolean isSlow) {
+    public DriveBalanceCommand(DrivetrainSubsystem drivetrain, boolean isSlow) {
         this.drive = drivetrain;
-        this.isAuton = isAuton;
-        this.setHold = setHold;
         this.isSlow = isSlow;
 
         addRequirements(drivetrain);
@@ -42,7 +37,6 @@ public class DriveBalanceCommand extends CommandBase {
     public boolean isFinished(){
         // If the distance we traveled from initial position > distance, go slower
         double minTraveledInches = 10.0;
-        double maxTraveledInches = 40.0;
         if(lastAngles.size()<5){
             lastAngles.add(0, drive.getRollDegreesOffLevel());
         }
@@ -67,7 +61,6 @@ public class DriveBalanceCommand extends CommandBase {
     public void end(boolean interrupted) {
         if(isSlow)
             drive.setDriveControlMode(DriveControlMode.HOLD);      
-        SmartDashboard.putNumber("Traveled BInches", Math.abs(drive.getPose().translation.subtract(drive.getBalanceInitialPos()).length));
         drive.setBalanceInitialPos(Vector2.ZERO);
         drive.setDriveBrake();
         drive.resetPose(new RigidTransform2(new Vector2(-164, drive.getPose().translation.y), drive.getPose().rotation));

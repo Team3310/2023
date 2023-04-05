@@ -33,7 +33,6 @@ public class Arm implements Subsystem{
     private double ARM_INCHES_TO_ENCODER_TICKS = Constants.ARM_EXTENDER_GEAR_RATIO*Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION/TRANSLATIONAL_ROTATIONS_TO_INCHES;//Constants.ARM_TRANSLATIONAL_GEAR_RATIO * Constants.ENCODER_TICKS_PER_MOTOR_REVOLUTION * TRANSLATIONAL_ROTATIONS_TO_INCHES;
 
     //misc
-    private double inchesOffset;
     private double targetInches = 0.0;
     private double targetInchesTicks = 0;
     private double manualTranslationSpeed;
@@ -253,7 +252,6 @@ public class Arm implements Subsystem{
     }
 
     public void setArmExtenderZeroReference(double inchesOffset){
-        this.inchesOffset = inchesOffset;
         armTranslationMotor.setSelectedSensorPosition(0+getArmInchesEncoderTicksAbsolute(inchesOffset));
         targetInchesTicks = 0;
     }
@@ -268,7 +266,6 @@ public class Arm implements Subsystem{
 
     public synchronized void setTargetArmInchesPositionAbsolute(double targetInches) {
         extenderControlMode = ArmControlMode.HOLD;
-        SmartDashboard.putNumber("TARGET ARM INCHES", targetInches);
         this.targetInches = targetInches;
         targetInchesTicks = getArmInchesEncoderTicksAbsolute(targetInches);
         armTranslationMotor.set(TalonFXControlMode.Position, targetInchesTicks);
@@ -336,16 +333,16 @@ public class Arm implements Subsystem{
     @Override
     public void periodic(){
         SmartDashboard.putString("score mode", Arm.getInstance().scoreMode.name());
-        SmartDashboard.putString("arm control mode", rotationControlMode.name());
-        SmartDashboard.putString("closest score mode", ScoreMode.getClosestMode(getArmDegreesIntegrated()).name());
-
         SmartDashboard.putNumber("arm degrees internal", getArmDegreesIntegrated());
-        // SmartDashboard.putNumber("arm degrees ext", getArmDegreesExternal());
         SmartDashboard.putNumber("arm inches", getArmInches());
 
-        SmartDashboard.putNumber("target arm degrees", getTargetDegrees());
-        SmartDashboard.putNumber("extendo voltage", armTranslationMotor.getMotorOutputVoltage());
-        SmartDashboard.putNumber("extendo current", armTranslationMotor.getStatorCurrent());
+        //debug smartdashboard prints
+        // SmartDashboard.putNumber("arm degrees ext", getArmDegreesExternal());
+        // SmartDashboard.putString("arm control mode", rotationControlMode.name());
+        // SmartDashboard.putString("closest score mode", ScoreMode.getClosestMode(getArmDegreesIntegrated()).name());
+        // SmartDashboard.putNumber("target arm degrees", getTargetDegrees());
+        // SmartDashboard.putNumber("extendo voltage", armTranslationMotor.getMotorOutputVoltage());
+        // SmartDashboard.putNumber("extendo current", armTranslationMotor.getStatorCurrent());
 
         if(rotationControlMode == ArmControlMode.MANUAL){
             targetDegreesTicks = armRotationMotor.getSelectedSensorPosition();

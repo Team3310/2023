@@ -208,12 +208,12 @@ public class Robot extends TimedRobot {
         // Safety disable
         List<AutonomousMode> vetted = new ArrayList<AutonomousMode>(
             Arrays.asList(AutonomousMode.SEVEN_FEET,
-                        AutonomousMode.S_CURVE,
-                        AutonomousMode.THREE_OBJECT_BRIDGE,
-                        AutonomousMode.THREE_OBJECT_CLOSE,
-                        AutonomousMode.THREE_OBJECT_FAR,
-                        AutonomousMode.UP_BRIDGE,
-                        AutonomousMode.TO_BRIDGE));
+                          AutonomousMode.S_CURVE,
+                          AutonomousMode.THREE_OBJECT_BRIDGE,
+                          AutonomousMode.THREE_OBJECT_FAR,
+                          AutonomousMode.THREE_OBJECT_FAR,
+                          AutonomousMode.ONE_OBJECT_BALANCE
+            ));
 
         if(vetted.contains(robotContainer.getAutonomousChooser().getAutonomousModeChooser().getSelected()) || teleopUsed)
         {

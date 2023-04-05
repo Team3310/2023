@@ -23,9 +23,9 @@ public class OnToBridge extends AutonCommandBase {
             new InstantCommand(()->drive.setBridgeDriveVoltage(value)),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>20),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<12.25),
-            new DriveBalanceCommand(drive, true, false, false),
+            new DriveBalanceCommand(drive, false),
             new WaitCommand(0.1),
-            new DriveBalanceCommand(drive, true, false, true)
+            new DriveBalanceCommand(drive, true)
         );
     }
 }

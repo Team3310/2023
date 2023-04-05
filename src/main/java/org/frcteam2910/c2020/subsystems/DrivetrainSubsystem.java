@@ -6,6 +6,7 @@ import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.Pigeon;
 import org.frcteam2910.c2020.Robot;
 import org.frcteam2910.c2020.RobotContainer;
+import org.frcteam2910.c2020.util.SideChooser.SideMode;
 import org.frcteam2910.common.control.CentripetalAccelerationConstraint;
 import org.frcteam2910.common.control.FeedforwardConstraint;
 import org.frcteam2910.common.control.HolonomicMotionProfiledTrajectoryFollower;
@@ -81,6 +82,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private double voltageSteerAngle;
     private double startDegrees;
     private boolean slowBalance;
+    private SideMode limelightSideMode;
 
     private Vector2 balanceInitialPos = Vector2.ZERO;
     private Timer balanceTimer = new Timer();
@@ -412,6 +414,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         this.limelightMode = limelightMode;
     }
 
+    public void setSide(boolean isBlue){
+        this.limelightSideMode = isBlue?SideMode.BLUE:SideMode.RED;
+    }
+
     public void setSwervePivotPoint(SwervePivotPoint pivotPoint){
         synchronized (kinematicsLock) {
             if (pivotPoint == SwervePivotPoint.CENTER) {
@@ -531,11 +537,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             {
                 // Auto gyro correction if no turning
                 double deltaAngleCurrToTarget = getLeastAngleDifference(getPose().rotation.toDegrees(), commandedPoseAngleDeg);
-                SmartDashboard.putNumber("Delta Gyro To Cmd", deltaAngleCurrToTarget);
                 // Radians version: joystickRotateGyroController.setSetpoint(Math.toRadians(-commandedPoseAngle) + getPose().rotation.toRadians());
                 rotationOutput = joystickRotateGyroController.calculate(deltaAngleCurrToTarget, 0.02);
-                    
-                SmartDashboard.putNumber("Gyro Rotation Out", rotationOutput);
 
                 if(Math.abs(rotationOutput) > 0.5) {
                     rotationOutput = Math.copySign(0.5, rotationOutput);
@@ -555,7 +558,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     }
 
     public void voltageDrive(){
-        commandedPoseAngleDeg = 180;
+        commandedPoseAngleDeg = 180;//voltageSteerAngle;
         drive(new Vector2((voltageOutput/12), 0.0), getGyroRotationOutput(0), false);
     }
 
@@ -698,6 +701,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             //     // We must modify the above parameter to lock to 0 so strafing while rotated is not allowed
             //     rotationOutputCommanded = getGyroRotationOutput(0);
             //     strafeOutput = limelightStrafeController.calculate(limelightForward.getTargetHorizOffset(), 0.02);
+            ////     strafeOutput *= limelightSideMode==SideMode.BLUE?-1:1 //test to see which way it needs to be based on side might need to put in teleop drive as well
             //     drive(new Vector2(driveForwardOutput, strafeOutput), rotationOutputCommanded, true);
             // }
             // else {
@@ -737,7 +741,6 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public void balanceOutDrive() {
         if(!slowBalance){
             boolean tiltedBackward = (getRoll() > 180);
-            double degreesAwayFromBalance = tiltedBackward ? (360 - getRoll()) : getRoll();
             drive(new Vector2((tiltedBackward?1:-1)*0.25, 0.0), 0.0, false);
         }
         else{
@@ -1284,25 +1287,26 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
 
         SmartDashboard.putString("Drive Mode", getDriveControlMode().name());
-        SmartDashboard.putNumber("Yaw Target", commandedPoseAngleDeg);
         SmartDashboard.putNumber("Yaw Curr", getPose().rotation.toDegrees());
+        SmartDashboard.putNumber("Pitch", getPitchDegreesOffLevel());
+        SmartDashboard.putNumber("Roll", getRollDegreesOffLevel());
+        
+        //debug prints
+        // SmartDashboard.putNumber("Yaw Target", commandedPoseAngleDeg);
         // SmartDashboard.putNumber("X", pose.translation.x);
+        // SmartDashboard.putNumber("raw roll", getRoll());
+        // SmartDashboard.putNumber("raw pitch", getPitch());
         // SmartDashboard.putNumber("Y", pose.translation.y);
         // SmartDashboard.putBoolean("was just turning", wasJustTurning);
-        SmartDashboard.putNumber("Pitch", getPitchDegreesOffLevel());
         // SmartDashboard.putString("Translation Drive", driveSignal.getTranslation().x+"\n"+driveSignal.getTranslation().y);
         // SmartDashboard.putNumber("Rotation Drive", driveSignal.getRotation());
-        SmartDashboard.putNumber("Roll", getRollDegreesOffLevel());
-        SmartDashboard.putNumber("raw pitch", getPitch());
-        SmartDashboard.putNumber("raw roll", getRoll());
         // SmartDashboard.putNumber("blanace timer length", balanceTimer.get());
         // SmartDashboard.putBoolean("turbo", turbo);
         // SmartDashboard.putNumber("drive voltage", voltageOutput);
-
-        synchronized(sensorLock) {
-            SmartDashboard.putNumber("gravity vector", gyroscope.getGravityVector()[0]);
-            SmartDashboard.putNumber("gravity vector1", gyroscope.getGravityVector()[1]);
-            SmartDashboard.putNumber("gravity vector2", gyroscope.getGravityVector()[2]);
-        }
+        // synchronized(sensorLock) {
+        //     SmartDashboard.putNumber("gravity vector", gyroscope.getGravityVector()[0]);
+        //     SmartDashboard.putNumber("gravity vector1", gyroscope.getGravityVector()[1]);
+        //     SmartDashboard.putNumber("gravity vector2", gyroscope.getGravityVector()[2]);
+        // }
     }
 }

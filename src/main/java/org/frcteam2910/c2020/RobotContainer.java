@@ -86,8 +86,8 @@ public class RobotContainer {
                     new InstantCommand(()->drivetrain.setBridgeDriveVoltage(-5)),
                     new WaitUntilCommand(() -> drivetrain.getRollDegreesOffLevel()>20),
                     new WaitUntilCommand(() -> drivetrain.getRollDegreesOffLevel()<12.25),
-                    new DriveBalanceCommand(drivetrain, true, false, false),
-                    new DriveBalanceCommand(drivetrain, true, false, true)
+                    new DriveBalanceCommand(drivetrain, false),
+                    new DriveBalanceCommand(drivetrain, true)
                 )
             );
         primaryController.getYButton()

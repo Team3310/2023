@@ -15,14 +15,13 @@ public class OneObjectMidBalance extends AutonCommandBase {
     }
 
     public OneObjectMidBalance(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
-        boolean isBlue=getSide(container);
         this.addCommands(
             new OneObjectMid(container, trajectories),
             new InstantCommand(()->drive.setBridgeDriveVoltage(-5)),
             new ChangeDriveMode(drive, DriveControlMode.BRIDGE_VOLTAGE),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
             new InstantCommand(() -> drive.setBalanceStartDegrees(drive.getRollDegreesOffLevel())),
-            new DriveBalanceCommand(drive, true, true, true)
+            new DriveBalanceCommand(drive, true)
             // new FollowTrajectoryCommand(drive, trajectories.getOnToBridge()),
             // new WaitCommand(2.0),
             // new FollowTrajectoryCommand(drive, trajectories.getPastBridge())

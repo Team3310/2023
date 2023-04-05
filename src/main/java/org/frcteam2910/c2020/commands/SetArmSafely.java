@@ -25,9 +25,6 @@ public class SetArmSafely extends SequentialCommandGroup {
 
     public SetArmSafely(ScoreMode targetScoreMode, boolean afterIntake, boolean isCone) {
 
-        // SmartDashboard.putString("target score mode", targetScoreMode.name());
-        // SmartDashboard.putString("new score mode", arm.getScoreMode().name());
-
         this.arm = Arm.getInstance();
         arm.setRotationPIDSlot(targetScoreMode);
 
@@ -37,9 +34,6 @@ public class SetArmSafely extends SequentialCommandGroup {
         );
 
         addRequirements(arm);
-
-        // this.addCommands(new PutString(startMode.name(), "start mode 1"));
-        // this.addCommands(new PutString(targetScoreMode.name(), "target mode "));
 
         if(!afterIntake){
             if(targetScoreMode!=ScoreMode.CUBE_INTAKE){

@@ -7,10 +7,9 @@ import org.frcteam2910.common.control.Trajectory;
 import org.frcteam2910.common.control.PathSegment;
 
 public class test {
-    private static boolean ran = false;
-    public static void main(String[] args){
-        AutonomousTrajectories test = new AutonomousTrajectories(DrivetrainSubsystem.getInstance().TRAJECTORY_CONSTRAINTS, SideMode.BLUE);
+    static AutonomousTrajectories test = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, SideMode.BLUE);
 
+    public static void main(String[] args){
         printCoords(test.getEasySideConeToPickup1(false), test.getEasySideConeToPickup1(true)); 
     }
 

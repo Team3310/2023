@@ -3,7 +3,7 @@ import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.subsystems.Arm;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 
@@ -37,9 +37,9 @@ public class ArmExtenderZero extends CommandBase {
         double positionChange = currentPosition - lastPosition;
         lastPosition = currentPosition;
         boolean haveMoved = Math.abs(positionChange) >= MIN_ARM_EXTEND_POSITION_CHANGE;
-        SmartDashboard.putBoolean("Done", timer.hasElapsed(0.25));
-        SmartDashboard.putNumber("Change", positionChange);
-        SmartDashboard.putNumber("Timer", timer.get());
+        // SmartDashboard.putBoolean("Done", timer.hasElapsed(0.25));
+        // SmartDashboard.putNumber("Change", positionChange);
+        // SmartDashboard.putNumber("Timer", timer.get());
         if(haveMoved) {
             // We're counting seconds we haven't moved
             timer.reset();

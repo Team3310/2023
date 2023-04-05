@@ -17,7 +17,7 @@ public class LeftTwoObjectBalance extends AutonCommandBase {
         this.addCommands(
             new LeftTwoObjectClose(container, trajectories),
             new FollowTrajectoryCommand(drive, trajectories.getUpBridge(drive.getPose().translation, drive.getPose().rotation, 10)),
-            new DriveBalanceCommand(drive, true, false, true)
+            new DriveBalanceCommand(drive, true)
         );
     }
 }
