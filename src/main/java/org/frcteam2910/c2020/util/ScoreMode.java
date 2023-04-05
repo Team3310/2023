@@ -1,22 +1,25 @@
 package org.frcteam2910.c2020.util;
 
+import org.frcteam2910.c2020.Constants;
+
 public enum ScoreMode{
-    HOME(10.0, 0.25), 
-    CONE_INTAKE(15, 0.1), //17, 3.375 practice : 15 , 0.1
-    CUBE_INTAKE(6.0, 3.0), //33, 9.5 practice : 24.5, 5.25
+    HOME(10.0, 0.25, Constants.ARM_DEFAULT_PID_SLOT), 
+    CONE_INTAKE(15, 0.1, Constants.ARM_DEFAULT_PID_SLOT), //17, 3.375 practice : 15 , 0.1
+    CUBE_INTAKE(6.0, 3.0, Constants.ARM_DEFAULT_PID_SLOT), //33, 9.5 practice : 24.5, 5.25
 
-    CONE_HIGH(103, 14.5), // "money" - paul
-    CONE_MID(85, 0.875),
-    CONE_LOW(40, 0.1),
+    CONE_HIGH(103, 14.5, Constants.ARM_CONE_HIGH_PID_SLOT), // "money" - paul
+    CONE_MID(85, 0.875, Constants.ARM_CONE_MID_PID_SLOT),
+    CONE_LOW(40, 0.1, Constants.ARM_LOW_PID_SLOT),
 
-    CUBE_HIGH(110, 18.5),
-    CUBE_MID(90, 6.875),
-    CUBE_LOW(55, 0.1),
+    CUBE_HIGH(110, 18.5, Constants.ARM_CUBE_HIGH_PID_SLOT),
+    CUBE_MID(90, 6.875, Constants.ARM_CUBE_MID_PID_SLOT),
+    CUBE_LOW(55, 0.1, Constants.ARM_LOW_PID_SLOT),
     ;
 
-    ScoreMode(double angle, double inches){
+    ScoreMode(double angle, double inches, int slot){
         this.angle = angle;
         this.inches = inches;
+        this.slot = slot;
     }
 
     public static ScoreMode getClosestMode(double angle){
@@ -38,6 +41,10 @@ public enum ScoreMode{
         else{
             return CONE_INTAKE;
         }
+    }
+
+    public int getPIDSlot(){
+        return this.slot;
     }
 
     public double getAngle(){
@@ -78,4 +85,5 @@ public enum ScoreMode{
 
     double angle;
     double inches;
+    int slot;
 }

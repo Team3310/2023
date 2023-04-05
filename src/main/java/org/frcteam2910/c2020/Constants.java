@@ -107,6 +107,13 @@ public class Constants
     public static final double ARM_EXTENDER_ZEROING_SPEED = 0.25;
     public static final double ARM_EXTENDER_HOME_INCHES = 0.0;
 
+    public static final int ARM_DEFAULT_PID_SLOT = 0;
+    public static final int ARM_CUBE_HIGH_PID_SLOT = 1;
+    public static final int ARM_CUBE_MID_PID_SLOT = 2;
+    public static final int ARM_CONE_HIGH_PID_SLOT = 3;
+    public static final int ARM_CONE_MID_PID_SLOT = 4;
+    public static final int ARM_LOW_PID_SLOT = 5;
+
     // Intake Constants
 
     // ARM INTAKE

@@ -9,11 +9,7 @@ import org.frcteam2910.c2020.subsystems.Intake;
 import org.frcteam2910.c2020.util.ScoreMode;
 
 public class SetArmSafely extends SequentialCommandGroup {
-
     private Arm arm;
-    // private final ScoreMode targetScoreMode;
-    private final ScoreMode startMode;
-    private boolean wasUnsafeManeuver = false;
 
     public SetArmSafely(ScoreMode targetScoreMode){
         this(targetScoreMode, false, false);
@@ -33,9 +29,7 @@ public class SetArmSafely extends SequentialCommandGroup {
         // SmartDashboard.putString("new score mode", arm.getScoreMode().name());
 
         this.arm = Arm.getInstance();
-        // this.targetScoreMode = targetScoreMode;
-        this.startMode = arm.getScoreMode();
-        wasUnsafeManeuver = true;
+        arm.setRotationPIDSlot(targetScoreMode);
 
         // arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO);
         this.addCommands(
