@@ -97,36 +97,37 @@ public class Arm implements Subsystem{
 
         //#region arm rotator pid slots
         //TODO tune PID for arm positions
+        //default pid slot
         armRotationMotor.config_kF(Constants.ARM_DEFAULT_PID_SLOT, 0.0);
         armRotationMotor.config_kP(Constants.ARM_DEFAULT_PID_SLOT, 0.03);
         armRotationMotor.config_kI(Constants.ARM_DEFAULT_PID_SLOT, 0.00001);
         armRotationMotor.config_kD(Constants.ARM_DEFAULT_PID_SLOT, 0.0);
-
+        //intake pid slot
         armRotationMotor.config_kF(Constants.ARM_INTAKE_PID_SLOT, 0.0);
         armRotationMotor.config_kP(Constants.ARM_INTAKE_PID_SLOT, 0.03);
         armRotationMotor.config_kI(Constants.ARM_INTAKE_PID_SLOT, 0.00001);
         armRotationMotor.config_kD(Constants.ARM_INTAKE_PID_SLOT, 0.0);
-
+        //low positions pid slot
         armRotationMotor.config_kF(Constants.ARM_LOW_PID_SLOT, 0.0);
         armRotationMotor.config_kP(Constants.ARM_LOW_PID_SLOT, 0.03);
         armRotationMotor.config_kI(Constants.ARM_LOW_PID_SLOT, 0.00001);
         armRotationMotor.config_kD(Constants.ARM_LOW_PID_SLOT, 0.0);
-
+        //cube high pid slot
         armRotationMotor.config_kF(Constants.ARM_CUBE_HIGH_PID_SLOT, 0.0);
         armRotationMotor.config_kP(Constants.ARM_CUBE_HIGH_PID_SLOT, 0.03);
         armRotationMotor.config_kI(Constants.ARM_CUBE_HIGH_PID_SLOT, 0.00001);
         armRotationMotor.config_kD(Constants.ARM_CUBE_HIGH_PID_SLOT, 0.0);
-
+        //cube mid pid slot
         armRotationMotor.config_kF(Constants.ARM_CUBE_MID_PID_SLOT, 0.0);
         armRotationMotor.config_kP(Constants.ARM_CUBE_MID_PID_SLOT, 0.03);
         armRotationMotor.config_kI(Constants.ARM_CUBE_MID_PID_SLOT, 0.00001);
         armRotationMotor.config_kD(Constants.ARM_CUBE_MID_PID_SLOT, 0.0);
-
+        //cone high pid slot
         armRotationMotor.config_kF(Constants.ARM_CONE_HIGH_PID_SLOT, 0.0);
         armRotationMotor.config_kP(Constants.ARM_CONE_HIGH_PID_SLOT, 0.03);
         armRotationMotor.config_kI(Constants.ARM_CONE_HIGH_PID_SLOT, 0.00001);
         armRotationMotor.config_kD(Constants.ARM_CONE_HIGH_PID_SLOT, 0.0);
-
+        //cone mid pid slot
         armRotationMotor.config_kF(Constants.ARM_CONE_MID_PID_SLOT, 0.0);
         armRotationMotor.config_kP(Constants.ARM_CONE_MID_PID_SLOT, 0.03);
         armRotationMotor.config_kI(Constants.ARM_CONE_MID_PID_SLOT, 0.00001);

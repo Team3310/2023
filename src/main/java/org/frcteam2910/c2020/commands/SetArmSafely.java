@@ -71,8 +71,8 @@ public class SetArmSafely extends SequentialCommandGroup {
                         intake.stopRollingOnTriggeredArmIntakeDIO = false;
                         intake.resetIntakeDIOTimestamp();
                         intake.setCubeRollerRPM(0);
-                    }),
-                    new SetArmIntakeRPM(intake, 0)
+                        intake.setArmIntakeRPM(0);
+                    })
                 );
             }
         }

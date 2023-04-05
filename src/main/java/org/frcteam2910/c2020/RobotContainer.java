@@ -260,7 +260,7 @@ public class RobotContainer {
                     intake.stopRollingOnTriggeredArmIntakeDIO = false;
                     intake.resetIntakeDIOTimestamp();
                 }),
-                new InstantCommand(()->intake.setArmIntakeHoldPosition()),
+                new InstantCommand(()->intake.setArmIntakeRPM(0)),
                 new SetArmSafely(true, false)
            )
         );

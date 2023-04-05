@@ -125,6 +125,7 @@ public class Constants
     public static final double ARM_CUBE_INTAKE_COLLECT_RPM = -350.0;
     public static final double ARM_CONE_INTAKE_SPIT_RPM = -1300.0;
     public static final double ARM_CUBE_INTAKE_SPIT_RPM = 400.0;
+    public static final double INTAKE_STOP_RPM_THRESHOLD = 25.0;
 
     // CUBE INTAKE DEPLOY
     public static final double CUBE_INTAKE_DEPLOY_MOTOR_RATIO = (64.0/11.0)*

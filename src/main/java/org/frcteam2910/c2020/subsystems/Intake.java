@@ -149,7 +149,7 @@ public class Intake implements Subsystem{
         }
 
         public void setArmIntakeHoldLowSpeed(){
-            if(Math.abs(ArmRoller_VelocityTicksToRpm(intakeMotor.getSelectedSensorVelocity()))<100){
+            if(Math.abs(ArmRoller_VelocityTicksToRpm(intakeMotor.getSelectedSensorVelocity()))<Constants.INTAKE_STOP_RPM_THRESHOLD){
                 controlMode = IntakeControlMode.HOLD;
                 intakeMotor.selectProfileSlot(kIntakePositionSlot, 0);
                 intakeMotor.set(TalonFXControlMode.Position, intakeMotor.getSelectedSensorPosition());
@@ -178,7 +178,7 @@ public class Intake implements Subsystem{
         }
 
         public void cubeRollerHoldLowSpeed(){
-            if(Math.abs(CubeRoller_VelocityTicksToRpm(cubeIntakeRollerMotor.getSelectedSensorVelocity()))<100){
+            if(Math.abs(CubeRoller_VelocityTicksToRpm(cubeIntakeRollerMotor.getSelectedSensorVelocity()))<Constants.INTAKE_STOP_RPM_THRESHOLD){
                 controlMode = IntakeControlMode.HOLD;
                 cubeIntakeRollerMotor.selectProfileSlot(kIntakePositionSlot, 0);
                 cubeIntakeRollerMotor.set(TalonFXControlMode.Position, cubeIntakeRollerMotor.getSelectedSensorPosition());
@@ -195,9 +195,17 @@ public class Intake implements Subsystem{
         
         /** @see SetArmIntakeRPM */
         public void setArmIntakeRPM(double rpm) {
-            controlMode = IntakeControlMode.MANUAL;
-            intakeMotor.selectProfileSlot(kIntakeVelocitySlot, 0);
-            intakeMotor.set(ControlMode.Velocity, this.ArmRoller_RpmToVelocityTicks(rpm));
+            if(rpm!=0){
+                controlMode = IntakeControlMode.MANUAL;
+                intakeMotor.selectProfileSlot(kIntakeVelocitySlot, 0);
+                intakeMotor.set(ControlMode.Velocity, this.ArmRoller_RpmToVelocityTicks(rpm));
+            }else{
+                switch(intakeStopType){
+                    case RPM : setArmIntakeHoldLowSpeed(); break;
+                    case POSITION : setArmIntakeHoldPosition(); break;
+                    case TIME : setArmIntakeHoldTime(); break;
+                }
+            }
         }
 
         /** @see SetIntakeDeployPosition */
@@ -323,11 +331,7 @@ public class Intake implements Subsystem{
                     intakeArmStop.start();
                     intakeCubeStop.start();
                     setCubeRollerRPM(0);
-                    switch(intakeStopType){
-                        case RPM : setArmIntakeHoldLowSpeed(); break;
-                        case POSITION : setArmIntakeHoldPosition(); break;
-                        case TIME : setArmIntakeHoldTime(); break;
-                    }
+                    setArmIntakeRPM(0);
                 }else{
                     intakeArmStop.stop();
                     intakeCubeStop.stop();
