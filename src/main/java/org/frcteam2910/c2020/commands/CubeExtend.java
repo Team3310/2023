@@ -8,6 +8,7 @@ public class CubeExtend extends CommandBase {
     private final Arm arm;
     private boolean waitUntilReachedTarget = false;
 
+    @Deprecated
     public CubeExtend(Arm arm, boolean waitToFinishUntilTargetReached) {
         this.arm = arm;
         this.waitUntilReachedTarget = waitToFinishUntilTargetReached;

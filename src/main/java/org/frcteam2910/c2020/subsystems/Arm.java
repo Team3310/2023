@@ -69,7 +69,7 @@ public class Arm implements Subsystem{
         CANCoderConfiguration config = new CANCoderConfiguration();
         config.sensorDirection =  false;
         //armExternalCANCoder.configAllSettings(config);
-        // armRotationMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+        // armRotationMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
 
 
         final StatorCurrentLimitConfiguration statorCurrentConfigs = new StatorCurrentLimitConfiguration();
@@ -313,6 +313,7 @@ public class Arm implements Subsystem{
         armTranslationMotor.set(ControlMode.PercentOutput, curSpeed);
     }
 
+    @Deprecated
     public void cubeExtend(){
         if(getScoreMode()!=ScoreMode.CONE_LOW){
             double target = getArmInches()+6;
