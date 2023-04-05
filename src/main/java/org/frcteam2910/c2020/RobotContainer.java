@@ -296,6 +296,22 @@ public class RobotContainer {
         // SmartDashboard.putData("Turn to Goal", new InstantCommand(() -> drivetrain.setTurnToTarget()));
         // SmartDashboard.putData("set drive control mode voltage", new InstantCommand(() -> {drivetrain.setBridgeDriveVoltage(1.0); drivetrain.setDriveControlMode(DriveControlMode.BRIDGE_VOLTAGE);}));
         SmartDashboard.putData("extendo zero", new ArmExtenderZero(arm));
+        SmartDashboard.putData("LL CUBE_TRACK", new InstantCommand(() ->
+        {
+            drivetrain.setLimelightMode(LimelightMode.AUTON_CUBE_TRACK);
+            drivetrain.setDriveControlMode(DriveControlMode.LIMELIGHT_AUTON);
+        }));
+        SmartDashboard.putData("LL CUBE_INTAKE", new InstantCommand(() ->
+        {
+            drivetrain.setLimelightMode(LimelightMode.CUBE_INTAKE);
+            drivetrain.setDriveControlMode(DriveControlMode.LIMELIGHT);
+        }));
+        SmartDashboard.putData("LL NORMAL", new InstantCommand(() ->
+        {
+            drivetrain.setLimelightMode(LimelightMode.NONE);
+            drivetrain.setDriveControlMode(DriveControlMode.JOYSTICKS);
+        }));
+        SmartDashboard.putData("extendo zero", new ArmExtenderZero(arm));
         SmartDashboard.putData("cancel all command", new InstantCommand(()->CommandScheduler.getInstance().cancelAll()));
         // SmartDashboard.putData("arm to zero", new SetArmSafely(ScoreMode.HOME));
         // SmartDashboard.putData("arm to high", new SetArmSafely(ScoreMode.CONE_HIGH));

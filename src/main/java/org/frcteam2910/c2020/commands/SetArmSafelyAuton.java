@@ -1,156 +1,62 @@
 package org.frcteam2910.c2020.commands;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
-import java.util.function.BooleanSupplier;
-
+import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.subsystems.Arm;
 import org.frcteam2910.c2020.subsystems.Intake;
 import org.frcteam2910.c2020.util.ScoreMode;
 
-@Deprecated
 public class SetArmSafelyAuton extends SequentialCommandGroup {
-
     private Arm arm;
-    // private final ScoreMode targetScoreMode;
-    private final ScoreMode startMode;
-    private boolean wasUnsafeManeuver = false;
+    private final double DEGREES_DOWN = 8.5;
 
-    public SetArmSafelyAuton(ScoreMode targetScoreMode, boolean isCube){
-        this(targetScoreMode, false, isCube);
-    }
-
-    public SetArmSafelyAuton(ScoreMode targetScoreMode){
-        this(targetScoreMode, false, false);
-    }
-
-    public SetArmSafelyAuton(boolean afterIntake){
-        this(afterIntake?null:ScoreMode.HOME, afterIntake, false);
-    }
-
-    public SetArmSafelyAuton(ScoreMode targetScoreMode, boolean afterIntake, boolean isCube) {
-
-        // SmartDashboard.putString("target score mode", targetScoreMode.name());
-        // SmartDashboard.putString("new score mode", arm.getScoreMode().name());
-
+    public SetArmSafelyAuton(ScoreMode targetScoreMode, boolean afterIntake, boolean isCone) {
         this.arm = Arm.getInstance();
-        // this.targetScoreMode = targetScoreMode;
-        this.startMode = arm.getScoreMode();
-        wasUnsafeManeuver = true;
 
-        arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.HOME);
+        this.addCommands(
+            new InstantCommand(()->arm.setScoreMode(targetScoreMode))
+        );
 
         addRequirements(arm);
 
         // this.addCommands(new PutString(startMode.name(), "start mode 1"));
-        this.addCommands(new PutString(targetScoreMode.name(), "started"));
+        // this.addCommands(new PutString(targetScoreMode.name(), "target mode "));
 
         if(!afterIntake){
-            this.addCommands(
-                new SetArmExtender(arm, 0.001, true),
-                new WaitUntilCommand(new BooleanSupplier() {
-
-                    @Override
-                    public boolean getAsBoolean() {
-                        return arm.getArmInches()<0.5;
-                    }
-                    
-                }),
-                new SetArmRotator(arm, targetScoreMode.getAutonAngle(isCube), true),
-                new WaitUntilCommand(new BooleanSupplier() {
-
-                    @Override
-                    public boolean getAsBoolean() {
-                        return arm.withinAngle(5.0, targetScoreMode.getAutonAngle(isCube));
-                    }
-
-                }),
-                new SetArmExtender(arm, targetScoreMode.getInches(), true)
-            );
+            if(targetScoreMode!=ScoreMode.CUBE_INTAKE){
+                this.addCommands(
+                    new SetArmExtender(arm, 0.0, true),
+                    new SetArmRotator(arm, targetScoreMode.getAngle()-DEGREES_DOWN, true),
+                    new SetArmExtender(arm, targetScoreMode.getInches(), true)
+                );
+            }
+            else if(targetScoreMode==ScoreMode.CUBE_INTAKE){
+                this.addCommands(
+                    // new InstantCommand(()->Intake.getInstance().setCubeIntakeDeployTargetPosition(111)),
+                    // new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_HANDOFF_RPM)),
+                    new SetArmExtender(arm, 0.0, true),
+                    new SetArmRotator(arm, targetScoreMode.getAngle(), true),
+                    new SetArmExtender(arm, targetScoreMode.getInches(), true)
+                );
+            }
         }else{
-            if(Intake.getInstance().getConeSensor().get()){
+            if(isCone){
                 this.addCommands(
                     new SetArmExtender(arm, 4.5, true),
-                    new WaitUntilCommand(new BooleanSupplier() {
-
-                        @Override
-                        public boolean getAsBoolean() {
-                            return arm.withinInches(0.5, 4.5);
-                        }
-                        
-                    }),
-                    new SetArmRotator(arm, 45.0, true),
-                    new WaitUntilCommand(new BooleanSupplier() {
-
-                        @Override
-                        public boolean getAsBoolean() {
-                            return arm.withinAngle(5.0, 45);
-                        }
-
-                    }),
+                    new SetArmRotator(arm, 35.0, true),
                     new SetArmExtender(arm, 0, true),
-                    new WaitUntilCommand(new BooleanSupplier() {
-
-                        @Override
-                        public boolean getAsBoolean() {
-                            return arm.getArmInches()<0.5;
-                        }
-                        
-                    }),
-                    new SetArmRotator(arm, 0, true)    
+                    new SetArmRotator(arm, 10, true)    
                 );
             }
             else{
                 this.addCommands(
-                    new SetArmExtender(arm, 0, true),
-                    new WaitUntilCommand(new BooleanSupplier() {
-
-                        @Override
-                        public boolean getAsBoolean() {
-                            return arm.getArmInches()<0.5;
-                        }
-                        
-                    }),
-                    new SetArmRotator(arm, 0, true)  
+                    new SetIntakeDeployPosition(Intake.getInstance(), Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES), 
+                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(0)),
+                    new SetArmExtender(arm, 0)
                 );
             }
         }
-
-        // if(startMode != targetScoreMode || (!arm.withinAngle(5.0, targetScoreMode.getAngle()) || !arm.withinInches(0.5, targetScoreMode.getInches()))){
-        //     switch(startMode !=targetScoreMode?ScoreMode.getClosestMode(arm.getArmDegrees()):startMode){
-        //         case HIGH :
-        //         case MID :
-        //             // We check the targetMode == LOW here because we could hit the high/mid scoring positions with the extension if we don't.
-        //             if(targetScoreMode==ScoreMode.ZERO || targetScoreMode==ScoreMode.CONE_INTAKE || targetScoreMode==ScoreMode.CUBE_INTAKE || targetScoreMode==ScoreMode.LOW){
-        //                 // We must SAFELY move to the above positions -- to do this we must retract
-        //                 this.addCommands(new SetArmExtender(arm, 0.0, true));
-        //                 wasUnsafeManeuver = true;
-        //             } break;
-        //         case LOW :
-        //             if(targetScoreMode==ScoreMode.ZERO || targetScoreMode==ScoreMode.CUBE_INTAKE || targetScoreMode==ScoreMode.CONE_INTAKE){
-        //                 // We must SAFELY move to the above positions -- to do this we must retract
-        //                 this.addCommands(new SetArmExtender(arm, 0.0, true));
-        //                 wasUnsafeManeuver = true;
-        //             } break;
-        //         case CONE_INTAKE : 
-        //         case CUBE_INTAKE : 
-        //             if(targetScoreMode == ScoreMode.ZERO) {
-        //                 // If going to Zero position after intaking from the front, bring the object up then in
-        //                 this.addCommands(new SetArmRotator(arm, 45.0, true));
-        //                 this.addCommands(new SetArmExtender(arm, 0.0, true));
-        //                 wasUnsafeManeuver = false;
-        //             } break;
-        //         case ZERO : 
-        //             // We started from zero; the assumption here is that we're fully retracted and have properly zeroed the rotator.
-        //             wasUnsafeManeuver = false;
-        //             break;       
-        //     }
-
-        //     // SmartDashboard.putBoolean("SetArm Retract?", wasUnsafeManeuver);
-        //     // Tell the arm to sequentially move to the target angle, then extend
-        //     this.addCommands(new SetArmRotator(arm, targetScoreMode.getAngle(), true));
-        //     this.addCommands(new SetArmExtender(arm, targetScoreMode.getInches(), true));
-        // }
     }
 }    
