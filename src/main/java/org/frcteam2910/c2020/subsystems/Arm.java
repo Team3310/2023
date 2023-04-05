@@ -69,6 +69,8 @@ public class Arm implements Subsystem{
         CANCoderConfiguration config = new CANCoderConfiguration();
         config.sensorDirection =  false;
         //armExternalCANCoder.configAllSettings(config);
+        // armRotationMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+
 
         final StatorCurrentLimitConfiguration statorCurrentConfigs = new StatorCurrentLimitConfiguration();
         statorCurrentConfigs.currentLimit = 40.0;
@@ -99,6 +101,11 @@ public class Arm implements Subsystem{
         armRotationMotor.config_kP(Constants.ARM_DEFAULT_PID_SLOT, 0.03);
         armRotationMotor.config_kI(Constants.ARM_DEFAULT_PID_SLOT, 0.00001);
         armRotationMotor.config_kD(Constants.ARM_DEFAULT_PID_SLOT, 0.0);
+
+        armRotationMotor.config_kF(Constants.ARM_INTAKE_PID_SLOT, 0.0);
+        armRotationMotor.config_kP(Constants.ARM_INTAKE_PID_SLOT, 0.03);
+        armRotationMotor.config_kI(Constants.ARM_INTAKE_PID_SLOT, 0.00001);
+        armRotationMotor.config_kD(Constants.ARM_INTAKE_PID_SLOT, 0.0);
 
         armRotationMotor.config_kF(Constants.ARM_LOW_PID_SLOT, 0.0);
         armRotationMotor.config_kP(Constants.ARM_LOW_PID_SLOT, 0.03);
