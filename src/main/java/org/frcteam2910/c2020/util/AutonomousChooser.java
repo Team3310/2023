@@ -28,6 +28,7 @@ public class AutonomousChooser {
         autonomousModeChooser.addOption("One Object Bridge Balance", AutonomousMode.ONE_OBJECT_BALANCE);
         autonomousModeChooser.addOption("One Object Bridge Mobility Balance", AutonomousMode.ONE_OBJECT_M_BALANCE);
         autonomousModeChooser.addOption("One Half Object Bridge Balance", AutonomousMode.ONE_HALF_OBJECT_BALANCE);
+        autonomousModeChooser.addOption("rotation test", AutonomousMode.ROTATION_TEST);
   
         // autonomousModeChooser.addOption("7 Feet", AutonomousMode.SEVEN_FEET);
         // autonomousModeChooser.addOption("sCurve", AutonomousMode.S_CURVE);
@@ -98,8 +99,17 @@ public class AutonomousChooser {
     }
 
     public enum AutonomousMode {
-        THREE_OBJECT_FAR, THREE_OBJECT_BRIDGE, TWO_OBJECT_BRIDGE, TWO_OBJECT_BRIDGE_BALANCE, TWO_HALF_OBJECT_BRIDGE_BALANCE, ONE_OBJECT_BALANCE, ONE_OBJECT_M_BALANCE, ONE_HALF_OBJECT_BALANCE, SEVEN_FEET, S_CURVE 
-        
+        THREE_OBJECT_FAR, 
+        THREE_OBJECT_BRIDGE,
+        TWO_OBJECT_BRIDGE, 
+        TWO_OBJECT_BRIDGE_BALANCE, 
+        TWO_HALF_OBJECT_BRIDGE_BALANCE, 
+        ONE_OBJECT_BALANCE, 
+        ONE_OBJECT_M_BALANCE, 
+        ONE_HALF_OBJECT_BALANCE, 
+        SEVEN_FEET, 
+        S_CURVE, 
+        ROTATION_TEST
         ;
     }
 }

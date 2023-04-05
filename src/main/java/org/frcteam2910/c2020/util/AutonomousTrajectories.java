@@ -22,6 +22,7 @@ public class AutonomousTrajectories
     private static final double SAMPLE_DISTANCE = 0.1;
 
 //#region Trajectories
+    private Trajectory fourFeetRotateTest;
     private Trajectory sevenFeet;
     private final Trajectory sCurve;
 
@@ -119,6 +120,12 @@ public class AutonomousTrajectories
                         .lineTo(new Vector2(200, 100))
                         .build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
+
+        fourFeetRotateTest = new Trajectory(
+                new SimplePathBuilder(new Vector2(0, 0), Rotation2.ZERO)
+                        .lineTo(new Vector2(48, 0), Rotation2.fromDegrees(180))
+                        .build(), 
+                trajectoryConstraints, SAMPLE_DISTANCE);     
 
 //#region Three Object Far
         //#region Red - Three Object Far
@@ -461,6 +468,10 @@ public class AutonomousTrajectories
 
     public Trajectory getSevenFeet(){
         return sevenFeet;
+    }
+
+    public Trajectory getFourFeetRotateTest(){
+        return fourFeetRotateTest;
     }
 
     public Trajectory get_sCurve(){
