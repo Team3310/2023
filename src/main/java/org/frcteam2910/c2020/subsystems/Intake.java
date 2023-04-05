@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
@@ -39,6 +40,7 @@ public class Intake implements Subsystem{
     public boolean stopRollingOnTriggeredCubeIntakeDIO = false;
     public boolean stopRollingOnTriggeredArmIntakeDIO = false;
     private long lastSysMillisTriggeredDIO = Long.MIN_VALUE;
+    private Timer intakeStop = new Timer();
 
     boolean hasSetIntakeZero = false;
     private IntakeControlMode controlMode = IntakeControlMode.MANUAL;
@@ -125,10 +127,63 @@ public class Intake implements Subsystem{
             this.hasSetIntakeZero = zero;
         }
 
-        public void setArmIntakeHold(){
+        public void setArmIntakeHoldPosition(){
+            setRPMZero = true;
+            controlMode = IntakeControlMode.HOLD;
+            intakeMotor.selectProfileSlot(kIntakePositionSlot, 0);
+            intakeMotor.set(TalonFXControlMode.Position, intakeMotor.getSelectedSensorPosition()+getArmIntakeTicksforDegrees(90));
+        }
+
+        public void setArmIntakeHoldTime(){
+            if(intakeStop.hasElapsed(Constants.INTAKE_STOP_DELAY)){
+                setRPMZero = true;
                 controlMode = IntakeControlMode.HOLD;
                 intakeMotor.selectProfileSlot(kIntakePositionSlot, 0);
                 intakeMotor.set(TalonFXControlMode.Position, intakeMotor.getSelectedSensorPosition());
+            }
+            else{
+                setRPMZero = false;
+            }
+        }
+
+        public void setArmIntakeHoldLowSpeed(){
+            if(Math.abs(ArmRoller_VelocityTicksToRpm(intakeMotor.getSelectedSensorVelocity()))<100){
+                controlMode = IntakeControlMode.HOLD;
+                intakeMotor.selectProfileSlot(kIntakePositionSlot, 0);
+                intakeMotor.set(TalonFXControlMode.Position, intakeMotor.getSelectedSensorPosition());
+                setRPMZero = true;
+            }else{
+                setRPMZero = false;
+            }
+        }
+
+        public void cubeRollerHoldPosition(){
+            setRPMZero = true;
+            controlMode = IntakeControlMode.HOLD;
+            intakeMotor.selectProfileSlot(kIntakePositionSlot, 0);
+            intakeMotor.set(TalonFXControlMode.Position, intakeMotor.getSelectedSensorPosition());
+        }
+
+        public void cubeRollerHoldTime(){
+            if(intakeStop.hasElapsed(Constants.INTAKE_STOP_DELAY)){
+                setRPMZero = true;
+                controlMode = IntakeControlMode.HOLD;
+                intakeMotor.selectProfileSlot(kIntakePositionSlot, 0);
+                intakeMotor.set(TalonFXControlMode.Position, intakeMotor.getSelectedSensorPosition());
+            }else{
+                setRPMZero = false;
+            }
+        }
+
+        public void cubeRollerHoldLowSpeed(){
+            if(Math.abs(CubeRoller_VelocityTicksToRpm(cubeIntakeRollerMotor.getSelectedSensorVelocity()))<100){
+                controlMode = IntakeControlMode.HOLD;
+                cubeIntakeRollerMotor.selectProfileSlot(kIntakePositionSlot, 0);
+                cubeIntakeRollerMotor.set(TalonFXControlMode.Position, cubeIntakeRollerMotor.getSelectedSensorPosition());
+                setRPMZero = true;
+            }else{
+                setRPMZero = false;
+            }
         }
 
         public void setArmIntakeSpeed(double speed) {
@@ -150,8 +205,7 @@ public class Intake implements Subsystem{
                 cubeIntakeRollerMotor.set(TalonFXControlMode.Velocity, this.CubeRoller_RpmToVelocityTicks(rpm));
             }
             else{
-                cubeIntakeRollerMotor.selectProfileSlot(kIntakePositionSlot, 0);
-                cubeIntakeRollerMotor.set(TalonFXControlMode.Position, this.cubeIntakeRollerMotor.getSelectedSensorPosition()+getArmIntakeTicksforDegrees(90));
+                cubeRollerHoldLowSpeed();
             }
         }
 
@@ -164,22 +218,9 @@ public class Intake implements Subsystem{
         }
 
         public void setCubeIntakeDeployTargetPosition(double positionDegrees) {
-            // if(positionDegrees<getCubeIntakeDeployDegrees()){
-            //     cubeIntakeLiftMotor.config_kF(kIntakePositionSlot, 0.0);
-            //     cubeIntakeLiftMotor.config_kP(kIntakePositionSlot, 0.02);
-            // }else{
-            //     cubeIntakeLiftMotor.config_kF(kIntakePositionSlot, -0.006);
-            //     cubeIntakeLiftMotor.config_kP(kIntakePositionSlot, 0.01);
-            // // }
             cubeIntakeLiftMotor.setIntegralAccumulator(0);
             cubeIntakeLiftMotor.selectProfileSlot(kIntakePositionSlot, 0);
             cubeIntakeLiftMotor.set(TalonFXControlMode.Position, getCubeIntakeDeployDegreesTicks(positionDegrees));
-            // if(positionDegrees==110){
-            //     cubeIntakeLiftMotor.set(ControlMode.PercentOutput, 0.2);
-            // }
-            // else{
-            //     cubeIntakeLiftMotor.set(ControlMode.PercentOutput, -0.2);
-            // }
         }
 
         public boolean withinCubeDeployTarget(double tolerance, double position) {
@@ -252,53 +293,35 @@ public class Intake implements Subsystem{
         // SmartDashboard.putNumber("intake lift voltage", cubeIntakeLiftMotor.getMotorOutputVoltage());
         // SmartDashboard.putNumber("cube intake current", cubeIntakeLiftMotor.getStatorCurrent());
 
-
-
-        // if(cubeSensor.get()){
-        //     setArmIntakeHold();
-        // }
         if(stopRollingOnTriggeredCubeIntakeDIO){
-            // double delayFactorSec = 0.25;
             if(cubeRollerSensor.get()){
-                // if(lastSysMillisTriggeredDIO <= 0){
-                //     lastSysMillisTriggeredDIO = System.currentTimeMillis();
-                // }
-                if(!setRPMZero) {
+                if(!setRPMZero){
                     setCubeRollerRPM(0);
-                    setRPMZero = true;
+                }else{
+                    intakeStop.stop();
                 }
             }
             else {
+                intakeStop.reset();
                 setRPMZero = false;
             }
-            // if(System.currentTimeMillis() - lastSysMillisTriggeredDIO > (int)(delayFactorSec * 1000)) {
-            //     // We're beyond the delay factor, time to act
-            //     setCubeRollerRPM(0);
-            // }
         }
 
         if(stopRollingOnTriggeredArmIntakeDIO) {
             // While holding right trigger (cube intake), if detect something where the cone would go,
             // override any commands to move intake rollers.
-            // double delayFactorSec = 0.25;
             if(cubeSensor.get()){
-                // if(lastSysMillisTriggeredDIO <= 0){
-                //     lastSysMillisTriggeredDIO = System.currentTimeMillis();
-                // }
                 if(!setRPMZero) {
                     setCubeRollerRPM(0);
-                    setArmIntakeHold();
-                    setRPMZero = true;
+                    setArmIntakeHoldPosition();
+                }else{
+                    intakeStop.stop();
                 }
             }
             else {
+                intakeStop.reset();
                 setRPMZero = false;
             }
-            // if(System.currentTimeMillis() - lastSysMillisTriggeredDIO > (int)(delayFactorSec * 1000)) {
-            //     // We're beyond the delay factor, time to act
-            //     setCubeRollerRPM(0);
-            //     setArmIntakeHold();
-            // }
         }
     }
 

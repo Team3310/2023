@@ -22,9 +22,6 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
 
         addRequirements(arm);
 
-        // this.addCommands(new PutString(startMode.name(), "start mode 1"));
-        // this.addCommands(new PutString(targetScoreMode.name(), "target mode "));
-
         if(!afterIntake){
             if(targetScoreMode == ScoreMode.HOME){
                 this.addCommands(
@@ -34,8 +31,6 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
             }
             else if(targetScoreMode==ScoreMode.CUBE_INTAKE){
                 this.addCommands(
-                    // new InstantCommand(()->Intake.getInstance().setCubeIntakeDeployTargetPosition(111)),
-                    // new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_HANDOFF_RPM)),
                     new SetArmExtender(arm, 0.0, true),
                     new SetArmRotator(arm, targetScoreMode.getAngle(), true),
                     new SetArmExtender(arm, targetScoreMode.getInches(), true)
@@ -65,5 +60,12 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
                 );
             }
         }
+
+        // this.handleInterrupt(()->{
+        //     if(arm.withinInches(1.0, 0.0)){
+        //         arm.setArmDegreesPositionAbsolute(targetScoreMode.getAngle()-DEGREES_DOWN);
+        //         arm.setTargetArmInchesPositionAbsolute(targetScoreMode.getInches());
+        //     }
+        // });
     }
 }    

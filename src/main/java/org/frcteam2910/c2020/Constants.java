@@ -140,5 +140,7 @@ public class Constants
     public static final double CUBE_INTAKE_ROLLER_COLLECT_RPM = 2000;
     public static final double CUBE_INTAKE_ROLLER_SPIT_RPM = -2000;
     public static final double CUBE_INTAKE_ROLLER_HANDOFF_RPM = 800;
+
+    public static final double INTAKE_STOP_DELAY = 0.75;
     //#endregion
 }

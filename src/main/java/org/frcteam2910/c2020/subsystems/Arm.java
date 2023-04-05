@@ -347,7 +347,7 @@ public class Arm implements Subsystem{
         if(rotationControlMode == ArmControlMode.MANUAL){
             targetDegreesTicks = armRotationMotor.getSelectedSensorPosition();
             armRotationMotor.selectProfileSlot(Constants.ARM_DEFAULT_PID_SLOT, 0);
-            setScoreMode(ScoreMode.getClosestMode(getArmDegreesIntegrated()));
+            // setScoreMode(ScoreMode.getClosestMode(getArmDegreesIntegrated()));
         }
 
         if (rotationControlMode == ArmControlMode.MANUAL){

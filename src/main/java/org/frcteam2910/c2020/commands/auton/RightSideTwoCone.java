@@ -32,7 +32,7 @@ public class RightSideTwoCone extends AutonCommandBase {
                 new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
                 new InstantCommand(()->{
                     intake.setCubeRollerRPM(0);
-                    intake.setArmIntakeHold();
+                    intake.setArmIntakeHoldPosition();
                 }),
                 new SetArmSafelyAuton(ScoreMode.CONE_MID, false, false)
             ),

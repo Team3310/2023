@@ -17,5 +17,14 @@ public class CubeSpit extends SequentialCommandGroup{
                 intake.setArmIntakeRPM(Constants.ARM_CUBE_INTAKE_SPIT_RPM*4);
             })
         );
+
+        //incase it gets called to late and gets interrupted
+        this.handleInterrupt(()->{
+            intake.stopRollingOnTriggeredArmIntakeDIO = false;
+            intake.stopRollingOnTriggeredCubeIntakeDIO = false;
+            intake.setCubeIntakeDeployTargetPosition(0);
+            intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM*2);
+            intake.setArmIntakeRPM(Constants.ARM_CUBE_INTAKE_SPIT_RPM*4);
+        });
     }
 }
