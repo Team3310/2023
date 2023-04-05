@@ -40,10 +40,12 @@ public class Intake implements Subsystem{
     public boolean stopRollingOnTriggeredCubeIntakeDIO = false;
     public boolean stopRollingOnTriggeredArmIntakeDIO = false;
     private long lastSysMillisTriggeredDIO = Long.MIN_VALUE;
-    private Timer intakeStop = new Timer();
+    private Timer intakeArmStop = new Timer();
+    private Timer intakeCubeStop = new Timer();
 
     boolean hasSetIntakeZero = false;
     private IntakeControlMode controlMode = IntakeControlMode.MANUAL;
+    private IntakeStopType intakeStopType = IntakeStopType.RPM;
 
     private static Intake INSTANCE=null;
 
@@ -135,7 +137,7 @@ public class Intake implements Subsystem{
         }
 
         public void setArmIntakeHoldTime(){
-            if(intakeStop.hasElapsed(Constants.INTAKE_STOP_DELAY)){
+            if(intakeArmStop.hasElapsed(Constants.INTAKE_STOP_DELAY)){
                 setRPMZero = true;
                 controlMode = IntakeControlMode.HOLD;
                 intakeMotor.selectProfileSlot(kIntakePositionSlot, 0);
@@ -165,7 +167,7 @@ public class Intake implements Subsystem{
         }
 
         public void cubeRollerHoldTime(){
-            if(intakeStop.hasElapsed(Constants.INTAKE_STOP_DELAY)){
+            if(intakeCubeStop.hasElapsed(Constants.INTAKE_STOP_DELAY)){
                 setRPMZero = true;
                 controlMode = IntakeControlMode.HOLD;
                 intakeMotor.selectProfileSlot(kIntakePositionSlot, 0);
@@ -205,7 +207,11 @@ public class Intake implements Subsystem{
                 cubeIntakeRollerMotor.set(TalonFXControlMode.Velocity, this.CubeRoller_RpmToVelocityTicks(rpm));
             }
             else{
-                cubeRollerHoldLowSpeed();
+                switch(intakeStopType){
+                    case RPM : cubeRollerHoldLowSpeed(); break;
+                    case POSITION : cubeRollerHoldPosition(); break;
+                    case TIME : cubeRollerHoldTime(); break;
+                }
             }
         }
 
@@ -296,13 +302,15 @@ public class Intake implements Subsystem{
         if(stopRollingOnTriggeredCubeIntakeDIO){
             if(cubeRollerSensor.get()){
                 if(!setRPMZero){
+                    intakeArmStop.start();
+                    intakeCubeStop.start();
                     setCubeRollerRPM(0);
                 }else{
-                    intakeStop.stop();
+                    intakeCubeStop.stop();
                 }
             }
             else {
-                intakeStop.reset();
+                intakeCubeStop.reset();
                 setRPMZero = false;
             }
         }
@@ -312,14 +320,22 @@ public class Intake implements Subsystem{
             // override any commands to move intake rollers.
             if(cubeSensor.get()){
                 if(!setRPMZero) {
+                    intakeArmStop.start();
+                    intakeCubeStop.start();
                     setCubeRollerRPM(0);
-                    setArmIntakeHoldPosition();
+                    switch(intakeStopType){
+                        case RPM : setArmIntakeHoldLowSpeed(); break;
+                        case POSITION : setArmIntakeHoldPosition(); break;
+                        case TIME : setArmIntakeHoldTime(); break;
+                    }
                 }else{
-                    intakeStop.stop();
+                    intakeArmStop.stop();
+                    intakeCubeStop.stop();
                 }
             }
             else {
-                intakeStop.reset();
+                intakeCubeStop.reset();
+                intakeArmStop.reset();
                 setRPMZero = false;
             }
         }
@@ -328,4 +344,14 @@ public class Intake implements Subsystem{
 	public IntakeControlMode getControlMode() {
 		return controlMode;
 	}
+    public void setStopType(IntakeStopType type) {
+		this.intakeStopType = type;
+	}
+
+    public enum IntakeStopType{
+        RPM,
+        POSITION,
+        TIME,
+        ;
+    }
 }

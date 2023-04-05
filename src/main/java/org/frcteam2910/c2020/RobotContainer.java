@@ -4,6 +4,7 @@ import org.frcteam2910.c2020.commands.*;
 import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.LimelightMode;
+import org.frcteam2910.c2020.subsystems.Intake.IntakeStopType;
 import org.frcteam2910.c2020.util.*;
 import org.frcteam2910.common.robot.input.*;
 import org.frcteam2910.common.robot.input.DPadButton.Direction;
@@ -117,15 +118,7 @@ public class RobotContainer {
             )
         ).onFalse(
             new SequentialCommandGroup(
-                new SetArmSafely(true, false),
-                new InstantCommand(()->{
-                    intake.stopRollingOnTriggeredCubeIntakeDIO = false;
-                    intake.stopRollingOnTriggeredArmIntakeDIO = false;
-                    intake.resetIntakeDIOTimestamp();
-                    intake.setCubeRollerRPM(0);
-                }),
-                new SetArmIntakeRPM(intake, 0),
-                new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES)
+                new SetArmSafely(true, false)
             )
         );
 
@@ -177,6 +170,12 @@ public class RobotContainer {
                     new InstantCommand(() -> drivetrain.setLimelightMode(LimelightMode.NONE))
                 )
             );
+
+        primaryController.getDPadButton(Direction.UP).onTrue(new InstantCommand(()->intake.setStopType(IntakeStopType.RPM)));
+
+        primaryController.getDPadButton(Direction.LEFT).onTrue(new InstantCommand(()->intake.setStopType(IntakeStopType.POSITION)));
+
+        primaryController.getDPadButton(Direction.DOWN).onTrue(new InstantCommand(()->intake.setStopType(IntakeStopType.TIME)));
         //#endregion
 
         //#region Second/Operator Controller
