@@ -53,7 +53,6 @@ public class DriveBalanceCommand extends CommandBase {
         }
         averageAngle/=5;
         boolean isFalling = drive.getStartDegrees()-1>averageAngle;
-        //TODO readd the condition for distance travelled
         return (isSlow?isBalanced:distanceTravelled>minTraveledInches&&isFalling);
     }
 

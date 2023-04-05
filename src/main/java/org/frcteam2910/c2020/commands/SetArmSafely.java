@@ -69,41 +69,5 @@ public class SetArmSafely extends SequentialCommandGroup {
                 );
             }
         }
-
-        // if(startMode != targetScoreMode || (!arm.withinAngle(5.0, targetScoreMode.getAngle()) || !arm.withinInches(0.5, targetScoreMode.getInches()))){
-        //     switch(startMode !=targetScoreMode?ScoreMode.getClosestMode(arm.getArmDegrees()):startMode){
-        //         case HIGH :
-        //         case MID :
-        //             // We check the targetMode == LOW here because we could hit the high/mid scoring positions with the extension if we don't.
-        //             if(targetScoreMode==ScoreMode.ZERO || targetScoreMode==ScoreMode.CONE_INTAKE || targetScoreMode==ScoreMode.CUBE_INTAKE || targetScoreMode==ScoreMode.LOW){
-        //                 // We must SAFELY move to the above positions -- to do this we must retract
-        //                 this.addCommands(new SetArmExtender(arm, 0.0, true));
-        //                 wasUnsafeManeuver = true;
-        //             } break;
-        //         case LOW :
-        //             if(targetScoreMode==ScoreMode.ZERO || targetScoreMode==ScoreMode.CUBE_INTAKE || targetScoreMode==ScoreMode.CONE_INTAKE){
-        //                 // We must SAFELY move to the above positions -- to do this we must retract
-        //                 this.addCommands(new SetArmExtender(arm, 0.0, true));
-        //                 wasUnsafeManeuver = true;
-        //             } break;
-        //         case CONE_INTAKE : 
-        //         case CUBE_INTAKE : 
-        //             if(targetScoreMode == ScoreMode.ZERO) {
-        //                 // If going to Zero position after intaking from the front, bring the object up then in
-        //                 this.addCommands(new SetArmRotator(arm, 45.0, true));
-        //                 this.addCommands(new SetArmExtender(arm, 0.0, true));
-        //                 wasUnsafeManeuver = false;
-        //             } break;
-        //         case ZERO : 
-        //             // We started from zero; the assumption here is that we're fully retracted and have properly zeroed the rotator.
-        //             wasUnsafeManeuver = false;
-        //             break;       
-        //     }
-
-        //     // SmartDashboard.putBoolean("SetArm Retract?", wasUnsafeManeuver);
-        //     // Tell the arm to sequentially move to the target angle, then extend
-        //     this.addCommands(new SetArmRotator(arm, targetScoreMode.getAngle(), true));
-        //     this.addCommands(new SetArmExtender(arm, targetScoreMode.getInches(), true));
-        // }
     }
 }    

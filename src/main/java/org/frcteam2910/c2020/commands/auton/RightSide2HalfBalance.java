@@ -21,54 +21,6 @@ public class RightSide2HalfBalance extends AutonCommandBase {
             new FollowTrajectoryCommand(drive, trajectories.getEasySideToBridge2Half()),
             new WaitCommand(0.2),
             new OnToBridge(container, trajectories, 5)
-            // new ParallelDeadlineGroup(     
-            //     new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPickup2(isBlue)),
-            //     new SetArmSafely(ScoreMode.CONE_INTAKE, false),
-            //     new InstantCommand(()->{
-            //         intake.setRollerRPM(Constants.INTAKE_COLLECT_RPM); 
-            //         intake.setServoPosition(-1.0);
-            //     })
-            // ),
-            // new ParallelRaceGroup( 
-            //     //waits until cone sensor says it has a cone or 1.5 seconds has elasped in case it doesn't get cone   
-            //     new WaitUntilCommand(new BooleanSupplier() {
-            //         @Override
-            //         public boolean getAsBoolean() {
-            //             return intake.getConeSensor().get();
-            //         }  
-            //     }),
-            //     new WaitCommand(1.5)
-            // ),
-            // new ParallelDeadlineGroup(
-            //     new FollowTrajectoryCommand(drive, trajectories.getConeBridgeToPlace2(isBlue)),
-            //     new SequentialCommandGroup(
-            //         new SetArmSafely(ScoreMode.ZERO, false),
-            //         new InstantCommand(()->{
-            //             intake.setRollerSpeed(0);
-            //             intake.setServoPosition(1.0);
-            //         })
-            //     )
-            // ),
-            // new ParallelDeadlineGroup(
-            //     new FollowTrajectoryCommand(drive, trajectories.getConeBridgefromLoadtoPlace(isBlue)),
-            //     new SetArmSafely(ScoreMode.HIGH, false)
-            // ),
-            // new ParallelDeadlineGroup(  
-            //     new ParallelRaceGroup( 
-            //       //waits until cone is out or 1.0 seconds has elasped in case
-            //         new SequentialCommandGroup(   
-            //             new WaitUntilCommand(new BooleanSupplier() {
-            //                 @Override
-            //                 public boolean getAsBoolean() {
-            //                     return intake.getConeSensor().get();
-            //                 }  
-            //             }),
-            //             new WaitCommand(0.25) //TODO test timing for object outtake
-            //         ),
-            //         new WaitCommand(1.0)
-            //     ),
-            //     new InstantCommand(()->intake.setRollerRPM(Constants.INTAKE_SPIT_RPM))
-            // )
         );
     }
 }
