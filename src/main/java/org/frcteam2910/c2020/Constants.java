@@ -142,7 +142,7 @@ public class Constants
     // CUBE INTAKE ROLLER
     public static final double CUBE_INTAKE_ROLLER_MOTOR_RATIO = (18.0/12.0);
 
-    public static final double CUBE_INTAKE_ROLLER_COLLECT_RPM = 2000;
+    public static final double CUBE_INTAKE_ROLLER_COLLECT_RPM = 1250;
     public static final double CUBE_INTAKE_ROLLER_SPIT_RPM = -2000;
     public static final double CUBE_INTAKE_ROLLER_HANDOFF_RPM = 800;
 
