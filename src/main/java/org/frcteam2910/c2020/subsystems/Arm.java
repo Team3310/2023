@@ -360,7 +360,7 @@ public class Arm implements Subsystem{
         SmartDashboard.putNumber("arm inches", getArmInches());
 
         //debug smartdashboard prints
-        SmartDashboard.putNumber("arm I accum", armRotationMotor.getIntegralAccumulator());
+        //SmartDashboard.putNumber("arm I accum", armRotationMotor.getIntegralAccumulator());
         // SmartDashboard.putNumber("arm degrees ext", getArmDegreesExternal());
         // SmartDashboard.putString("arm control mode", rotationControlMode.name());
         // SmartDashboard.putString("closest score mode", ScoreMode.getClosestMode(getArmDegreesIntegrated()).name());
