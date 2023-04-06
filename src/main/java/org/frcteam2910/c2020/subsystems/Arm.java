@@ -8,8 +8,10 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.ctre.phoenix.motorcontrol.can.TalonFXPIDSetConfiguration;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -100,17 +102,17 @@ public class Arm implements Subsystem{
         //default pid slot
         armRotationMotor.config_kF(Constants.ARM_DEFAULT_PID_SLOT, 0.0);
         armRotationMotor.config_kP(Constants.ARM_DEFAULT_PID_SLOT, 0.03);
-        armRotationMotor.config_kI(Constants.ARM_DEFAULT_PID_SLOT, 0.00001);
+        armRotationMotor.config_kI(Constants.ARM_DEFAULT_PID_SLOT, 0.0);
         armRotationMotor.config_kD(Constants.ARM_DEFAULT_PID_SLOT, 0.0);
         //intake pid slot
         armRotationMotor.config_kF(Constants.ARM_INTAKE_PID_SLOT, 0.0);
         armRotationMotor.config_kP(Constants.ARM_INTAKE_PID_SLOT, 0.03);
-        armRotationMotor.config_kI(Constants.ARM_INTAKE_PID_SLOT, 0.00001);
+        armRotationMotor.config_kI(Constants.ARM_INTAKE_PID_SLOT, 0.0);
         armRotationMotor.config_kD(Constants.ARM_INTAKE_PID_SLOT, 0.0);
         //low positions pid slot
         armRotationMotor.config_kF(Constants.ARM_LOW_PID_SLOT, 0.0);
         armRotationMotor.config_kP(Constants.ARM_LOW_PID_SLOT, 0.03);
-        armRotationMotor.config_kI(Constants.ARM_LOW_PID_SLOT, 0.00001);
+        armRotationMotor.config_kI(Constants.ARM_LOW_PID_SLOT, 0.0);
         armRotationMotor.config_kD(Constants.ARM_LOW_PID_SLOT, 0.0);
         //cube high pid slot
         armRotationMotor.config_kF(Constants.ARM_CUBE_HIGH_PID_SLOT, 0.0);
@@ -125,14 +127,14 @@ public class Arm implements Subsystem{
         //cone high pid slot
         armRotationMotor.config_kF(Constants.ARM_CONE_HIGH_PID_SLOT, 0.0);
         armRotationMotor.config_kP(Constants.ARM_CONE_HIGH_PID_SLOT, 0.05);
-        armRotationMotor.config_kI(Constants.ARM_CONE_HIGH_PID_SLOT, 0.01);
+        armRotationMotor.config_kI(Constants.ARM_CONE_HIGH_PID_SLOT, 0.0);
         armRotationMotor.config_kD(Constants.ARM_CONE_HIGH_PID_SLOT, 0.0);
         //cone mid pid slot
         armRotationMotor.config_kF(Constants.ARM_CONE_MID_PID_SLOT, 0.0);
         armRotationMotor.config_kP(Constants.ARM_CONE_MID_PID_SLOT, 0.05);
-        armRotationMotor.config_kI(Constants.ARM_CONE_MID_PID_SLOT, 0.01);
+        armRotationMotor.config_kI(Constants.ARM_CONE_MID_PID_SLOT, 0.0);
         armRotationMotor.config_kD(Constants.ARM_CONE_MID_PID_SLOT, 0.0);
-        //#endregion
+        // #endregion
     }
     //#endregion
     
@@ -170,6 +172,9 @@ public class Arm implements Subsystem{
     public void setRotationPIDSlot(ScoreMode mode){
         SmartDashboard.putNumber("pid slot", mode.getPIDSlot());
         SmartDashboard.putString("pid slot name", mode.name());
+        SlotConfiguration t = new SlotConfiguration();
+        armRotationMotor.getSlotConfigs(t, mode.getPIDSlot(), 0);
+        SmartDashboard.putString("pid gains", t.toString("-"));
         armRotationMotor.selectProfileSlot(mode.getPIDSlot(), 0);
     }
 
@@ -211,6 +216,8 @@ public class Arm implements Subsystem{
         manualRotationSpeed = speed;
 
         rotationControlMode = ArmControlMode.MANUAL;
+
+        armRotationMotor.setIntegralAccumulator(0);
         if (getArmDegreesIntegrated() < Constants.ARM_ROTATOR_MIN_ROTATION_DEGREES && speed < 0.0) {
             speed = 0;
         } else if (getArmDegreesIntegrated() > Constants.ARM_ROTATOR_MAX_ROTATION_DEGREES && speed > 0.0) {
@@ -353,6 +360,7 @@ public class Arm implements Subsystem{
         SmartDashboard.putNumber("arm inches", getArmInches());
 
         //debug smartdashboard prints
+        SmartDashboard.putNumber("arm I accum", armRotationMotor.getIntegralAccumulator());
         // SmartDashboard.putNumber("arm degrees ext", getArmDegreesExternal());
         // SmartDashboard.putString("arm control mode", rotationControlMode.name());
         // SmartDashboard.putString("closest score mode", ScoreMode.getClosestMode(getArmDegreesIntegrated()).name());

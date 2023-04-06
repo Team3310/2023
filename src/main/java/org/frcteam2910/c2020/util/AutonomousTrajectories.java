@@ -20,73 +20,74 @@ import org.frcteam2910.common.math.Vector2;
 public class AutonomousTrajectories
 {
     private static final double SAMPLE_DISTANCE = 0.1;
-
-//#region Trajectories
-    private Trajectory sevenFeet;
-    private final Trajectory sCurve;
-
-    private Trajectory threeObjectFarPart1;
-    private Trajectory threeObjectFarPart2;
-    private Trajectory threeObjectFarPart3;
-    private Trajectory threeObjectFarPart4A;
-    private Trajectory threeObjectFarPart4B;
-
-    private Trajectory threeObjectClosePart1;
-    private Trajectory threeObjectClosePart2;
-    private Trajectory threeObjectClosePart3;
-    private Trajectory threeObjectClosePart4;
-    private Trajectory threeObjectCloseEnd1;
-    private Trajectory threeObjectCloseEnd2;
-
-    private Trajectory threeObjectBridgePart1;
-    private Trajectory threeObjectBridgePart2;
-    private Trajectory threeObjectBridgePart3;
-    private Trajectory threeObjectBridgePart4;
-
-    private Trajectory easySideConeToPickUp1;
-    private Trajectory easySideConeToPickUp2;
-    private Trajectory easySideConeToPlace1;
-    private Trajectory easySideConeToPlace2;
-
-    private Trajectory onToBridge;
-    private Trajectory goPastBridge;
-    private Trajectory getToConePastBridge;
-
-    private Trajectory threeObjectFarPart1Blue;
-    private Trajectory threeObjectFarPart2Blue;
-    private Trajectory threeObjectFarPart3Blue;
-    private Trajectory threeObjectFarPart4ABlue;
-    private Trajectory threeObjectFarPart4BBlue;
-
-    private Trajectory threeObjectClosePart1Blue;
-    private Trajectory threeObjectClosePart2Blue;
-    private Trajectory threeObjectClosePart3Blue;
-    private Trajectory threeObjectClosePart4Blue;
-    private Trajectory threeObjectCloseEnd1Blue;
-    private Trajectory threeObjectCloseEnd2Blue;
-
-    private Trajectory threeObjectBridgePart1Blue;
-    private Trajectory threeObjectBridgePart2Blue;
-    private Trajectory threeObjectBridgePart3Blue;
-    private Trajectory threeObjectBridgePart4Blue;
-
-    private Trajectory easySideConeToPickUp1Blue;
-    private Trajectory easySideConeToPickUp2Blue;
-    private Trajectory easySideConeToPlace1Blue;
-    private Trajectory easySideConeToPlace2Blue;
-    private Trajectory easySideConeToBridge1;
-    private Trajectory easySideConeToBridge1Blue;
-    private Trajectory easySideConeToBridge2;
-    private Trajectory easySideConeToBridge2Half;
-//#endregion
-
     private TrajectoryConstraint[] bridgeConstraints;
     private TrajectoryConstraint[] mediumConstraints;
     private TrajectoryConstraint[] mediumSlowConstraints;
     private TrajectoryConstraint[] slowConstraints;
     private TrajectoryConstraint[] bumpConstraints;
 
+//#region Trajectories
+    private final Trajectory sevenFeet;
+    private final Trajectory sCurve;
+
+    private final Trajectory threeObjectFarPart1;
+    private final Trajectory threeObjectFarPart2;
+    private final Trajectory threeObjectFarPart3;
+    private final Trajectory threeObjectFarPart4A;
+    private final Trajectory threeObjectFarPart4B;
+
+    private final Trajectory threeObjectClosePart1;
+    private final Trajectory threeObjectClosePart2;
+    private final Trajectory threeObjectClosePart3;
+    private final Trajectory threeObjectClosePart4;
+    private final Trajectory threeObjectCloseEnd1;
+    private final Trajectory threeObjectCloseEnd2;
+
+    private final Trajectory threeObjectBridgePart1;
+    private final Trajectory threeObjectBridgePart2;
+    private final Trajectory threeObjectBridgePart3;
+    private final Trajectory threeObjectBridgePart4;
+
+    private final Trajectory easySideConeToPickUp1;
+    private final Trajectory easySideConeToPickUp2;
+    private final Trajectory easySideConeToPlace1;
+    private final Trajectory easySideConeToPlace2;
+
+    private final Trajectory onToBridge;
+    private final Trajectory goPastBridge;
+    private final Trajectory getToConePastBridge;
+
+    private final Trajectory threeObjectFarPart1Blue;
+    private final Trajectory threeObjectFarPart2Blue;
+    private final Trajectory threeObjectFarPart3Blue;
+    private final Trajectory threeObjectFarPart4ABlue;
+    private final Trajectory threeObjectFarPart4BBlue;
+
+    private final Trajectory threeObjectClosePart1Blue;
+    private final Trajectory threeObjectClosePart2Blue;
+    private final Trajectory threeObjectClosePart3Blue;
+    private final Trajectory threeObjectClosePart4Blue;
+    private final Trajectory threeObjectCloseEnd1Blue;
+    private final Trajectory threeObjectCloseEnd2Blue;
+
+    private final Trajectory threeObjectBridgePart1Blue;
+    private final Trajectory threeObjectBridgePart2Blue;
+    private final Trajectory threeObjectBridgePart3Blue;
+    private final Trajectory threeObjectBridgePart4Blue;
+
+    private final Trajectory easySideConeToPickUp1Blue;
+    private final Trajectory easySideConeToPickUp2Blue;
+    private final Trajectory easySideConeToPlace1Blue;
+    private final Trajectory easySideConeToPlace2Blue;
+    private final Trajectory easySideConeToBridge1;
+    private final Trajectory easySideConeToBridge1Blue;
+    private final Trajectory easySideConeToBridge2;
+    private final Trajectory easySideConeToBridge2Half;
+//#endregion
+
     public AutonomousTrajectories(TrajectoryConstraint[] trajectoryConstraints, SideMode side){
+
+        System.out.println("ran trajectories constructor");
         //#region constraints
         slowConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
         slowConstraints[slowConstraints.length - 1] = new MaxVelocityConstraint(6.0 * 12.0);
@@ -271,19 +272,6 @@ public class AutonomousTrajectories
                         .build(),
                 slowConstraints, SAMPLE_DISTANCE
         );
-
-        threeObjectCloseEnd1Blue = new Trajectory(
-                new SimplePathBuilder(new Vector2(259.5, 297.5), Rotation2.fromDegrees(0))
-                        .lineTo(new Vector2(237.9, 230))
-                        .build(),
-                slowConstraints, SAMPLE_DISTANCE
-        );
-        threeObjectCloseEnd2Blue = new Trajectory(
-                new SimplePathBuilder(new Vector2(258, 260), Rotation2.fromDegrees(0))
-                        .lineTo(new Vector2(237.9, 230))
-                        .build(),
-                slowConstraints, SAMPLE_DISTANCE
-        );
 //#endregion
 //#region Three Object Bridge
         threeObjectBridgePart1 = new Trajectory(
@@ -440,7 +428,39 @@ public class AutonomousTrajectories
                         .lineTo(new Vector2(-45, 231), Rotation2.fromDegrees(0))
                         .build(),
                 bridgeConstraints, SAMPLE_DISTANCE);
-        }                
+
+        //TODO fill out path or remove
+        easySideConeToBridge2 = new Trajectory(
+                new SimplePathBuilder(new Vector2(-95, 218), Rotation2.fromDegrees(0))
+                .lineTo(new Vector2(-45, 231), Rotation2.fromDegrees(0))
+                .build(),
+        bridgeConstraints, SAMPLE_DISTANCE);
+
+        easySideConeToBridge2Half = new Trajectory(
+                new SimplePathBuilder(new Vector2(-95, 218), Rotation2.fromDegrees(0))
+                .lineTo(new Vector2(-45, 231), Rotation2.fromDegrees(0))
+                .build(),
+        bridgeConstraints, SAMPLE_DISTANCE);
+
+        threeObjectCloseEnd1 = new Trajectory(
+                new SimplePathBuilder(new Vector2(-95, 218), Rotation2.fromDegrees(0))
+                .lineTo(new Vector2(-45, 231), Rotation2.fromDegrees(0))
+                .build(),
+        bridgeConstraints, SAMPLE_DISTANCE);
+
+        threeObjectCloseEnd2 = new Trajectory(
+                new SimplePathBuilder(new Vector2(-95, 218), Rotation2.fromDegrees(0))
+                .lineTo(new Vector2(-45, 231), Rotation2.fromDegrees(0))
+                .build(),
+        bridgeConstraints, SAMPLE_DISTANCE);
+
+        sevenFeet = new Trajectory(
+                new SimplePathBuilder(new Vector2(0, 0), Rotation2.fromDegrees(0))
+                .lineTo(new Vector2(7*12, 0))
+                .build(),
+        bridgeConstraints, SAMPLE_DISTANCE);
+
+        }  
     
     @SuppressWarnings("unused")
     private Path getPath(String name) throws IOException {

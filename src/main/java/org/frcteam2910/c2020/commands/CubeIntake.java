@@ -35,13 +35,5 @@ public class CubeIntake extends SequentialCommandGroup{
                 })
             );
         }
-
-        this.handleInterrupt(()->{
-            intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM, true);
-            intake.stopRollingOnTriggeredCubeIntakeDIO = false;
-            intake.stopRollingOnTriggeredArmIntakeDIO = true;
-            intake.setArmIntakeRPM(Constants.ARM_CUBE_INTAKE_COLLECT_RPM, true);
-            intake.setCubeIntakeDeployTargetPosition(Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES);
-        });
-    }
+    }    
 }

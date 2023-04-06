@@ -232,7 +232,7 @@ public class RobotContainer {
             // If we grabbed a cone, we want to continue intaking until we're back at ZERO
             new SequentialCommandGroup(
                 new SetArmSafely(true, true),
-                new SetArmIntakeRPM(intake, 0, true),
+                new SetArmIntakeRPM(intake, 50, true),
                 new SetServosIn(intake)
             )
             );

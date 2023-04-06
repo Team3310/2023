@@ -14,37 +14,39 @@ public class CubeIntakeAuton extends SequentialCommandGroup{
     public CubeIntakeAuton(Intake intake, boolean handoff, Trajectory trajectory){
         if(handoff){
             this.addCommands(
-                new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES),
-                new ParallelRaceGroup(
-                    //wait for at least 5 seconds or the trajectory duration(if<5) or until the arm gets to where its supposed to be
-                    //shouldn't need to worry about arm intake rolling into cube lift intake but just in case
-                    new SetArmSafely(ScoreMode.CUBE_INTAKE),
-                    new WaitCommand(trajectory.getDuration()<10?trajectory.getDuration()<5?trajectory.getDuration():5:trajectory.getDuration()*0.5)    
-                ),
-                new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM, true),
-                new InstantCommand(()->{
-                    intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM, true);
-                    intake.stopRollingOnTriggeredCubeIntakeDIO = false;
-                    intake.stopRollingOnTriggeredArmIntakeDIO = true;
-                })
+                new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES).
+                andThen(
+                    new ParallelRaceGroup(
+                        //wait for at least 5 seconds or the trajectory duration(if<5) or until the arm gets to where its supposed to be
+                        //shouldn't need to worry about arm intake rolling into cube lift intake but just in case
+                        new SetArmSafely(ScoreMode.CUBE_INTAKE),
+                        new WaitCommand(2.5)
+                        //new WaitCommand(trajectory.getDuration()<10?trajectory.getDuration()<5?trajectory.getDuration():5:trajectory.getDuration()*0.5)    
+                    )
+                ).
+                andThen(
+                    new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM, true)
+                ).andThen(
+                    new InstantCommand(()->{
+                        intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM, true);
+                        intake.stopRollingOnTriggeredCubeIntakeDIO = false;
+                        intake.stopRollingOnTriggeredArmIntakeDIO = true;
+                    })
+                )
             );
         }else{
             this.addCommands(
-                new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES),
-                new InstantCommand(()->{
-                    intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM, true);
-                    intake.stopRollingOnTriggeredCubeIntakeDIO = true;
-                    intake.stopRollingOnTriggeredArmIntakeDIO = true;
-                })
+                new SequentialCommandGroup(
+                    new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES).
+                    andThen(
+                        new InstantCommand(()->{
+                            intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM, true);
+                            intake.stopRollingOnTriggeredCubeIntakeDIO = true;
+                            intake.stopRollingOnTriggeredArmIntakeDIO = true;
+                        })
+                    )
+                )
             );
         }
-
-        this.handleInterrupt(()->{
-            intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM, true);
-            intake.stopRollingOnTriggeredCubeIntakeDIO = false;
-            intake.stopRollingOnTriggeredArmIntakeDIO = true;
-            intake.setArmIntakeRPM(Constants.ARM_CUBE_INTAKE_COLLECT_RPM, true);
-            intake.setCubeIntakeDeployTargetPosition(Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES);
-        });
     }
 }

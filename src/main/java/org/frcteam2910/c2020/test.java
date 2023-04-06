@@ -1,6 +1,7 @@
 package org.frcteam2910.c2020;
 
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
+import org.frcteam2910.c2020.subsystems.Intake;
 import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import org.frcteam2910.c2020.util.SideChooser.SideMode;
 import org.frcteam2910.common.control.Trajectory;
@@ -10,7 +11,8 @@ public class test {
     static AutonomousTrajectories test = new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, SideMode.BLUE);
 
     public static void main(String[] args){
-        printCoords(test.getEasySideConeToPickup1(false), test.getEasySideConeToPickup1(true)); 
+        Intake test = Intake.getInstance();
+        System.out.println(test.ArmRoller_RpmToVelocityTicks(Constants.ARM_CONE_INTAKE_SPIT_RPM));
     }
 
     public static void printCoords(Trajectory trajectory, Trajectory trajectory2){

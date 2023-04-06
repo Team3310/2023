@@ -10,7 +10,7 @@ import org.frcteam2910.c2020.util.ScoreMode;
 
 public class SetArmSafelyAuton extends SequentialCommandGroup {
     private Arm arm;
-    private final double DEGREES_DOWN = 8.5;
+    private final double DEGREES_DOWN = 4.0;
 
     public SetArmSafelyAuton(ScoreMode targetScoreMode, boolean afterIntake, boolean isCone) {
         this.arm = Arm.getInstance();
@@ -63,12 +63,5 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
                 );
             }
         }
-
-        // this.handleInterrupt(()->{
-        //     if(arm.withinInches(1.0, 0.0)){
-        //         arm.setArmDegreesPositionAbsolute(targetScoreMode.getAngle()-DEGREES_DOWN);
-        //         arm.setTargetArmInchesPositionAbsolute(targetScoreMode.getInches());
-        //     }
-        // });
     }
 }    

@@ -75,13 +75,14 @@ public class Intake implements Subsystem{
         final StatorCurrentLimitConfiguration statorCurrentConfigs = new StatorCurrentLimitConfiguration();
         statorCurrentConfigs.currentLimit = 80.0;
         statorCurrentConfigs.enable = true;
-        intakeMotor.configStatorCurrentLimit(statorCurrentConfigs);  
         cubeIntakeRollerMotor.configStatorCurrentLimit(statorCurrentConfigs);
+        statorCurrentConfigs.currentLimit = 80.0;
+        intakeMotor.configStatorCurrentLimit(statorCurrentConfigs);  
         statorCurrentConfigs.currentLimit = 40.0;
         cubeIntakeLiftMotor.configStatorCurrentLimit(statorCurrentConfigs);      
 
         intakeMotor.config_kF(kIntakeVelocitySlot, 0.0);
-        intakeMotor.config_kP(kIntakeVelocitySlot, 0.10);
+        intakeMotor.config_kP(kIntakeVelocitySlot, 0.05);
         intakeMotor.config_kI(kIntakeVelocitySlot, 0.0001);
         intakeMotor.config_kD(kIntakeVelocitySlot, 0.0);
         intakeMotor.config_IntegralZone(kIntakeVelocitySlot, (int)this.ArmRoller_RpmToVelocityTicks(200));
@@ -133,7 +134,8 @@ public class Intake implements Subsystem{
             setIntakeHold = true;
             controlMode = IntakeControlMode.HOLD;
             intakeMotor.selectProfileSlot(kIntakePositionSlot, 0);
-            intakeMotor.set(TalonFXControlMode.Position, intakeMotor.getSelectedSensorPosition()+getArmIntakeTicksforDegrees(360));
+            System.out.println("ran intake hold position");
+            intakeMotor.set(TalonFXControlMode.Position, intakeMotor.getSelectedSensorPosition()-getArmIntakeTicksforDegrees(coneSensor.get()?-0:120));
         }
 
         public void setArmIntakeHoldTime(){
@@ -250,6 +252,7 @@ public class Intake implements Subsystem{
 
         // These are for velocity units
         public double ArmRoller_RpmToVelocityTicks(double rpm) {
+            SmartDashboard.putNumber("intake rpm ticks per 100 ms", ((rpm * Constants.ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) / (10*60)));
             return (rpm * Constants.ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) / (10*60);
         }
         public double ArmRoller_VelocityTicksToRpm(double ticksPer100ms) {

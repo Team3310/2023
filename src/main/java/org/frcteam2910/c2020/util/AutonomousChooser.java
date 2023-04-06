@@ -83,9 +83,11 @@ public class AutonomousChooser {
             case ONE_OBJECT_M_BALANCE:
                 return new OneObjectMidMobilityBalance(container, trajectories); 
             case SCORE_ONE_TEST:
-                return new OneObjectMid(container, trajectories);            
+                return new OneObjectMidTest(container, trajectories);  
+            case THREE_OBJECT_FAR:
+                return new LeftThreeObjectFarSpit(container, trajectories);              
             default:
-                return getSevenFeet(container);
+                return new OneObjectMid(container, trajectories);
         }
         //return get10BallAutoCommand(container);
     }

@@ -42,7 +42,7 @@ public class Constants
     public static final int DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT = 2;
 
     public static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET = -Math.toRadians(35.77); //35.77 Practice robot settings
-    public static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(201.71); //201.71 Comp settings
+    public static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(354.375); //201.71 Comp settings
 
     /********************************************************************************************************************/
 
@@ -110,12 +110,12 @@ public class Constants
     public static final double ARM_EXTENDER_HOME_INCHES = 0.0;
 
     public static final int ARM_DEFAULT_PID_SLOT = 0;
-    public static final int ARM_INTAKE_PID_SLOT = 1;
+    public static final int ARM_INTAKE_PID_SLOT = 0;
+    public static final int ARM_LOW_PID_SLOT = 0;
+    public static final int ARM_CONE_MID_PID_SLOT = 1;
+    public static final int ARM_CONE_HIGH_PID_SLOT = 1;
     public static final int ARM_CUBE_HIGH_PID_SLOT = 2;
-    public static final int ARM_CUBE_MID_PID_SLOT = 3;
-    public static final int ARM_CONE_HIGH_PID_SLOT = 4;
-    public static final int ARM_CONE_MID_PID_SLOT = 5;
-    public static final int ARM_LOW_PID_SLOT = 6;
+    public static final int ARM_CUBE_MID_PID_SLOT = 2;
 
     // Intake Constants
 
@@ -123,12 +123,12 @@ public class Constants
     public static final double ARM_INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO = 50.0 / 11.0;
     public static final double ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = ARM_INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * ENCODER_TICKS_PER_MOTOR_REVOLUTION;
 
-    public static final double ARM_CONE_INTAKE_COLLECT_RPM = 1500.0;
+    public static final double ARM_CONE_INTAKE_COLLECT_RPM = 2000.0;
     public static final double ARM_CUBE_INTAKE_COLLECT_RPM = -350.0;
-    public static final double ARM_CONE_INTAKE_SPIT_RPM = -1300.0;
+    public static final double ARM_CONE_INTAKE_SPIT_RPM = -2600.0;
     public static final double ARM_CUBE_INTAKE_SPIT_RPM = 400.0;
     public static final double INTAKE_STOP_RPM_THRESHOLD = 5.0;
-    public static final IntakeStopMode INTAKE_DEFAULT_STOP_MODE = IntakeStopMode.RPM;
+    public static final IntakeStopMode INTAKE_DEFAULT_STOP_MODE = IntakeStopMode.POSITION;
 
     // CUBE INTAKE DEPLOY
     public static final double CUBE_INTAKE_DEPLOY_MOTOR_RATIO = (64.0/11.0)*
