@@ -126,14 +126,13 @@ public class RobotContainer {
         primaryController.getLeftTriggerAxis()
             .onTrue(
                 new SequentialCommandGroup(
-                    new SetArmSafely(ScoreMode.CUBE_INTAKE),
                     new ParallelCommandGroup(
                         new InstantCommand(()->{
                             intake.stopRollingOnTriggeredCubeIntakeDIO = false;
                             intake.stopRollingOnTriggeredArmIntakeDIO = false;
                             intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true);
                         }),
-                        new SetArmIntakeRPM(intake, 1000, true)
+                        new SetArmIntakeRPM(intake, Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM, true)
                     )
                 )
             )

@@ -27,17 +27,20 @@ public class SetArmSafely extends SequentialCommandGroup {
 
         this.arm = Arm.getInstance();
         Intake intake = Intake.getInstance();
-        arm.setRotationPIDSlot(targetScoreMode);
 
         // arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO);
         this.addCommands(
-            new InstantCommand(()->arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.HOME))
+            new InstantCommand(()->{
+                arm.clearRotatorIWindup();
+                arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.HOME);
+                arm.setRotationPIDSlot(targetScoreMode);
+            })
         );
 
         addRequirements(arm);
 
         if(!afterIntake){
-            if(targetScoreMode!=ScoreMode.CUBE_INTAKE){
+            if(targetScoreMode!=ScoreMode.CUBE_INTAKE || targetScoreMode==ScoreMode.HOME){
                 this.addCommands(
                     new SetArmExtender(arm, 0.0, true),
                     new SetArmRotator(arm, targetScoreMode.getAngle(), true),
@@ -70,8 +73,10 @@ public class SetArmSafely extends SequentialCommandGroup {
                         intake.stopRollingOnTriggeredCubeIntakeDIO = false;
                         intake.stopRollingOnTriggeredArmIntakeDIO = false;
                         intake.resetIntakeDIOTimestamp();
-                        intake.setCubeRollerRPM(0, true);
-                        intake.setArmIntakeRPM(0, true);
+                        if(!intake.setIntakeHold){
+                            intake.setCubeRollerRPM(0, true);
+                            intake.setArmIntakeRPM(0, true);
+                        }
                     })
                 );
             }

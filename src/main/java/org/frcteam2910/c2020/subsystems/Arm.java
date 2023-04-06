@@ -83,7 +83,7 @@ public class Arm implements Subsystem{
         armTranslationMotor.setNeutralMode(NeutralMode.Brake);
 
         armRotationMotor.configMotionCruiseVelocity(20000);
-        armRotationMotor.configMotionAcceleration(28000);
+        armRotationMotor.configMotionAcceleration(14000);
         armRotationMotor.configMotionSCurveStrength(4);
 
         armTranslationMotor.configMotionCruiseVelocity(20000);
@@ -114,29 +114,33 @@ public class Arm implements Subsystem{
         armRotationMotor.config_kD(Constants.ARM_LOW_PID_SLOT, 0.0);
         //cube high pid slot
         armRotationMotor.config_kF(Constants.ARM_CUBE_HIGH_PID_SLOT, 0.0);
-        armRotationMotor.config_kP(Constants.ARM_CUBE_HIGH_PID_SLOT, 0.03);
-        armRotationMotor.config_kI(Constants.ARM_CUBE_HIGH_PID_SLOT, 0.00001);
+        armRotationMotor.config_kP(Constants.ARM_CUBE_HIGH_PID_SLOT, 0.05);
+        armRotationMotor.config_kI(Constants.ARM_CUBE_HIGH_PID_SLOT, 0.0);
         armRotationMotor.config_kD(Constants.ARM_CUBE_HIGH_PID_SLOT, 0.0);
         //cube mid pid slot
         armRotationMotor.config_kF(Constants.ARM_CUBE_MID_PID_SLOT, 0.0);
-        armRotationMotor.config_kP(Constants.ARM_CUBE_MID_PID_SLOT, 0.03);
-        armRotationMotor.config_kI(Constants.ARM_CUBE_MID_PID_SLOT, 0.00001);
+        armRotationMotor.config_kP(Constants.ARM_CUBE_MID_PID_SLOT, 0.05);
+        armRotationMotor.config_kI(Constants.ARM_CUBE_MID_PID_SLOT, 0.0);
         armRotationMotor.config_kD(Constants.ARM_CUBE_MID_PID_SLOT, 0.0);
         //cone high pid slot
         armRotationMotor.config_kF(Constants.ARM_CONE_HIGH_PID_SLOT, 0.0);
-        armRotationMotor.config_kP(Constants.ARM_CONE_HIGH_PID_SLOT, 0.03);
-        armRotationMotor.config_kI(Constants.ARM_CONE_HIGH_PID_SLOT, 0.00001);
+        armRotationMotor.config_kP(Constants.ARM_CONE_HIGH_PID_SLOT, 0.05);
+        armRotationMotor.config_kI(Constants.ARM_CONE_HIGH_PID_SLOT, 0.01);
         armRotationMotor.config_kD(Constants.ARM_CONE_HIGH_PID_SLOT, 0.0);
         //cone mid pid slot
         armRotationMotor.config_kF(Constants.ARM_CONE_MID_PID_SLOT, 0.0);
-        armRotationMotor.config_kP(Constants.ARM_CONE_MID_PID_SLOT, 0.03);
-        armRotationMotor.config_kI(Constants.ARM_CONE_MID_PID_SLOT, 0.00001);
+        armRotationMotor.config_kP(Constants.ARM_CONE_MID_PID_SLOT, 0.05);
+        armRotationMotor.config_kI(Constants.ARM_CONE_MID_PID_SLOT, 0.01);
         armRotationMotor.config_kD(Constants.ARM_CONE_MID_PID_SLOT, 0.0);
         //#endregion
     }
     //#endregion
     
     //#region rotation Methods
+    public void clearRotatorIWindup(){
+        armRotationMotor.setIntegralAccumulator(0);
+    }
+
     public boolean withinAngle(double tolerance, double angle){
         // SmartDashboard.putNumber("angle checking", angle);
         // SmartDashboard.putNumber("result", Math.abs(getArmDegreesIntegrated()-angle));
@@ -195,6 +199,7 @@ public class Arm implements Subsystem{
     }
 
     public synchronized void setArmDegreesPositionAbsolute(double degrees) {
+        armRotationMotor.setIntegralAccumulator(0);
         rotationControlMode = ArmControlMode.HOLD;
         armRotationMotor.setIntegralAccumulator(0);
         targetDegreesTicks = getArmDegreesEncoderTicks(limitArmDegrees(degrees));

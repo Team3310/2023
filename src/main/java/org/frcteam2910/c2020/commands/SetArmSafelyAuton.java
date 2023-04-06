@@ -14,10 +14,13 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
 
     public SetArmSafelyAuton(ScoreMode targetScoreMode, boolean afterIntake, boolean isCone) {
         this.arm = Arm.getInstance();
-        arm.setRotationPIDSlot(targetScoreMode);
 
         this.addCommands(
-            new InstantCommand(()->arm.setScoreMode(targetScoreMode))
+            new InstantCommand(()->{
+                arm.setScoreMode(targetScoreMode);
+                arm.clearRotatorIWindup();
+                arm.setRotationPIDSlot(targetScoreMode);
+            })
         );
 
         addRequirements(arm);

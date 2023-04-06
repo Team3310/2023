@@ -133,7 +133,7 @@ public class Intake implements Subsystem{
             setIntakeHold = true;
             controlMode = IntakeControlMode.HOLD;
             intakeMotor.selectProfileSlot(kIntakePositionSlot, 0);
-            intakeMotor.set(TalonFXControlMode.Position, intakeMotor.getSelectedSensorPosition()+getArmIntakeTicksforDegrees(90));
+            intakeMotor.set(TalonFXControlMode.Position, intakeMotor.getSelectedSensorPosition()+getArmIntakeTicksforDegrees(360));
         }
 
         public void setArmIntakeHoldTime(){
@@ -290,7 +290,7 @@ public class Intake implements Subsystem{
         //#endregion
     //#endregion
 
-    boolean setIntakeHold = false;
+    public boolean setIntakeHold = false;
 
     @Override
     public void periodic(){
