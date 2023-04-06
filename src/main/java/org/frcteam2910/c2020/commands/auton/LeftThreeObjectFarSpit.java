@@ -27,16 +27,15 @@ public class LeftThreeObjectFarSpit extends AutonCommandBase {
             new SetArmSafelyAuton(ScoreMode.CONE_MID, false, false),
             new ScoreConeAuton(intake),
             new SetArmIntakeRPM(intake, 0, true),
-            new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart1(isBlue)).
-                alongWith(
-                    new CubeIntakeAuton(intake, true, trajectories.getThreeObjectFarPart1(isBlue))
-                ),
+            new ParallelDeadlineGroup(
+                new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart1(isBlue)),
+                new CubeIntake(intake, true)
+            ),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart2(isBlue)),
                 new SequentialCommandGroup(
-                    new InstantCommand(()->intake.setCubeRollerRPM(0, true)).andThen(
-                        new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES)
-                    ),
+                    new InstantCommand(()->intake.setCubeRollerRPM(0, true)),
+                    new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
                     new WaitForEndOfTrajectory(
                         trajectories.getThreeObjectFarPart2(isBlue),
                         1.0,

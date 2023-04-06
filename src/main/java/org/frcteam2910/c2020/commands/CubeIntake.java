@@ -16,7 +16,7 @@ public class CubeIntake extends SequentialCommandGroup{
                 new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES),
                 new ParallelRaceGroup(
                     new SetArmSafely(ScoreMode.CUBE_INTAKE),
-                    new WaitCommand(2.0)    
+                    new WaitCommand(1.0)    
                 ),
                 new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM, true),
                 new InstantCommand(()->{

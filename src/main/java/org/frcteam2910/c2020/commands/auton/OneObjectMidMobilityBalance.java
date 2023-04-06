@@ -25,12 +25,10 @@ public class OneObjectMidMobilityBalance extends AutonCommandBase {
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
-            new InstantCommand(()->drive.setBridgeDriveVoltage(1)),
             new ParallelDeadlineGroup(
-                new WaitCommand(0.9),
+                new WaitCommand(1.1),
                 new CubeIntake(intake, true)
             ),
-            new WaitCommand(0.2),
             new InstantCommand(()->{
                 intake.setCubeIntakeDeployTargetPosition(Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES);
                 drive.setBridgeDriveVoltage(6);
