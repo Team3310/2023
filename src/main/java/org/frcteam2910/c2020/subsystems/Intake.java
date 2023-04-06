@@ -45,7 +45,7 @@ public class Intake implements Subsystem{
 
     boolean hasSetIntakeZero = false;
     private IntakeControlMode controlMode = IntakeControlMode.MANUAL;
-    private IntakeStopType intakeStopType = IntakeStopType.RPM;
+    private IntakeStopMode intakeStopType = Constants.INTAKE_DEFAULT_STOP_MODE;
 
     private static Intake INSTANCE=null;
 
@@ -349,11 +349,11 @@ public class Intake implements Subsystem{
 	public IntakeControlMode getControlMode() {
 		return controlMode;
 	}
-    public void setStopType(IntakeStopType type) {
+    public void setStopType(IntakeStopMode type) {
 		this.intakeStopType = type;
 	}
 
-    public enum IntakeStopType{
+    public enum IntakeStopMode{
         RPM,
         POSITION,
         TIME,
