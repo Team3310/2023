@@ -1,5 +1,6 @@
 package org.frcteam2910.c2020.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
@@ -27,6 +28,8 @@ public class SetArmSafely extends SequentialCommandGroup {
 
         this.arm = Arm.getInstance();
         Intake intake = Intake.getInstance();
+
+        SmartDashboard.putNumber("commanded angle", targetScoreMode.getAngle());
 
         // arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO);
         this.addCommands(

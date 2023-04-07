@@ -126,12 +126,12 @@ public class Arm implements Subsystem{
         armRotationMotor.config_kD(Constants.ARM_CUBE_MID_PID_SLOT, 0.0);
         //cone high pid slot
         armRotationMotor.config_kF(Constants.ARM_CONE_HIGH_PID_SLOT, 0.0);
-        armRotationMotor.config_kP(Constants.ARM_CONE_HIGH_PID_SLOT, 0.03);
+        armRotationMotor.config_kP(Constants.ARM_CONE_HIGH_PID_SLOT, 0.04);
         armRotationMotor.config_kI(Constants.ARM_CONE_HIGH_PID_SLOT, 0.00001);
         armRotationMotor.config_kD(Constants.ARM_CONE_HIGH_PID_SLOT, 0.0);
         //cone mid pid slot
         armRotationMotor.config_kF(Constants.ARM_CONE_MID_PID_SLOT, 0.0);
-        armRotationMotor.config_kP(Constants.ARM_CONE_MID_PID_SLOT, 0.03);
+        armRotationMotor.config_kP(Constants.ARM_CONE_MID_PID_SLOT, 0.04);
         armRotationMotor.config_kI(Constants.ARM_CONE_MID_PID_SLOT, 0.00001);
         armRotationMotor.config_kD(Constants.ARM_CONE_MID_PID_SLOT, 0.0);
         // #endregion
