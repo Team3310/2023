@@ -38,7 +38,7 @@ public class LeftThreeObjectFarSpit extends AutonCommandBase {
                     new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
                     new WaitForEndOfTrajectory(
                         trajectories.getThreeObjectFarPart2(isBlue),
-                        1.0,
+                        1.5,
                         new CubeSpit(intake)
                     )
                 )

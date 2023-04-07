@@ -133,14 +133,14 @@ public class AutonomousTrajectories
         threeObjectFarPart2 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart1), getEndRotation(threeObjectFarPart1))
                         .lineTo(new Vector2(188, -15), Rotation2.fromDegrees(-5))
-                        .lineTo(new Vector2(160, -15))
+                        .lineTo(new Vector2(148, -15))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
         threeObjectFarPart3 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart2), getEndRotation(threeObjectFarPart2))
-                        .lineTo(new Vector2(197, -15), Rotation2.fromDegrees(160))
-                        .lineTo(new Vector2(231, -81))
+                        .lineTo(new Vector2(185, -15), Rotation2.fromDegrees(160))
+                        .lineTo(new Vector2(219, -81))
                         .build(),
                 mediumSlowConstraints, SAMPLE_DISTANCE
         );
@@ -170,14 +170,14 @@ public class AutonomousTrajectories
         threeObjectFarPart2Blue = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart1Blue), getEndRotation(threeObjectFarPart1Blue))
                         .lineTo(new Vector2(188, 15), Rotation2.fromDegrees(5))
-                        .lineTo(new Vector2(160, 15))
+                        .lineTo(new Vector2(148, 15))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
         threeObjectFarPart3Blue = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart2Blue), getEndRotation(threeObjectFarPart2Blue))
-                        .lineTo(new Vector2(197, 15), Rotation2.fromDegrees(-160))
-                        .lineTo(new Vector2(231, 81))
+                        .lineTo(new Vector2(185, 15), Rotation2.fromDegrees(-160))
+                        .lineTo(new Vector2(219, 81))
                         .build(),
                 mediumSlowConstraints, SAMPLE_DISTANCE
         );
