@@ -191,7 +191,7 @@ public class AutonomousTrajectories
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart3Blue), getEndRotation(threeObjectFarPart3Blue))
                         .lineTo(new Vector2(173, 15), Rotation2.fromDegrees(-180))
                         .lineTo(new Vector2(15, 30))
-                        .lineTo(new Vector2(-12, 30), Rotation2.fromDegrees(-195))
+                        .lineTo(new Vector2(-20, 30), Rotation2.fromDegrees(-195))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
