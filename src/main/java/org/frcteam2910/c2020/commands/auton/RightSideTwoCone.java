@@ -9,6 +9,7 @@ import org.frcteam2910.c2020.util.ScoreMode;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class RightSideTwoCone extends AutonCommandBase {
@@ -20,23 +21,11 @@ public class RightSideTwoCone extends AutonCommandBase {
         boolean isBlue = getSide(container);
         resetRobotPose(container, trajectories.getEasySideConeToPickup1(isBlue));
         this.addCommands(
-            new SetArmSafelyAuton(ScoreMode.CONE_MID, false, false),
+            new SetArmSafelyAuton(ScoreMode.CONE_HIGH, false, true),
             new ScoreConeAuton(intake),
-            new ParallelCommandGroup(
-                new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPickup1(isBlue)),
-                new CubeIntakeAuton(intake, true, trajectories.getEasySideConeToPickup1(isBlue))
-            ),
-            new WaitCommand(0.1),
-            new ParallelCommandGroup(
-                new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPlace1(isBlue)),
-                new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
-                new InstantCommand(()->{
-                    intake.setCubeRollerRPM(0, true);
-                    intake.setArmIntakeRPM(0, true);
-                }),
-                new SetArmSafelyAuton(ScoreMode.CONE_MID, false, false)
-            ),
-            new ScoreCubeAuton(intake)
+            new ParallelDeadlineGroup(
+                new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPickup1(isBlue))
+            )
         );
     }
 }

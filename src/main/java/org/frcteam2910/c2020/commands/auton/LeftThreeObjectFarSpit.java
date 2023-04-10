@@ -36,6 +36,10 @@ public class LeftThreeObjectFarSpit extends AutonCommandBase {
                 new SequentialCommandGroup(
                     new InstantCommand(()->intake.setCubeRollerRPM(0, true)),
                     new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
+                    new SequentialCommandGroup(
+                        new WaitCommand(0.3),
+                        new InstantCommand(()->intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true))
+                    ),
                     new WaitForEndOfTrajectory(
                         trajectories.getThreeObjectFarPart2(isBlue),
                         1.5,

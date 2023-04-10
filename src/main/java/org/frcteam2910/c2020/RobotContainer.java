@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 
@@ -132,7 +133,10 @@ public class RobotContainer {
                             intake.stopRollingOnTriggeredArmIntakeDIO = false;
                             intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true);
                         }),
-                        new SetArmIntakeRPM(intake, Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM, true)
+                        new SequentialCommandGroup(
+                            new WaitCommand(0.5),
+                            new SetArmIntakeRPM(intake, Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM, true)
+                        )
                     )
                 )
             )

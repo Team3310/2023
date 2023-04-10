@@ -121,7 +121,7 @@ public class AutonomousTrajectories
                         .build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
-//#region Three Object Far
+//#region Three Object Bump
         //#region Red - Three Object Far
         threeObjectFarPart1 = new Trajectory(
                 new SimplePathBuilder(new Vector2(0,0), Rotation2.fromDegrees(180))
@@ -141,6 +141,7 @@ public class AutonomousTrajectories
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart2), getEndRotation(threeObjectFarPart2))
                         .lineTo(new Vector2(185, -15), Rotation2.fromDegrees(160))
                         .lineTo(new Vector2(219, -66))
+                        .lineTo(new Vector2(231, -66))
                         .build(),
                 mediumSlowConstraints, SAMPLE_DISTANCE
         );
@@ -153,8 +154,8 @@ public class AutonomousTrajectories
         threeObjectFarPart4B = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart3), getEndRotation(threeObjectFarPart3))
                         .lineTo(new Vector2(173, -15), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(15, -30))
-                        .lineTo(new Vector2(-15, -30), Rotation2.fromDegrees(195))
+                        .lineTo(new Vector2(68, -15))
+                        .lineTo(new Vector2(-3, -40), Rotation2.fromDegrees(195))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
@@ -197,7 +198,7 @@ public class AutonomousTrajectories
         );
         //#endregion
 //#endregion
-//#region Three Object Close
+//#region Three Object IDK
         threeObjectClosePart1 = new Trajectory(
                 new SimplePathBuilder(new Vector2(259.5, 297.5), Rotation2.fromDegrees(0))
                         .lineTo(new Vector2(58.75, 279))
@@ -338,27 +339,26 @@ public class AutonomousTrajectories
 //#endregion
 //#region Easy Side
         //#region Red - Easy Side
-        easySideConeToPickUp2 =
-                new Trajectory(new SimplePathBuilder(new Vector2(-246, 140.68), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(-123.3, 140.68), Rotation2.fromDegrees(225))
-                        .arcTo(new Vector2(-28.95271996, 195.00), new Vector2(-123.29914997, 246.99918908)).build(),
+        easySideConeToPickUp1 =
+                new Trajectory(new SimplePathBuilder(new Vector2(0, 0), Rotation2.fromDegrees(180))
+                        .lineTo(new Vector2(243, 18.0))
+                        .build(),
                         mediumConstraints, SAMPLE_DISTANCE);
 
-        easySideConeToPlace2 = new Trajectory(
-                new SimplePathBuilder(new Vector2(-28.95271996, 195.00), Rotation2.fromDegrees(225))
-                        .arcTo(new Vector2(-123.3, 140.68), new Vector2(-123.29914997, 246.99918908))
-                        .lineTo(new Vector2(-250, 146.68), Rotation2.fromDegrees(160))
+        easySideConeToPlace1 = new Trajectory(
+                new SimplePathBuilder(getEndCoords(easySideConeToPickUp1), getEndRotation(easySideConeToPickUp1))
+                        .lineTo(new Vector2(0.0, 18.0))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE);
 
 
-        easySideConeToPickUp1 = new Trajectory(
+        easySideConeToPickUp2 = new Trajectory(
                 new SimplePathBuilder(new Vector2(-250, 119), Rotation2.fromDegrees(180))
                         .lineTo(new Vector2(-32.1, 140.5))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE);        
 
-        easySideConeToPlace1 = new Trajectory(
+        easySideConeToPlace2 = new Trajectory(
                 new SimplePathBuilder(new Vector2(-32.1, 140.5), Rotation2.fromDegrees(180))
                         .lineTo(new Vector2(-246, 140.68))
                         .build(),
