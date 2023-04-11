@@ -12,6 +12,7 @@ import org.frcteam2910.c2020.util.ScoreMode;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class LeftThreeObjectFarSpit extends AutonCommandBase {
@@ -25,19 +26,25 @@ public class LeftThreeObjectFarSpit extends AutonCommandBase {
         this.addCommands(
             new SetArmSafelyAuton(ScoreMode.CONE_MID, false, false),
             new ScoreConeAuton(intake),
-            new SetArmIntakeRPM(intake, 0),
+            new SetArmIntakeRPM(intake, 0, true),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart1(isBlue)),
-                new CubeIntakeAuton(intake, true, trajectories.getThreeObjectFarPart1(isBlue))
+                new CubeIntake(intake, true)
             ),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart2(isBlue)),
-                new InstantCommand(()->intake.setCubeRollerRPM(0)),
-                new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
-                new WaitForEndOfTrajectory(
-                    trajectories.getThreeObjectFarPart2(isBlue),
-                    1.0,
-                    new CubeSpit(intake)
+                new SequentialCommandGroup(
+                    new InstantCommand(()->intake.setCubeRollerRPM(0, true)),
+                    new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
+                    new SequentialCommandGroup(
+                        new WaitCommand(0.3),
+                        new InstantCommand(()->intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true))
+                    ),
+                    new WaitForEndOfTrajectory(
+                        trajectories.getThreeObjectFarPart2(isBlue),
+                        1.5,
+                        new CubeSpit(intake)
+                    )
                 )
             ),
             new WaitCommand(0.3),
@@ -48,13 +55,15 @@ public class LeftThreeObjectFarSpit extends AutonCommandBase {
             new WaitCommand(0.2),
             new ParallelCommandGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart4B(isBlue)),
-                new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
                 new SequentialCommandGroup(
-                    new SetArmSafely(ScoreMode.HOME),
-                    new WaitForEndOfTrajectory(
-                        trajectories.getThreeObjectFarPart4B(isBlue),
-                        2,
-                        new SetArmSafely(ScoreMode.CUBE_MID)
+                    new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
+                    new SequentialCommandGroup(
+                        new SetArmSafely(ScoreMode.HOME),
+                        new WaitForEndOfTrajectory(
+                            trajectories.getThreeObjectFarPart4B(isBlue),
+                            2,
+                            new SetArmSafely(ScoreMode.CUBE_MID)
+                        )
                     )
                 )
             ),

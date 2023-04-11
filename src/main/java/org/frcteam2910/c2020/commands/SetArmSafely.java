@@ -1,5 +1,6 @@
 package org.frcteam2910.c2020.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
@@ -20,23 +21,29 @@ public class SetArmSafely extends SequentialCommandGroup {
     }
 
     public SetArmSafely(boolean afterIntake, boolean isCone){
-        this(afterIntake?null:ScoreMode.HOME, afterIntake, isCone);
+        this(ScoreMode.HOME, afterIntake, isCone);
     }
 
     public SetArmSafely(ScoreMode targetScoreMode, boolean afterIntake, boolean isCone) {
 
         this.arm = Arm.getInstance();
-        arm.setRotationPIDSlot(targetScoreMode);
+        Intake intake = Intake.getInstance();
+
+        SmartDashboard.putNumber("commanded angle", targetScoreMode.getAngle());
 
         // arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO);
         this.addCommands(
-            new InstantCommand(()->arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.HOME))
+            new InstantCommand(()->{
+                arm.clearRotatorIWindup();
+                arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.HOME);
+                arm.setRotationPIDSlot(targetScoreMode);
+            })
         );
 
         addRequirements(arm);
 
         if(!afterIntake){
-            if(targetScoreMode!=ScoreMode.CUBE_INTAKE){
+            if(targetScoreMode!=ScoreMode.CUBE_INTAKE || targetScoreMode==ScoreMode.HOME){
                 this.addCommands(
                     new SetArmExtender(arm, 0.0, true),
                     new SetArmRotator(arm, targetScoreMode.getAngle(), true),
@@ -46,10 +53,10 @@ public class SetArmSafely extends SequentialCommandGroup {
             else if(targetScoreMode==ScoreMode.CUBE_INTAKE){
                 this.addCommands(
                     // new InstantCommand(()->Intake.getInstance().setCubeIntakeDeployTargetPosition(111)),
-                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_HANDOFF_RPM)),
                     new SetArmExtender(arm, 0.0, true),
                     new SetArmRotator(arm, targetScoreMode.getAngle(), true),
-                    new SetArmExtender(arm, targetScoreMode.getInches(), true)
+                    new SetArmExtender(arm, targetScoreMode.getInches(), true),
+                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_HANDOFF_RPM, true))
                 );
             }
         }else{
@@ -64,46 +71,18 @@ public class SetArmSafely extends SequentialCommandGroup {
             else{
                 this.addCommands(
                     new SetIntakeDeployPosition(Intake.getInstance(), Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES), 
-                    new InstantCommand(()->Intake.getInstance().setCubeRollerRPM(0)),
-                    new SetArmExtender(arm, 0)
+                    new SetArmRotator(arm, ScoreMode.HOME.getAngle()),
+                    new InstantCommand(()->{
+                        intake.stopRollingOnTriggeredCubeIntakeDIO = false;
+                        intake.stopRollingOnTriggeredArmIntakeDIO = false;
+                        intake.resetIntakeDIOTimestamp();
+                        if(!intake.setIntakeHold){
+                            intake.setCubeRollerRPM(0, true);
+                            intake.setArmIntakeRPM(0, true);
+                        }
+                    })
                 );
             }
         }
-
-        // if(startMode != targetScoreMode || (!arm.withinAngle(5.0, targetScoreMode.getAngle()) || !arm.withinInches(0.5, targetScoreMode.getInches()))){
-        //     switch(startMode !=targetScoreMode?ScoreMode.getClosestMode(arm.getArmDegrees()):startMode){
-        //         case HIGH :
-        //         case MID :
-        //             // We check the targetMode == LOW here because we could hit the high/mid scoring positions with the extension if we don't.
-        //             if(targetScoreMode==ScoreMode.ZERO || targetScoreMode==ScoreMode.CONE_INTAKE || targetScoreMode==ScoreMode.CUBE_INTAKE || targetScoreMode==ScoreMode.LOW){
-        //                 // We must SAFELY move to the above positions -- to do this we must retract
-        //                 this.addCommands(new SetArmExtender(arm, 0.0, true));
-        //                 wasUnsafeManeuver = true;
-        //             } break;
-        //         case LOW :
-        //             if(targetScoreMode==ScoreMode.ZERO || targetScoreMode==ScoreMode.CUBE_INTAKE || targetScoreMode==ScoreMode.CONE_INTAKE){
-        //                 // We must SAFELY move to the above positions -- to do this we must retract
-        //                 this.addCommands(new SetArmExtender(arm, 0.0, true));
-        //                 wasUnsafeManeuver = true;
-        //             } break;
-        //         case CONE_INTAKE : 
-        //         case CUBE_INTAKE : 
-        //             if(targetScoreMode == ScoreMode.ZERO) {
-        //                 // If going to Zero position after intaking from the front, bring the object up then in
-        //                 this.addCommands(new SetArmRotator(arm, 45.0, true));
-        //                 this.addCommands(new SetArmExtender(arm, 0.0, true));
-        //                 wasUnsafeManeuver = false;
-        //             } break;
-        //         case ZERO : 
-        //             // We started from zero; the assumption here is that we're fully retracted and have properly zeroed the rotator.
-        //             wasUnsafeManeuver = false;
-        //             break;       
-        //     }
-
-        //     // SmartDashboard.putBoolean("SetArm Retract?", wasUnsafeManeuver);
-        //     // Tell the arm to sequentially move to the target angle, then extend
-        //     this.addCommands(new SetArmRotator(arm, targetScoreMode.getAngle(), true));
-        //     this.addCommands(new SetArmExtender(arm, targetScoreMode.getInches(), true));
-        // }
     }
 }    

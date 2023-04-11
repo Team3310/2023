@@ -34,6 +34,14 @@ public class DriveBalanceCommand extends CommandBase {
         boolean isFalling = Math.abs(lastGravityVector-drive.getZGravityVector())<0.5;
         lastGravityVector = drive.getZGravityVector();
         return (isSlow?isBalanced:isFalling);
+
+        // double averageAngle=0.0;
+        // for(int i=0; i<lastAngles.size();i++){
+        //     averageAngle+=lastAngles.get(i);
+        // }
+        // averageAngle/=5;
+        // boolean isFalling = drive.getStartDegrees()-1>averageAngle;
+        // return (isSlow?isBalanced:distanceTravelled>minTraveledInches&&isFalling);
     }
 
     @Override

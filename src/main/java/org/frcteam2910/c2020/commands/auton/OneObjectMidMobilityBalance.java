@@ -1,11 +1,13 @@
 package org.frcteam2910.c2020.commands.auton;
 
+import org.frcteam2910.c2020.Constants;
 import org.frcteam2910.c2020.RobotContainer;
 import org.frcteam2910.c2020.commands.*;
 import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
@@ -23,10 +25,12 @@ public class OneObjectMidMobilityBalance extends AutonCommandBase {
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
-            new WaitCommand(1.1),
-            new InstantCommand(()->drive.setBridgeDriveVoltage(0)),
-            new WaitCommand(0.2),
+            new ParallelDeadlineGroup(
+                new WaitCommand(1.1),
+                new CubeIntake(intake, true)
+            ),
             new InstantCommand(()->{
+                intake.setCubeIntakeDeployTargetPosition(Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES);
                 drive.setBridgeDriveVoltage(6);
             }),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),

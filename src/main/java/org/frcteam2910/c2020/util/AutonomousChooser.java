@@ -21,13 +21,14 @@ public class AutonomousChooser {
         this.trajectories = trajectories;
 
         autonomousModeChooser.setDefaultOption("Left Three Object Far Spit", AutonomousMode.THREE_OBJECT_FAR);
-        autonomousModeChooser.addOption("Right Three Object", AutonomousMode.THREE_OBJECT_BRIDGE);
-        autonomousModeChooser.addOption("Right Two Object", AutonomousMode.TWO_OBJECT_BRIDGE);
+        autonomousModeChooser.addOption("easy three object", AutonomousMode.THREE_OBJECT_BRIDGE);
+        autonomousModeChooser.addOption("easy two object", AutonomousMode.TWO_OBJECT_BRIDGE);
         autonomousModeChooser.addOption("Right Two Object Balance", AutonomousMode.TWO_OBJECT_BRIDGE_BALANCE);
         autonomousModeChooser.addOption("Right Two Half Object Balance", AutonomousMode.TWO_HALF_OBJECT_BRIDGE_BALANCE);
         autonomousModeChooser.addOption("One Object Bridge Balance", AutonomousMode.ONE_OBJECT_BALANCE);
         autonomousModeChooser.addOption("One Object Bridge Mobility Balance", AutonomousMode.ONE_OBJECT_M_BALANCE);
         autonomousModeChooser.addOption("One Half Object Bridge Balance", AutonomousMode.ONE_HALF_OBJECT_BALANCE);
+        autonomousModeChooser.addOption("SCORE ONE TEST", AutonomousMode.SCORE_ONE_TEST);
   
         // autonomousModeChooser.addOption("7 Feet", AutonomousMode.SEVEN_FEET);
         // autonomousModeChooser.addOption("sCurve", AutonomousMode.S_CURVE);
@@ -80,9 +81,13 @@ public class AutonomousChooser {
             case ONE_HALF_OBJECT_BALANCE:
                 return new OneHalfObjectMidBalance(container, trajectories);
             case ONE_OBJECT_M_BALANCE:
-                return new OneObjectMidMobilityBalance(container, trajectories);         
+                return new OneObjectMidMobilityBalance(container, trajectories); 
+            case SCORE_ONE_TEST:
+                return new OneObjectMidTest(container, trajectories);  
+            case THREE_OBJECT_FAR:
+                return new LeftThreeObjectFarSpit(container, trajectories);              
             default:
-                return getSevenFeet(container);
+                return new OneObjectMid(container, trajectories);
         }
         //return get10BallAutoCommand(container);
     }
@@ -98,8 +103,17 @@ public class AutonomousChooser {
     }
 
     public enum AutonomousMode {
-        THREE_OBJECT_FAR, THREE_OBJECT_BRIDGE, TWO_OBJECT_BRIDGE, TWO_OBJECT_BRIDGE_BALANCE, TWO_HALF_OBJECT_BRIDGE_BALANCE, ONE_OBJECT_BALANCE, ONE_OBJECT_M_BALANCE, ONE_HALF_OBJECT_BALANCE, SEVEN_FEET, S_CURVE 
-        
+        THREE_OBJECT_FAR, 
+        THREE_OBJECT_BRIDGE, 
+        TWO_OBJECT_BRIDGE, 
+        TWO_OBJECT_BRIDGE_BALANCE, 
+        TWO_HALF_OBJECT_BRIDGE_BALANCE, 
+        ONE_OBJECT_BALANCE, 
+        ONE_OBJECT_M_BALANCE, 
+        ONE_HALF_OBJECT_BALANCE, 
+        SEVEN_FEET, 
+        S_CURVE, 
+        SCORE_ONE_TEST,
         ;
     }
 }

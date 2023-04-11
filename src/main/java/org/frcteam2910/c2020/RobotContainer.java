@@ -4,6 +4,7 @@ import org.frcteam2910.c2020.commands.*;
 import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.LimelightMode;
+import org.frcteam2910.c2020.subsystems.Intake.IntakeStopMode;
 import org.frcteam2910.c2020.util.*;
 import org.frcteam2910.common.robot.input.*;
 import org.frcteam2910.common.robot.input.DPadButton.Direction;
@@ -14,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 
@@ -110,22 +112,14 @@ public class RobotContainer {
                     intake.stopRollingOnTriggeredArmIntakeDIO = true;
                     // intake.setCubeIntakeDeployTargetPosition(110);
                     intake.resetIntakeDIOTimestamp();
-                    intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_HANDOFF_RPM * 2.0);
+                    intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_HANDOFF_RPM * 2.0, true);
                 }),
-                new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
+                new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM, true),
                 new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES)
             )
         ).onFalse(
             new SequentialCommandGroup(
-                new SetArmSafely(true, false),
-                new InstantCommand(()->{
-                    intake.stopRollingOnTriggeredCubeIntakeDIO = false;
-                    intake.stopRollingOnTriggeredArmIntakeDIO = false;
-                    intake.resetIntakeDIOTimestamp();
-                    intake.setCubeRollerRPM(0);
-                }),
-                new SetArmIntakeRPM(intake, 0),
-                new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES)
+                new SetArmSafely(true, false)
             )
         );
 
@@ -133,14 +127,16 @@ public class RobotContainer {
         primaryController.getLeftTriggerAxis()
             .onTrue(
                 new SequentialCommandGroup(
-                    new SetArmSafely(ScoreMode.CUBE_INTAKE),
                     new ParallelCommandGroup(
                         new InstantCommand(()->{
                             intake.stopRollingOnTriggeredCubeIntakeDIO = false;
                             intake.stopRollingOnTriggeredArmIntakeDIO = false;
-                            intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM);
+                            intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true);
                         }),
-                        new SetArmIntakeRPM(intake, 1000)
+                        new SequentialCommandGroup(
+                            new WaitCommand(0.5),
+                            new SetArmIntakeRPM(intake, Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM, true)
+                        )
                     )
                 )
             )
@@ -148,9 +144,9 @@ public class RobotContainer {
                 new ParallelCommandGroup(
                     new SetArmSafely(true, false),
                     new InstantCommand(()->{
-                        intake.setCubeRollerRPM(0);
+                        intake.setCubeRollerRPM(0, true);
                     }),
-                    new SetArmIntakeRPM(intake, 0)
+                    new SetArmIntakeRPM(intake, 0, true)
                 )
             );
 
@@ -177,6 +173,12 @@ public class RobotContainer {
                     new InstantCommand(() -> drivetrain.setLimelightMode(LimelightMode.NONE))
                 )
             );
+
+        primaryController.getDPadButton(Direction.UP).onTrue(new InstantCommand(()->intake.setStopType(IntakeStopMode.RPM)));
+
+        primaryController.getDPadButton(Direction.LEFT).onTrue(new InstantCommand(()->intake.setStopType(IntakeStopMode.POSITION)));
+
+        primaryController.getDPadButton(Direction.DOWN).onTrue(new InstantCommand(()->intake.setStopType(IntakeStopMode.TIME)));
         //#endregion
 
         //#region Second/Operator Controller
@@ -227,14 +229,14 @@ public class RobotContainer {
             .onTrue(
                 new SequentialCommandGroup(
                     new SetServosOut(intake),
-                    new SetArmIntakeRPM(intake, Constants.ARM_CONE_INTAKE_COLLECT_RPM),
+                    new SetArmIntakeRPM(intake, Constants.ARM_CONE_INTAKE_COLLECT_RPM, true),
                     new SetArmSafely(ScoreMode.CONE_INTAKE)
                 )    
             ).onFalse(
             // If we grabbed a cone, we want to continue intaking until we're back at ZERO
             new SequentialCommandGroup(
                 new SetArmSafely(true, true),
-                new SetArmIntakeRPM(intake, 0),
+                new SetArmIntakeRPM(intake, 50, true),
                 new SetServosIn(intake)
             )
             );
@@ -243,7 +245,7 @@ public class RobotContainer {
         secondaryController.getRightTriggerAxis()
             .onTrue(
                 new SequentialCommandGroup(
-                    new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM),
+                    new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM, true),
                     new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false),
                     new InstantCommand(() -> {
                         // This flag is set so that we can force stuff to stop moving once cone/cube is in arm intake
@@ -261,7 +263,7 @@ public class RobotContainer {
                     intake.stopRollingOnTriggeredArmIntakeDIO = false;
                     intake.resetIntakeDIOTimestamp();
                 }),
-                new InstantCommand(()->intake.setArmIntakeHold()),
+                new InstantCommand(()->intake.setArmIntakeRPM(0, true)),
                 new SetArmSafely(true, false)
            )
         );
@@ -269,7 +271,7 @@ public class RobotContainer {
         // Outtake Cone
         secondaryController.getLeftBumperButton()
             .onTrue(
-                new SetArmIntakeRPM(intake, Constants.ARM_CONE_INTAKE_SPIT_RPM)
+                new SetArmIntakeRPM(intake, Constants.ARM_CONE_INTAKE_SPIT_RPM, true)
             )
             .onFalse(
                 new PutIntakeZeroAfterOuttake(intake, arm)
@@ -285,7 +287,7 @@ public class RobotContainer {
                         intake.stopRollingOnTriggeredArmIntakeDIO = false;
                         intake.resetIntakeDIOTimestamp();
                     }),
-                    new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_SPIT_RPM)
+                    new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_SPIT_RPM, true)
                 ))
             .onFalse(
                 new PutIntakeZeroAfterOuttake(intake, arm)

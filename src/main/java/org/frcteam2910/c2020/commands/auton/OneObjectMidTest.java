@@ -15,25 +15,17 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
-public class OneObjectMid extends AutonCommandBase {
-    public OneObjectMid(RobotContainer container, AutonomousTrajectories trajectories){
+public class OneObjectMidTest extends AutonCommandBase {
+    public OneObjectMidTest(RobotContainer container, AutonomousTrajectories trajectories){
         this(container, trajectories, container.getDrivetrainSubsystem(), container.getArm(), container.getIntake());
     }
 
-    public OneObjectMid(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
+    public OneObjectMidTest(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
         resetRobotPose(container, trajectories.getOnToBridge());
         this.addCommands(
             //new ArmExtenderZero(Arm.getInstance()),
-            new SetArmSafely(ScoreMode.CONE_HIGH),
-            new WaitCommand(0.125),
-            new SetArmIntakeRPM(intake, Constants.ARM_CONE_INTAKE_SPIT_RPM, true),
-            new ParallelRaceGroup(
-                new SequentialCommandGroup(
-                    new WaitUntilCommand(()->!intake.getConeSensor().get()),
-                    new WaitCommand(0.3)
-                ),
-                new WaitCommand(1.0)
-            ),
+            new SetArmSafelyAuton(ScoreMode.CONE_MID, false, false),
+            new ScoreConeAuton(intake),
             new ParallelCommandGroup(
                 new SetArmSafely(ScoreMode.HOME),
                 new SetArmIntakeRPM(intake, 0, true)
