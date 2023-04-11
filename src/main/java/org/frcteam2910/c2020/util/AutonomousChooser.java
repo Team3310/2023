@@ -21,8 +21,8 @@ public class AutonomousChooser {
         this.trajectories = trajectories;
 
         autonomousModeChooser.setDefaultOption("Left Three Object Far Spit", AutonomousMode.THREE_OBJECT_FAR);
-        autonomousModeChooser.addOption("Right Three Object", AutonomousMode.THREE_OBJECT_BRIDGE);
-        autonomousModeChooser.addOption("Right Two Object", AutonomousMode.TWO_OBJECT_BRIDGE);
+        autonomousModeChooser.addOption("easy three object", AutonomousMode.THREE_OBJECT_BRIDGE);
+        autonomousModeChooser.addOption("easy two object", AutonomousMode.TWO_OBJECT_BRIDGE);
         autonomousModeChooser.addOption("Right Two Object Balance", AutonomousMode.TWO_OBJECT_BRIDGE_BALANCE);
         autonomousModeChooser.addOption("Right Two Half Object Balance", AutonomousMode.TWO_HALF_OBJECT_BRIDGE_BALANCE);
         autonomousModeChooser.addOption("One Object Bridge Balance", AutonomousMode.ONE_OBJECT_BALANCE);

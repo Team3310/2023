@@ -24,8 +24,19 @@ public class RightSideTwoCone extends AutonCommandBase {
             new SetArmSafelyAuton(ScoreMode.CONE_HIGH, false, true),
             new ScoreConeAuton(intake),
             new ParallelDeadlineGroup(
-                new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPickup1(isBlue))
-            )
+                new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPickup1(isBlue)),
+                new CubeIntake(intake, true)
+            ),
+            new ParallelDeadlineGroup(
+                new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPlace1(isBlue)),
+                new InstantCommand(()->intake.setCubeRollerRPM(0, true)),
+                new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
+                new WaitForEndOfTrajectory(trajectories.getEasySideConeToPlace1(isBlue), 1.5,
+                    new SetArmSafely(ScoreMode.CUBE_HIGH) 
+                )
+            ),
+            new WaitCommand(0.2),
+            new ScoreCubeAuton(intake)
         );
     }
 }

@@ -9,6 +9,7 @@ import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import org.frcteam2910.c2020.util.ScoreMode;
 
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class RightSideThreeCone extends AutonCommandBase {
@@ -21,16 +22,22 @@ public class RightSideThreeCone extends AutonCommandBase {
         this.addCommands(
             new RightSideTwoCone(container, trajectories),
             new ParallelDeadlineGroup(
-                new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPickup2(isBlue)),
-                new SetArmSafely(ScoreMode.CUBE_INTAKE, false, false) 
+                new WaitCommand(0.1),
+                new SetArmSafely(ScoreMode.CUBE_INTAKE)
             ),
-            new WaitCommand(1.0),
+            new ParallelDeadlineGroup(
+                new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPickup2(isBlue)),
+                new WaitForEndOfTrajectory(trajectories.getEasySideConeToPickup2(isBlue), 2.5,
+                    new CubeIntake(intake, true)
+                )
+            ),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPlace2(isBlue)),
-                new SetArmSafely(true, false) 
+                new WaitForEndOfTrajectory(trajectories.getEasySideConeToPlace2(isBlue), 1.5, 
+                    new SetArmSafely(ScoreMode.CUBE_MID)
+                )
             ),
-            new SetArmSafely(ScoreMode.CONE_MID),
-            new SetArmIntakeRPM(intake, -Constants.ARM_CONE_INTAKE_SPIT_RPM, true)
+            new ScoreCubeAuton(intake)
         );
     }
 }
