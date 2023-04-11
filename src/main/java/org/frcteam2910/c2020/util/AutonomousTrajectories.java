@@ -53,7 +53,7 @@ public class AutonomousTrajectories
     private final Trajectory easySideConeToPickUp2;
     private final Trajectory easySideConeToPlace1;
     private final Trajectory easySideConeToPlace2;
-    private final Trajectory EasySideToEndSpot;
+    private final Trajectory easySideToEndSpot;
 //     private final Trajectory EasySideToEndSpotBlue;
 
     private final Trajectory onToBridge;
@@ -380,7 +380,7 @@ public class AutonomousTrajectories
                         // .lineTo(new Vector2(0, 18))
                         .build(),
                 mediumFastConstraints, SAMPLE_DISTANCE);  
-        EasySideToEndSpot = new Trajectory(
+        easySideToEndSpot = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPlace2), getEndRotation(easySideConeToPlace2))
                         .lineTo(new Vector2(217, 18))
                         .build(),
@@ -545,7 +545,7 @@ public class AutonomousTrajectories
     }
 
     public Trajectory getEasySideToEndSpot(boolean isBlue){
-        return isBlue?EasySideToEndSpot:EasySideToEndSpot; //TODO add blue side path back
+        return isBlue?easySideToEndSpot:easySideToEndSpot; //TODO add blue side path back
     }
 
     public Trajectory getEasySideConeToPickup1(boolean isBlue){
