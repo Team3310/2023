@@ -8,6 +8,7 @@ import org.frcteam2910.c2020.subsystems.*;
 import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import org.frcteam2910.c2020.util.ScoreMode;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -33,11 +34,15 @@ public class RightSideThreeCone extends AutonCommandBase {
             ),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPlace2(isBlue)),
+                new SequentialCommandGroup(
+                    new WaitCommand(0.3),
+                    new InstantCommand(()->intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true))
+                ),
                 new WaitForEndOfTrajectory(trajectories.getEasySideConeToPlace2(isBlue), 1.5, 
-                    new SetArmSafely(ScoreMode.CUBE_MID)
+                    new CubeSpit(intake)
                 )
             ),
-            new ScoreCubeAuton(intake)
+            new FollowTrajectoryCommand(drive, trajectories.getEasySideToEndSpot(isBlue))
         );
     }
 }

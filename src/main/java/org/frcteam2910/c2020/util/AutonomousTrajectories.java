@@ -53,6 +53,8 @@ public class AutonomousTrajectories
     private final Trajectory easySideConeToPickUp2;
     private final Trajectory easySideConeToPlace1;
     private final Trajectory easySideConeToPlace2;
+    private final Trajectory EasySideToEndSpot;
+//     private final Trajectory EasySideToEndSpotBlue;
 
     private final Trajectory onToBridge;
     private final Trajectory goPastBridge;
@@ -100,7 +102,7 @@ public class AutonomousTrajectories
 
         mediumFastConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
         mediumFastConstraints[mediumConstraints.length - 1] = new MaxVelocityConstraint(18.0 * 12.0); //9
-        mediumFastConstraints[mediumConstraints.length - 2] = new MaxAccelerationConstraint(10 * 12.0);//4
+        mediumFastConstraints[mediumConstraints.length - 2] = new MaxAccelerationConstraint(7 * 12.0);//4
 
         mediumSlowConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
         mediumSlowConstraints[mediumConstraints.length - 1] = new MaxVelocityConstraint(10.0 * 12.0); //9
@@ -201,6 +203,7 @@ public class AutonomousTrajectories
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
+        
         //#endregion
 //#endregion
 //#region Three Object IDK
@@ -371,12 +374,18 @@ public class AutonomousTrajectories
 
         easySideConeToPlace2 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPickUp2), getEndRotation(easySideConeToPickUp2))
-                        .lineTo(new Vector2(138, 18), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(108, 12))
-                        .lineTo(new Vector2(48, 12))
-                        .lineTo(new Vector2(0, 18))
+                        .lineTo(new Vector2(178, 18), Rotation2.fromDegrees(180))//was 138 but we are spitting now
+                        // .lineTo(new Vector2(108, 12))
+                        // .lineTo(new Vector2(48, 12))
+                        // .lineTo(new Vector2(0, 18))
                         .build(),
-                mediumFastConstraints, SAMPLE_DISTANCE);        
+                mediumFastConstraints, SAMPLE_DISTANCE);  
+        EasySideToEndSpot = new Trajectory(
+                new SimplePathBuilder(getEndCoords(easySideConeToPlace2), getEndRotation(easySideConeToPlace2))
+                        .lineTo(new Vector2(217, 18))
+                        .build(),
+                mediumFastConstraints, SAMPLE_DISTANCE); 
+                        
         easySideConeToBridge1 = new Trajectory(
                 new SimplePathBuilder(new Vector2(-246, 140.68), Rotation2.fromDegrees(180))
                         .lineTo(new Vector2(-240, 140.68))
@@ -533,6 +542,10 @@ public class AutonomousTrajectories
 
     public Trajectory getEasySideConeToPlace2(boolean isBlue){
         return isBlue?easySideConeToPlace2Blue:easySideConeToPlace2;
+    }
+
+    public Trajectory getEasySideToEndSpot(boolean isBlue){
+        return isBlue?EasySideToEndSpot:EasySideToEndSpot; //TODO add blue side path back
     }
 
     public Trajectory getEasySideConeToPickup1(boolean isBlue){

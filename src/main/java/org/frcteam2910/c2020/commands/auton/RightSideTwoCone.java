@@ -21,7 +21,7 @@ public class RightSideTwoCone extends AutonCommandBase {
         boolean isBlue = getSide(container);
         resetRobotPose(container, trajectories.getEasySideConeToPickup1(isBlue));
         this.addCommands(
-            new SetArmSafelyAuton(ScoreMode.CONE_HIGH, false, true),
+            new SetArmSafelyAuton(ScoreMode.CONE_MID, false, true),
             new ScoreConeAuton(intake),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPickup1(isBlue)),
@@ -32,7 +32,7 @@ public class RightSideTwoCone extends AutonCommandBase {
                 new InstantCommand(()->intake.setCubeRollerRPM(0, true)),
                 new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
                 new WaitForEndOfTrajectory(trajectories.getEasySideConeToPlace1(isBlue), 1.5,
-                    new SetArmSafely(ScoreMode.CUBE_HIGH) 
+                    new SetArmSafely(ScoreMode.CUBE_MID) 
                 )
             ),
             new WaitCommand(0.2),
