@@ -21,7 +21,7 @@ public class PlaceConeAndLeave extends AutonCommandBase {
         resetRobotPose(container, trajectories.placeAndLeave(isBlue));
         this.addCommands(
             new OneObjectMid(container, trajectories),
-            new InstantCommand(()->drive.setBridgeDriveVoltage(3)),
+            new InstantCommand(()->drive.setBridgeDriveVoltage(-3)),
             new ChangeDriveMode(drive, DriveControlMode.BRIDGE_VOLTAGE),
             new WaitCommand(1.5),
             new InstantCommand(()->drive.setBridgeDriveVoltage(0))

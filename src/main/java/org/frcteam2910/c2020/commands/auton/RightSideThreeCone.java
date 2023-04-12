@@ -34,11 +34,12 @@ public class RightSideThreeCone extends AutonCommandBase {
             ),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPlace2(isBlue)),
+                new SetIntakeDeployPosition(intake, 45.0),
                 new SequentialCommandGroup(
                     new WaitCommand(0.3),
                     new InstantCommand(()->intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true))
                 ),
-                new WaitForEndOfTrajectory(trajectories.getEasySideConeToPlace2(isBlue), 1.5, 
+                new WaitForEndOfTrajectory(trajectories.getEasySideConeToPlace2(isBlue), 1.0, 
                     new CubeSpit(intake)
                 )
             ),

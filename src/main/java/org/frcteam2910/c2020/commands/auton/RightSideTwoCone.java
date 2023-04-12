@@ -34,7 +34,7 @@ public class RightSideTwoCone extends AutonCommandBase {
                     new SetArmSafely(ScoreMode.CUBE_MID) 
                 )
             ),
-            new WaitCommand(0.2),
+            // new WaitCommand(0.1),
             new ScoreCubeAuton(intake)
         );
     }

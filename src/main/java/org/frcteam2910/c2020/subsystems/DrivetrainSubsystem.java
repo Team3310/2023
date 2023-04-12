@@ -558,8 +558,11 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     }
 
     public void voltageDrive(){
-        commandedPoseAngleDeg = 180;//voltageSteerAngle;
-        drive(new Vector2((voltageOutput/12), 0.0), getGyroRotationOutput(0), false);
+        drive(new Vector2((voltageOutput/12), 0.0), getGyroRotationOutput(0), true);
+    }
+
+    public void setCommandedGyroAngle(double angle){
+        this.commandedPoseAngleDeg = angle;
     }
 
     public void rotationDrive(){

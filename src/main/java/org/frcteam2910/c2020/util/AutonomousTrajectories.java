@@ -374,7 +374,8 @@ public class AutonomousTrajectories
 
         easySideConeToPlace2 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPickUp2), getEndRotation(easySideConeToPickUp2))
-                        .lineTo(new Vector2(178, 18), Rotation2.fromDegrees(180))//was 138 but we are spitting now
+                        .lineTo(new Vector2(178, 18), Rotation2.fromDegrees(0))//was 138 but we are spitting now
+                        .lineTo(new Vector2(80, 18))
                         // .lineTo(new Vector2(108, 12))
                         // .lineTo(new Vector2(48, 12))
                         // .lineTo(new Vector2(0, 18))

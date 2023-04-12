@@ -22,6 +22,7 @@ public class AutonomousChooser {
         autonomousModeChooser.setDefaultOption("Left Three Object Far Spit", AutonomousMode.THREE_OBJECT_FAR);
         autonomousModeChooser.addOption("easy three object", AutonomousMode.THREE_OBJECT_BRIDGE);
         autonomousModeChooser.addOption("easy two object", AutonomousMode.TWO_OBJECT_BRIDGE);
+        autonomousModeChooser.addOption("mid two object balance", AutonomousMode.TWO_MID_BALANCE);
         autonomousModeChooser.addOption("Right Two Object Balance", AutonomousMode.TWO_OBJECT_BRIDGE_BALANCE);
         autonomousModeChooser.addOption("Right Two Half Object Balance", AutonomousMode.TWO_HALF_OBJECT_BRIDGE_BALANCE);
         autonomousModeChooser.addOption("One Object Bridge Balance", AutonomousMode.ONE_OBJECT_BALANCE);
@@ -84,7 +85,9 @@ public class AutonomousChooser {
             case SCORE_ONE_TEST:
                 return new OneObjectMidTest(container, trajectories);  
             case THREE_OBJECT_FAR:
-                return new LeftThreeObjectFarSpit(container, trajectories);              
+                return new LeftThreeObjectFarSpit(container, trajectories);
+            case TWO_MID_BALANCE:
+                return new TwoObjectMidBalance(container, trajectories);                  
             default:
                 return new OneObjectMid(container, trajectories);
         }
@@ -113,6 +116,7 @@ public class AutonomousChooser {
         SEVEN_FEET, 
         S_CURVE, 
         SCORE_ONE_TEST,
+        TWO_MID_BALANCE,
         ;
     }
 }

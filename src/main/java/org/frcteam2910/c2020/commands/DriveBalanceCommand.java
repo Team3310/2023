@@ -52,7 +52,7 @@ public class DriveBalanceCommand extends CommandBase {
             averageAngle+=lastAngles.get(i);
         }
         averageAngle/=5;
-        boolean isFalling = drive.getStartDegrees()-1>averageAngle;
+        boolean isFalling = drive.getStartDegrees()-1<averageAngle;
         return (isSlow?isBalanced:distanceTravelled>minTraveledInches&&isFalling);
     }
 
