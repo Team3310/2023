@@ -16,12 +16,12 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
-public class TwoObjectMidBalance extends AutonCommandBase {
-    public TwoObjectMidBalance(RobotContainer container, AutonomousTrajectories trajectories){
+public class MidTwoBalance extends AutonCommandBase {
+    public MidTwoBalance(RobotContainer container, AutonomousTrajectories trajectories){
         this(container, trajectories, container.getDrivetrainSubsystem(), container.getArm(), container.getIntake());
     }
 
-    public TwoObjectMidBalance(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
+    public MidTwoBalance(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
         this.addCommands(
             new OneObjectMid(container, trajectories),
             new InstantCommand(()->{

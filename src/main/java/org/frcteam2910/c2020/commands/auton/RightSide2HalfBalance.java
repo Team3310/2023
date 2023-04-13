@@ -15,7 +15,7 @@ public class RightSide2HalfBalance extends AutonCommandBase {
     public RightSide2HalfBalance(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
         boolean isBlue = false;//getSide(container);
         this.addCommands(
-            new RightSideTwoCone(container, trajectories),
+            new EasyTwoObject(container, trajectories),
             new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPickup2(isBlue)),
             new WaitCommand(1.0),
             new FollowTrajectoryCommand(drive, trajectories.getEasySideToBridge2Half()),

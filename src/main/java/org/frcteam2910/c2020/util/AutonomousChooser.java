@@ -19,7 +19,7 @@ public class AutonomousChooser {
     public AutonomousChooser(AutonomousTrajectories trajectories) {
         this.trajectories = trajectories;
 
-        autonomousModeChooser.setDefaultOption("Left Three Object Far Spit", AutonomousMode.THREE_OBJECT_FAR);
+        autonomousModeChooser.setDefaultOption("Bump Three Object", AutonomousMode.BUMP_THREE_OBJECT);
         autonomousModeChooser.addOption("easy three object", AutonomousMode.THREE_OBJECT_BRIDGE);
         autonomousModeChooser.addOption("easy two object", AutonomousMode.TWO_OBJECT_BRIDGE);
         autonomousModeChooser.addOption("mid two object balance", AutonomousMode.TWO_MID_BALANCE);
@@ -71,7 +71,7 @@ public class AutonomousChooser {
             case THREE_OBJECT_BRIDGE:
                 return new RightSideThreeCone(container, trajectories); 
             case TWO_OBJECT_BRIDGE:
-                return new RightSideTwoCone(container, trajectories);
+                return new EasyTwoObject(container, trajectories);
             case ONE_OBJECT_BALANCE:
                 return new OneObjectMidBalance(container, trajectories);
             case TWO_OBJECT_BRIDGE_BALANCE:
@@ -84,10 +84,10 @@ public class AutonomousChooser {
                 return new OneObjectMidMobilityBalance(container, trajectories); 
             case SCORE_ONE_TEST:
                 return new OneObjectMidTest(container, trajectories);  
-            case THREE_OBJECT_FAR:
-                return new LeftThreeObjectFarSpit(container, trajectories);
+            case BUMP_THREE_OBJECT:
+                return new BumpThreeObject(container, trajectories);
             case TWO_MID_BALANCE:
-                return new TwoObjectMidBalance(container, trajectories);                  
+                return new MidTwoBalance(container, trajectories);                  
             default:
                 return new OneObjectMid(container, trajectories);
         }
@@ -105,7 +105,7 @@ public class AutonomousChooser {
     }
 
     public enum AutonomousMode {
-        THREE_OBJECT_FAR, 
+        BUMP_THREE_OBJECT, 
         THREE_OBJECT_BRIDGE, 
         TWO_OBJECT_BRIDGE, 
         TWO_OBJECT_BRIDGE_BALANCE, 

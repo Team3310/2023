@@ -14,12 +14,12 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class LeftThreeObjectFarSpit extends AutonCommandBase {
-    public LeftThreeObjectFarSpit(RobotContainer container, AutonomousTrajectories trajectories){
+public class BumpThreeObject extends AutonCommandBase {
+    public BumpThreeObject(RobotContainer container, AutonomousTrajectories trajectories){
         this(container, trajectories, container.getDrivetrainSubsystem(), container.getIntake());
     }
 
-    public LeftThreeObjectFarSpit(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Intake intake) {
+    public BumpThreeObject(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Intake intake) {
         boolean isBlue = getSide(container);
         resetRobotPose(container, trajectories.getThreeObjectFarPart1(isBlue));
         this.addCommands(

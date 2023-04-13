@@ -21,7 +21,7 @@ public class RightSideThreeCone extends AutonCommandBase {
     public RightSideThreeCone(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
         boolean isBlue = false;//getSide(container);
         this.addCommands(
-            new RightSideTwoCone(container, trajectories),
+            new EasyTwoObject(container, trajectories),
             new ParallelDeadlineGroup(
                 new WaitCommand(0.1),
                 new SetArmSafely(ScoreMode.CUBE_INTAKE)

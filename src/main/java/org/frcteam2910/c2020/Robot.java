@@ -210,8 +210,8 @@ public class Robot extends TimedRobot {
             Arrays.asList(AutonomousMode.SEVEN_FEET,
                           AutonomousMode.S_CURVE,
                           AutonomousMode.THREE_OBJECT_BRIDGE,
-                          AutonomousMode.THREE_OBJECT_FAR,
-                          AutonomousMode.THREE_OBJECT_FAR,
+                          AutonomousMode.BUMP_THREE_OBJECT,
+                          AutonomousMode.BUMP_THREE_OBJECT,
                           AutonomousMode.ONE_OBJECT_BALANCE
             ));
 

@@ -8,12 +8,12 @@ import org.frcteam2910.c2020.util.AutonomousTrajectories;
 
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class RightThreeObject extends AutonCommandBase {
-    public RightThreeObject(RobotContainer container, AutonomousTrajectories trajectories){
+public class EasyThreeObject extends AutonCommandBase {
+    public EasyThreeObject(RobotContainer container, AutonomousTrajectories trajectories){
         this(container, trajectories, container.getDrivetrainSubsystem());
     }
 
-    public RightThreeObject(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive) {
+    public EasyThreeObject(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive) {
         boolean isBlue = getSide(container);
         resetRobotPose(container, trajectories.getThreeObjectBridgePart1(isBlue));
         this.addCommands(
