@@ -10,7 +10,7 @@ public class DriveBalanceCommand extends CommandBase {
     private final DrivetrainSubsystem drive;
 
     private final boolean isSlow;
-    private double lastGravityVector;
+    private double minGravityVector = 0.96450;
 
     public DriveBalanceCommand(DrivetrainSubsystem drivetrain, boolean isSlow) {
         this.drive = drivetrain;
@@ -21,7 +21,6 @@ public class DriveBalanceCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        lastGravityVector = drive.getZGravityVector();
         drive.setBalanceStartDegrees(drive.getRollDegreesOffLevel());
         drive.setSlowBalance(isSlow);
         drive.setDriveControlMode(DriveControlMode.BALANCE);
@@ -31,8 +30,7 @@ public class DriveBalanceCommand extends CommandBase {
     @Override
     public boolean isFinished(){
         boolean isBalanced = drive.isBalanced();
-        boolean isFalling = Math.abs(lastGravityVector-drive.getZGravityVector())<0.5;
-        lastGravityVector = drive.getZGravityVector();
+        boolean isFalling = drive.getZGravityVector()>minGravityVector;//drive.getZGravityVector()-minGravityVector>0.001;
         return (isSlow?isBalanced:isFalling);
 
         // double averageAngle=0.0;

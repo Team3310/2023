@@ -741,7 +741,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public void balanceOutDrive() {
         if(!slowBalance){
             boolean tiltedBackward = (getRoll() > 180);
-            drive(new Vector2((tiltedBackward?1:-1)*0.25, 0.0), 0.0, false);
+            drive(new Vector2((tiltedBackward?1:-1)*0.2, 0.0), 0.0, false);
         }
         else{
             balanceController.reset();
@@ -1307,10 +1307,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         // SmartDashboard.putNumber("blanace timer length", balanceTimer.get());
         // SmartDashboard.putBoolean("turbo", turbo);
         // SmartDashboard.putNumber("drive voltage", voltageOutput);
-        // synchronized(sensorLock) {
-        //     SmartDashboard.putNumber("gravity vector", gyroscope.getGravityVector()[0]);
-        //     SmartDashboard.putNumber("gravity vector1", gyroscope.getGravityVector()[1]);
-        //     SmartDashboard.putNumber("gravity vector2", gyroscope.getGravityVector()[2]);
-        // }
+        synchronized(sensorLock) {
+            SmartDashboard.putNumber("gravity vector", gyroscope.getGravityVector()[0]);
+            SmartDashboard.putNumber("gravity vector1", gyroscope.getGravityVector()[1]);
+            SmartDashboard.putNumber("gravity vector2", gyroscope.getGravityVector()[2]);
+        }
     }
 }
