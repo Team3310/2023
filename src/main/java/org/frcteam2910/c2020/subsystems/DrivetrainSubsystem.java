@@ -211,7 +211,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public ProfiledPIDController profiledLimelightController = new ProfiledPIDController(1.0, 0.03, 0.02, constraints, 0.02);
     public PidController limelightForwardAxisController = new PidController(new PidConstants(1.0, 0.002, 0.0));
     public PIDController ballTrackController = new PIDController(1.0, 0.03, 0.25, 0.02);
-    private PidController balanceController = new PidController(new PidConstants(0.45, 0.0, 0.0));
+    private PidController balanceController = new PidController(new PidConstants(0.55, 0.0, 0.0));
     private PidController joystickRotateGyroController = new PidController(new PidConstants(.01, 0.002, 0.0));
     private PidController limelightStrafeController = new PidController(new PidConstants(.01, 0.002, 0.0));
 

@@ -31,10 +31,11 @@ public class OneObjectMidMobilityBalance extends AutonCommandBase {
             ),
             new InstantCommand(()->{
                 intake.setCubeIntakeDeployTargetPosition(Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES);
-                drive.setBridgeDriveVoltage(6);
+                // drive.setBridgeDriveVoltage(6);
             }),
-            new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
-            new InstantCommand(() -> drive.setBalanceStartDegrees(drive.getRollDegreesOffLevel())),
+            new ChangeDriveMode(drive, DriveControlMode.TRAJECTORY),
+            new FollowTrajectoryCommand(drive, trajectories.getBackwardsSevenFeet()),
+            new DriveBalanceCommand(drive, false),
             new DriveBalanceCommand(drive, true)
             // new FollowTrajectoryCommand(drive, trajectories.getOnToBridge()),
             // new WaitCommand(2.0),

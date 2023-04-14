@@ -19,7 +19,7 @@ public class OneObjectMidBalance extends AutonCommandBase {
         this.addCommands(
             new OneObjectMid(container, trajectories),
             new FollowTrajectoryCommand(drive, trajectories.getSevenFeet()),
-            // new WaitCommand(1.0),
+            new WaitCommand(0.1),
             new DriveBalanceCommand(drive, false),
             new DriveBalanceCommand(drive, true)
             // new FollowTrajectoryCommand(drive, trajectories.getOnToBridge()),
