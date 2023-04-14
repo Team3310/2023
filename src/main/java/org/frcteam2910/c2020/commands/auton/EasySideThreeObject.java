@@ -13,15 +13,15 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class RightSideThreeCone extends AutonCommandBase {
-    public RightSideThreeCone(RobotContainer container, AutonomousTrajectories trajectories){
+public class EasySideThreeObject extends AutonCommandBase {
+    public EasySideThreeObject(RobotContainer container, AutonomousTrajectories trajectories){
         this(container, trajectories, container.getDrivetrainSubsystem(), container.getArm(), container.getIntake());
     }
 
-    public RightSideThreeCone(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
+    public EasySideThreeObject(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
         boolean isBlue = false;//getSide(container);
         this.addCommands(
-            new EasyTwoObject(container, trajectories),
+            new EasySideTwoObject(container, trajectories),
             new ParallelDeadlineGroup(
                 new WaitCommand(0.1),
                 new SetArmSafely(ScoreMode.CUBE_INTAKE)
@@ -39,8 +39,8 @@ public class RightSideThreeCone extends AutonCommandBase {
                     new WaitCommand(0.3),
                     new InstantCommand(()->intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true))
                 ),
-                new WaitForEndOfTrajectory(trajectories.getEasySideConeToPlace2(isBlue), 1.0, 
-                    new CubeSpit(intake)
+                new WaitForEndOfTrajectory(trajectories.getEasySideConeToPlace2(isBlue), 0.5, 
+                    new CubeSpit(intake, false)
                 )
             ),
             new FollowTrajectoryCommand(drive, trajectories.getEasySideToEndSpot(isBlue))

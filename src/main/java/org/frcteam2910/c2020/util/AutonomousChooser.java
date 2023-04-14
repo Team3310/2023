@@ -69,9 +69,9 @@ public class AutonomousChooser {
             case S_CURVE:
                 return get_sCurve(container); 
             case THREE_OBJECT_BRIDGE:
-                return new RightSideThreeCone(container, trajectories); 
+                return new EasySideThreeObject(container, trajectories); 
             case TWO_OBJECT_BRIDGE:
-                return new EasyTwoObject(container, trajectories);
+                return new EasySideTwoObject(container, trajectories);
             case ONE_OBJECT_BALANCE:
                 return new OneObjectMidBalance(container, trajectories);
             case TWO_OBJECT_BRIDGE_BALANCE:

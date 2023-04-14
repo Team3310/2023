@@ -11,12 +11,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class EasyTwoObject extends AutonCommandBase {
-    public EasyTwoObject(RobotContainer container, AutonomousTrajectories trajectories){
+public class EasySideTwoObject extends AutonCommandBase {
+    public EasySideTwoObject(RobotContainer container, AutonomousTrajectories trajectories){
         this(container, trajectories, container.getDrivetrainSubsystem(), container.getArm(), container.getIntake());
     }
 
-    public EasyTwoObject(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
+    public EasySideTwoObject(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
         boolean isBlue = getSide(container);
         resetRobotPose(container, trajectories.getEasySideConeToPickup1(isBlue));
         this.addCommands(

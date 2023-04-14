@@ -7,12 +7,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class CubeSpit extends SequentialCommandGroup{
-    public CubeSpit(Intake intake){
+    public CubeSpit(Intake intake, boolean bump){
         this.addCommands(
             new InstantCommand(()->{
                 intake.stopRollingOnTriggeredArmIntakeDIO = false;
                 intake.stopRollingOnTriggeredCubeIntakeDIO = false;
-                intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM*2, true);
+                intake.setCubeRollerRPM((bump?Constants.CUBE_INTAKE_ROLLER_SPIT_RPM*2:-2000*2), true);
                 intake.setArmIntakeRPM(Constants.ARM_CUBE_INTAKE_SPIT_RPM*4, true);
             })
         );

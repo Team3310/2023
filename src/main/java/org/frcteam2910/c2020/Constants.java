@@ -124,7 +124,7 @@ public class Constants
     public static final double ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS = ARM_INTAKE_ROLLER_OUTPUT_TO_ENCODER_RATIO * ENCODER_TICKS_PER_MOTOR_REVOLUTION;
 
     public static final double ARM_CONE_INTAKE_COLLECT_RPM = 2000.0;
-    public static final double ARM_CUBE_INTAKE_COLLECT_RPM = -700.0;
+    public static final double ARM_CUBE_INTAKE_COLLECT_RPM = -800.0;
     public static final double ARM_CONE_INTAKE_SPIT_RPM = -2600.0;
     public static final double ARM_CUBE_INTAKE_SPIT_RPM = 400.0;
     public static final double INTAKE_STOP_RPM_THRESHOLD = 5.0;
@@ -142,7 +142,7 @@ public class Constants
     // CUBE INTAKE ROLLER
     public static final double CUBE_INTAKE_ROLLER_MOTOR_RATIO = (18.0/12.0);
 
-    public static final double CUBE_INTAKE_ROLLER_COLLECT_RPM = 1250;
+    public static final double CUBE_INTAKE_ROLLER_COLLECT_RPM = 1750;
     public static final double CUBE_INTAKE_ROLLER_SPIT_RPM = -3000;
     public static final double CUBE_INTAKE_ROLLER_HANDOFF_RPM = 800;
 

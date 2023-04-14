@@ -57,7 +57,7 @@ public class MidTwoBalance extends AutonCommandBase {
                 new SequentialCommandGroup(
                     new InstantCommand(()->intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true)),
                     new WaitCommand(0.5),
-                    new CubeSpit(intake)
+                    new CubeSpit(intake, true)
                 )
             )
             // new FollowTrajectoryCommand(drive, trajectories.getOnToBridge()),

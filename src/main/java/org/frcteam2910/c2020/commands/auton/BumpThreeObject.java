@@ -42,7 +42,7 @@ public class BumpThreeObject extends AutonCommandBase {
                     new WaitForEndOfTrajectory(
                         trajectories.getThreeObjectFarPart2(isBlue),
                         1.5,
-                        new CubeSpit(intake)
+                        new CubeSpit(intake, true)
                     )
                 )
             ),
