@@ -2,6 +2,8 @@ package org.frcteam2910.c2020.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
+import java.util.ArrayList;
+
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.common.math.Vector2;
@@ -10,7 +12,8 @@ public class DriveBalanceCommand extends CommandBase {
     private final DrivetrainSubsystem drive;
 
     private final boolean isSlow;
-    private double minGravityVector = 0.96450;
+    private double lastValue;
+    private ArrayList<Double> lastValues = new ArrayList<>();
 
     public DriveBalanceCommand(DrivetrainSubsystem drivetrain, boolean isSlow) {
         this.drive = drivetrain;
@@ -21,6 +24,7 @@ public class DriveBalanceCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        lastValue=drive.getZGravityVector();
         drive.setBalanceStartDegrees(drive.getRollDegreesOffLevel());
         drive.setSlowBalance(isSlow);
         drive.setDriveControlMode(DriveControlMode.BALANCE);
@@ -30,16 +34,24 @@ public class DriveBalanceCommand extends CommandBase {
     @Override
     public boolean isFinished(){
         boolean isBalanced = drive.isBalanced();
-        boolean isFalling = drive.getZGravityVector()>minGravityVector;//drive.getZGravityVector()-minGravityVector>0.001;
+        boolean isFalling = drive.getZGravityVector()-lastValue>0.00198;
+        lastValue = drive.getZGravityVector();
         return (isSlow?isBalanced:isFalling);
 
-        // double averageAngle=0.0;
-        // for(int i=0; i<lastAngles.size();i++){
-        //     averageAngle+=lastAngles.get(i);
+        // if(lastValues.size()<5){
+        //     lastValues.add(drive.getZGravityVector());
+        // }else{
+        //     lastValues.remove(0);
+        //     lastValues.add(drive.getZGravityVector());
         // }
-        // averageAngle/=5;
-        // boolean isFalling = drive.getStartDegrees()-1>averageAngle;
-        // return (isSlow?isBalanced:distanceTravelled>minTraveledInches&&isFalling);
+
+        // double averageValue=0.0;
+        // for(int i=0; i<lastValues.size();i++){
+        //     averageValue+=lastValues.get(i);
+        // }
+        // averageValue/=lastValues.size();
+        // boolean isFalling = averageValue > 0.001;
+        // return (isSlow?isBalanced:isFalling);
     }
 
     @Override

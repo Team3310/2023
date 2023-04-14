@@ -478,10 +478,10 @@ public class AutonomousTrajectories
         bridgeConstraints, SAMPLE_DISTANCE);
 
         sevenFeet = new Trajectory(
-                new SimplePathBuilder(new Vector2(0, 0), Rotation2.fromDegrees(0))
-                .lineTo(new Vector2(7*12, 0))
+                new SimplePathBuilder(new Vector2(0, 0), Rotation2.fromDegrees(180))
+                .lineTo(new Vector2(11*12, 0))
                 .build(),
-        bridgeConstraints, SAMPLE_DISTANCE);
+        mediumSlowConstraints, SAMPLE_DISTANCE, 0.0 ,5.0);
 
         }  
     
@@ -535,6 +535,14 @@ public class AutonomousTrajectories
     public Trajectory getThreeObjectBridgePart3(boolean isBlue){return isBlue?threeObjectBridgePart3Blue:threeObjectBridgePart3;}
 
     public Trajectory getThreeObjectBridgePart4(boolean isBlue){return isBlue?threeObjectBridgePart4Blue:threeObjectBridgePart4;}
+
+    public Trajectory getBackwardsSevenFeet(){
+        return new Trajectory(
+                new SimplePathBuilder(new Vector2(0, 0), Rotation2.fromDegrees(180))
+                .lineTo(new Vector2(-11*12, 0))
+                .build(),
+        mediumSlowConstraints, SAMPLE_DISTANCE, 0.0 ,5.0);
+    }
 
     public Trajectory getEasySideConeToPlace1(boolean isBlue){
         return isBlue?easySideConeToPlace1Blue:easySideConeToPlace1;

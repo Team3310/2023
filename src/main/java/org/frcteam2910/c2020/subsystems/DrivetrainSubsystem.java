@@ -741,7 +741,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public void balanceOutDrive() {
         if(!slowBalance){
             boolean tiltedBackward = (getRoll() > 180);
-            drive(new Vector2((tiltedBackward?1:-1)*0.2, 0.0), 0.0, false);
+            drive(new Vector2((tiltedBackward?1:-1)*0.3, 0.0), 0.0, false);
         }
         else{
             balanceController.reset();
