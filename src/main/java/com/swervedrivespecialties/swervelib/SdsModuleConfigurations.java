@@ -54,7 +54,7 @@ public final class SdsModuleConfigurations {
 
     public static final ModuleConfiguration WCP = new ModuleConfiguration(
             0.1016,
-            (12.0 / 42.0) * (28.0 / 18.0) * (15.0 / 45.0),
+            (12.0 / 42.0) * (30.0 / 16.0) * (15.0 / 45.0),
             true,
             (8.0 / 24.0) * (14.0 / 72.0),
             false
