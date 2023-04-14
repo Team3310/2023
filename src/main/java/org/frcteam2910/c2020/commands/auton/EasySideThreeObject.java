@@ -19,7 +19,7 @@ public class EasySideThreeObject extends AutonCommandBase {
     }
 
     public EasySideThreeObject(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
-        boolean isBlue = false;//getSide(container);
+        boolean isBlue = getSide(container);
         this.addCommands(
             new EasySideTwoObject(container, trajectories),
             new ParallelDeadlineGroup(

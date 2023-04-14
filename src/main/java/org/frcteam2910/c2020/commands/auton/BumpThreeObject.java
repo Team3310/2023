@@ -33,10 +33,9 @@ public class BumpThreeObject extends AutonCommandBase {
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart2(isBlue)),
                 new SequentialCommandGroup(
-                    new InstantCommand(()->intake.setCubeRollerRPM(0, true)),
                     new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
                     new SequentialCommandGroup(
-                        new WaitCommand(0.3),
+                        new WaitCommand(0.4),
                         new InstantCommand(()->intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true))
                     ),
                     new WaitForEndOfTrajectory(
@@ -46,7 +45,7 @@ public class BumpThreeObject extends AutonCommandBase {
                     )
                 )
             ),
-            new WaitCommand(0.3),
+            new WaitCommand(0.2),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart3(isBlue)),
                 new CubeIntakeAuton(intake, true, trajectories.getThreeObjectFarPart3(isBlue))

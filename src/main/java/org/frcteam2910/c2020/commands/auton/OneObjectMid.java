@@ -24,7 +24,7 @@ public class OneObjectMid extends AutonCommandBase {
         resetRobotPose(container, trajectories.getSevenFeet());
         this.addCommands(
             //new ArmExtenderZero(Arm.getInstance()),
-            new SetArmSafely(ScoreMode.CONE_MID),
+            new SetArmSafelyAuton(ScoreMode.CONE_MID, false, false),
             new WaitCommand(0.125),
             new SetArmIntakeRPM(intake, Constants.ARM_CONE_INTAKE_SPIT_RPM, true),
             new ParallelRaceGroup(

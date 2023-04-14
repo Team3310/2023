@@ -25,23 +25,30 @@ public class OneObjectMidMobilityBalance extends AutonCommandBase {
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()>15),
             new WaitUntilCommand(() -> drive.getRollDegreesOffLevel()<5),
-            new ParallelDeadlineGroup(
-                new WaitCommand(1.1),
-                new CubeIntake(intake, true)
-            ),
-            new InstantCommand(()->{
-                intake.setCubeIntakeDeployTargetPosition(Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES);
-                // drive.setBridgeDriveVoltage(6);
-            }),
-            new ChangeDriveMode(drive, DriveControlMode.TRAJECTORY),
-            new FollowTrajectoryCommand(drive, trajectories.getBackwardsSevenFeet()),
-            new DriveBalanceCommand(drive, false),
-            new DriveBalanceCommand(drive, true)
+            new InstantCommand(()->drive.setBridgeDriveVoltage(2)),
+            new WaitCommand(0.5),
+            new MobilityPart2(container, trajectories)
             // new FollowTrajectoryCommand(drive, trajectories.getOnToBridge()),
             // new WaitCommand(2.0),
             // new FollowTrajectoryCommand(drive, trajectories.getPastBridge())
             // // new FollowTrajectoryCommand(drive, trajectories.getUpBridge(drive.getPose().translation, drive.getPose().rotation, -45)),
             // // new DriveBalanceCommand(drive, true, false)
         );
+    }
+}
+
+class MobilityPart2 extends AutonCommandBase{
+    public MobilityPart2(RobotContainer container, AutonomousTrajectories trajectories){
+        this(container, trajectories, container.getDrivetrainSubsystem());
+    }
+
+    public MobilityPart2(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive){
+        resetRobotPose(container, trajectories.getBackwardsSevenFeet());
+        this.addCommands(
+            new ChangeDriveMode(drive, DriveControlMode.TRAJECTORY),
+            new FollowTrajectoryCommand(drive, trajectories.getBackwardsSevenFeet()),
+            new DriveBalanceCommand(drive, false),
+            new DriveBalanceCommand(drive, true)
+        );        
     }
 }
