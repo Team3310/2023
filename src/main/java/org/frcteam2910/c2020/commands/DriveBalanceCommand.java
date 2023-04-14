@@ -6,15 +6,14 @@ import java.util.ArrayList;
 
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
-import org.frcteam2910.common.math.RigidTransform2;
 import org.frcteam2910.common.math.Vector2;
 
 public class DriveBalanceCommand extends CommandBase {
     private final DrivetrainSubsystem drive;
 
     private final boolean isSlow;
-    private Vector2 start;
-    private ArrayList<Double> lastAngles = new ArrayList<Double>();
+    private double lastValue;
+    private ArrayList<Double> lastValues = new ArrayList<>();
 
     public DriveBalanceCommand(DrivetrainSubsystem drivetrain, boolean isSlow) {
         this.drive = drivetrain;
@@ -25,45 +24,42 @@ public class DriveBalanceCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        lastValue=drive.getZGravityVector();
         drive.setBalanceStartDegrees(drive.getRollDegreesOffLevel());
         drive.setSlowBalance(isSlow);
         drive.setDriveControlMode(DriveControlMode.BALANCE);
-        //drive.setBalanceInitialPos(start);
-        start = drive.getPose().translation;
         drive.getBalanceTimer().start();
     }
 
     @Override
     public boolean isFinished(){
-        // If the distance we traveled from initial position > distance, go slower
-        double minTraveledInches = 10.0;
-        if(lastAngles.size()<5){
-            lastAngles.add(0, drive.getRollDegreesOffLevel());
-        }
-        else{
-            lastAngles.remove(4);
-            lastAngles.add(0, drive.getRollDegreesOffLevel());
-        }
-        double distanceTravelled = start.subtract(drive.getPose().translation).length;
-        //boolean metTarget = drivetrain.getPitch()>180 ? (360-drivetrain.getPitch())<this.deadband:drivetrain.getPitch()<this.deadband;
         boolean isBalanced = drive.isBalanced();
-        double averageAngle=0.0;
-        for(int i=0; i<lastAngles.size();i++){
-            averageAngle+=lastAngles.get(i);
-        }
-        averageAngle/=5;
-        boolean isFalling = drive.getStartDegrees()-1<averageAngle;
-        return (isSlow?isBalanced:distanceTravelled>minTraveledInches&&isFalling);
+        boolean isFalling = drive.getZGravityVector()-lastValue>0.00198;
+        lastValue = drive.getZGravityVector();
+        return (isSlow?isBalanced:isFalling);
+
+        // if(lastValues.size()<5){
+        //     lastValues.add(drive.getZGravityVector());
+        // }else{
+        //     lastValues.remove(0);
+        //     lastValues.add(drive.getZGravityVector());
+        // }
+
+        // double averageValue=0.0;
+        // for(int i=0; i<lastValues.size();i++){
+        //     averageValue+=lastValues.get(i);
+        // }
+        // averageValue/=lastValues.size();
+        // boolean isFalling = averageValue > 0.001;
+        // return (isSlow?isBalanced:isFalling);
     }
 
     @Override
     public void end(boolean interrupted) {
-        if(isSlow)
-            drive.setDriveControlMode(DriveControlMode.HOLD);      
+        drive.drive(Vector2.ZERO, 0.0, false);
+        drive.setDriveControlMode(DriveControlMode.HOLD);      
         drive.setBalanceInitialPos(Vector2.ZERO);
         drive.setDriveBrake();
-        drive.resetPose(new RigidTransform2(new Vector2(-164, drive.getPose().translation.y), drive.getPose().rotation));
-        drive.drive(Vector2.ZERO, 0.0, false);
         drive.getBalanceTimer().stop();
         drive.getBalanceTimer().reset();
     }

@@ -84,10 +84,6 @@ public class RobotContainer {
         primaryController.getAButton()
             .onTrue(
                 new SequentialCommandGroup(
-                    new ChangeDriveMode(drivetrain, DriveControlMode.BRIDGE_VOLTAGE),
-                    new InstantCommand(()->drivetrain.setBridgeDriveVoltage(-5)),
-                    new WaitUntilCommand(() -> drivetrain.getRollDegreesOffLevel()>20),
-                    new WaitUntilCommand(() -> drivetrain.getRollDegreesOffLevel()<12.25),
                     new DriveBalanceCommand(drivetrain, false),
                     new DriveBalanceCommand(drivetrain, true)
                 )
@@ -164,7 +160,7 @@ public class RobotContainer {
             .onTrue(
                 new ParallelCommandGroup(
                     new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.LIMELIGHT),
-                    new InstantCommand(() -> drivetrain.setLimelightMode(LimelightMode.RETROREFLECTIVE))
+                    new InstantCommand(() -> drivetrain.setLimelightMode(LimelightMode.RETROREFLECTIVE))                    
                 )
             )
             .onFalse(

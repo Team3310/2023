@@ -211,7 +211,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public ProfiledPIDController profiledLimelightController = new ProfiledPIDController(1.0, 0.03, 0.02, constraints, 0.02);
     public PidController limelightForwardAxisController = new PidController(new PidConstants(1.0, 0.002, 0.0));
     public PIDController ballTrackController = new PIDController(1.0, 0.03, 0.25, 0.02);
-    private PidController balanceController = new PidController(new PidConstants(0.45, 0.0, 0.0));
+    private PidController balanceController = new PidController(new PidConstants(0.55, 0.0, 0.0));
     private PidController joystickRotateGyroController = new PidController(new PidConstants(.01, 0.002, 0.0));
     private PidController limelightStrafeController = new PidController(new PidConstants(.01, 0.002, 0.0));
 
@@ -744,7 +744,7 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     public void balanceOutDrive() {
         if(!slowBalance){
             boolean tiltedBackward = (getRoll() > 180);
-            drive(new Vector2((tiltedBackward?1:-1)*0.25, 0.0), 0.0, false);
+            drive(new Vector2((tiltedBackward?1:-1)*0.3, 0.0), 0.0, false);
         }
         else{
             balanceController.reset();
@@ -1119,6 +1119,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         return Math.abs(getLeastAngleDifference(pitch, 0));
     }
 
+    public double getZGravityVector(){
+        return gyroscope.getGravityVector()[2];
+    }
+
     public double getRollDegreesOffLevel(){
         double roll = getRoll();
         return Math.abs(getLeastAngleDifference(roll, 0));
@@ -1306,10 +1310,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         // SmartDashboard.putNumber("blanace timer length", balanceTimer.get());
         // SmartDashboard.putBoolean("turbo", turbo);
         // SmartDashboard.putNumber("drive voltage", voltageOutput);
-        // synchronized(sensorLock) {
-        //     SmartDashboard.putNumber("gravity vector", gyroscope.getGravityVector()[0]);
-        //     SmartDashboard.putNumber("gravity vector1", gyroscope.getGravityVector()[1]);
-        //     SmartDashboard.putNumber("gravity vector2", gyroscope.getGravityVector()[2]);
-        // }
+        synchronized(sensorLock) {
+            SmartDashboard.putNumber("gravity vector", gyroscope.getGravityVector()[0]);
+            SmartDashboard.putNumber("gravity vector1", gyroscope.getGravityVector()[1]);
+            SmartDashboard.putNumber("gravity vector2", gyroscope.getGravityVector()[2]);
+        }
     }
 }

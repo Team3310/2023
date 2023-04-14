@@ -21,7 +21,7 @@ public class OneObjectMid extends AutonCommandBase {
     }
 
     public OneObjectMid(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Arm arm, Intake intake) {
-        resetRobotPose(container, trajectories.getOnToBridge());
+        resetRobotPose(container, trajectories.getSevenFeet());
         this.addCommands(
             //new ArmExtenderZero(Arm.getInstance()),
             new SetArmSafely(ScoreMode.CONE_MID),
