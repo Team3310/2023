@@ -165,7 +165,7 @@ public class Arm implements Subsystem{
     }
 
     public double getArmDegreesIntegrated(){
-        return (armRotationMotor.getSelectedSensorPosition() / Constants.ARM_ROTATOR_ONE_DEGREE_TO_INTEGRATED_ENCODER_TICKS) + degreesOffset;
+        return (armRotationMotor.getSelectedSensorPosition() / Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS) + degreesOffset;
     }
 
     public void setRotationPIDSlot(ScoreMode mode){
@@ -182,7 +182,7 @@ public class Arm implements Subsystem{
     // }
 
     public double getArmDegreesEncoderTicks(double degrees){
-        return degrees * Constants.ARM_ROTATOR_ONE_DEGREE_TO_INTEGRATED_ENCODER_TICKS;
+        return degrees * Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS;
     }
 
     public void setArmRotatorZeroReference(double offset){
@@ -241,7 +241,7 @@ public class Arm implements Subsystem{
     }
 
     public double getTargetDegrees(){
-        return targetDegreesTicks/Constants.ARM_ROTATOR_ONE_DEGREE_TO_INTEGRATED_ENCODER_TICKS;
+        return targetDegreesTicks/Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS;
     }   
 
     public void setMotorNeutralMode(NeutralMode nm) {
