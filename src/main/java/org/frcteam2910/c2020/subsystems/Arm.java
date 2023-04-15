@@ -186,9 +186,8 @@ public class Arm implements Subsystem{
     }
 
     public void setArmRotatorZeroReference(double offset){
-        degreesOffset = offset;
         targetDegreesTicks = 0;
-        armRotationMotor.setSelectedSensorPosition(0);
+        armRotationMotor.setSelectedSensorPosition(getArmDegreesEncoderTicks(offset));
         // armExternalCANCoder.setPosition(0);
     }
 
@@ -273,7 +272,7 @@ public class Arm implements Subsystem{
     }
 
     public void setArmExtenderZeroReference(double inchesOffset){
-        armTranslationMotor.setSelectedSensorPosition(0+getArmInchesEncoderTicksAbsolute(inchesOffset));
+        armTranslationMotor.setSelectedSensorPosition(getArmInchesEncoderTicksAbsolute(inchesOffset));
         targetInchesTicks = 0;
     }
 

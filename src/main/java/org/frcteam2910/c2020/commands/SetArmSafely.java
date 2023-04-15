@@ -62,7 +62,7 @@ public class SetArmSafely extends SequentialCommandGroup {
         }else{
             if(isCone){
                 this.addCommands(
-                    new SetArmExtender(arm, 4.5, true),
+                    new SetArmExtender(arm, 5.5, true),
                     new SetArmRotator(arm, 35.0, true),
                     new SetArmExtender(arm, 0, true),
                     new SetArmRotator(arm, 10, true)    

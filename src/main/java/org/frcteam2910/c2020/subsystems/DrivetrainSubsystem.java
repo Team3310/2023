@@ -123,7 +123,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         HOLD_ANGLE, 
         HOLD_ANGLE_DRIVE,
         BRIDGE_VOLTAGE,
-        VELOCITY;
+        VELOCITY,
+        LOCK_180;
     }
 
     public enum LimelightMode {
@@ -521,6 +522,27 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
             rotationOutput,
             true);  
         wasJustTurning = Math.abs(getDriveForwardAxis().get(true))<0.1 && Math.abs(getDriveStrafeAxis().get(true))<0.1 && Math.abs(getDriveRotationAxis().get(true))>0.1;                             
+    }
+
+    public void lock180Drive(){
+        // DriveControlMode is JOYSTICKS
+
+        primaryController.getLeftXAxis().setInverted(true);
+        primaryController.getRightXAxis().setInverted(true);
+        double rotationInput = 0.0;
+        
+        double rotationOutput = 0.0;
+        // Lock to 180
+        commandedPoseAngleDeg = 180;
+        rotationOutput = getGyroRotationOutput(rotationInput);
+
+        //Set the drive signal to a field-centric (last boolean parameter is true) joystick-based input.
+        drive(new Vector2(
+            getDriveForwardAxis().get(true)*0.6, // Left Joystick YAxis
+            getDriveStrafeAxis().get(true)*0.6),    // Left Joystick XAxis
+            rotationOutput,
+            true);  
+        // wasJustTurning = Math.abs(getDriveForwardAxis().get(true))<0.1 && Math.abs(getDriveStrafeAxis().get(true))<0.1 && Math.abs(getDriveRotationAxis().get(true))>0.1;                             
     }
 
     /**
@@ -1017,6 +1039,12 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         switch(i_controlMode){
             case JOYSTICKS:
                 joystickDrive();
+                synchronized (stateLock) {
+                    currentDriveSignal = this.driveSignal;
+                }
+                break;
+            case LOCK_180:
+                lock180Drive();
                 synchronized (stateLock) {
                     currentDriveSignal = this.driveSignal;
                 }

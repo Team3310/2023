@@ -159,14 +159,15 @@ public class RobotContainer {
         primaryController.getRightTriggerAxis()
             .onTrue(
                 new ParallelCommandGroup(
-                    new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.LIMELIGHT),
-                    new InstantCommand(() -> drivetrain.setLimelightMode(LimelightMode.RETROREFLECTIVE))                    
+                    new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.LOCK_180),
+                    new InstantCommand(() -> drivetrain.setDriveBrake())
                 )
             )
             .onFalse(
                 new ParallelCommandGroup(
                     new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS),
-                    new InstantCommand(() -> drivetrain.setLimelightMode(LimelightMode.NONE))
+                    new InstantCommand(() -> drivetrain.setCommandedGyroAngle(drivetrain.getPose().rotation.toDegrees())),
+                    new InstantCommand(() -> drivetrain.setDriveCoast())
                 )
             );
 
