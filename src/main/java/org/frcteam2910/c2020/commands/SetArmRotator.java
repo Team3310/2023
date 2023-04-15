@@ -30,6 +30,7 @@ public class SetArmRotator extends CommandBase {
 
     @Override
     public void execute() {
+        System.out.println("rotating");
     }
 
     @Override

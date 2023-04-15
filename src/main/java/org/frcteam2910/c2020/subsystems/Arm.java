@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,7 +27,7 @@ public class Arm implements Subsystem{
     private TalonFX armTranslationMotor;
 
     //sensors
-    //private CANCoder armExternalCANCoder = new CANCoder(Constants.ARM_EXTERNAL_CANCODER_PORT);
+    private CANCoder armExternalCANCoder = new CANCoder(Constants.ARM_EXTERNAL_CANCODER_PORT);
 
     //conversions
     private double DRUM_DIAMETER = .58;//(0.68414+old:0.54134)/2.0*0.9;
@@ -69,9 +70,9 @@ public class Arm implements Subsystem{
 
         CANCoderConfiguration config = new CANCoderConfiguration();
         config.sensorDirection =  false;
-        //armExternalCANCoder.configAllSettings(config);
-        // armRotationMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
-
+        armExternalCANCoder.configAllSettings(config);
+        armRotationMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
+        armRotationMotor.setSensorPhase(false);
 
         final StatorCurrentLimitConfiguration statorCurrentConfigs = new StatorCurrentLimitConfiguration();
         statorCurrentConfigs.currentLimit = 40.0;
@@ -165,7 +166,7 @@ public class Arm implements Subsystem{
     }
 
     public double getArmDegreesIntegrated(){
-        return (armRotationMotor.getSelectedSensorPosition() / Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS) + degreesOffset;
+        return ((armRotationMotor.getSelectedSensorPosition()*360/4096) / Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS) + degreesOffset;
     }
 
     public void setRotationPIDSlot(ScoreMode mode){
@@ -177,12 +178,12 @@ public class Arm implements Subsystem{
         armRotationMotor.selectProfileSlot(mode.getPIDSlot(), 0);
     }
 
-    // public double getArmDegreesExternal(){
-    //     return (armExternalCANCoder.getPosition() / Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS) + degreesOffset;
-    // }
+    public double getArmDegreesExternal(){
+        return ((armExternalCANCoder.getAbsolutePosition()/360*4096) / Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS) + degreesOffset;
+    }
 
     public double getArmDegreesEncoderTicks(double degrees){
-        return degrees * Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS;
+        return degrees * Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS / 360 * 4096;
     }
 
     public void setArmRotatorZeroReference(double offset){
@@ -357,9 +358,13 @@ public class Arm implements Subsystem{
         SmartDashboard.putNumber("arm degrees internal", getArmDegreesIntegrated());
         SmartDashboard.putNumber("arm inches", getArmInches());
 
+        SmartDashboard.putNumber("motor ticks", armRotationMotor.getSelectedSensorPosition());
+        SmartDashboard.putNumber("encoder ticks", armExternalCANCoder.getAbsolutePosition()/360*4096);
+        SmartDashboard.putNumber("encoder ticks", armExternalCANCoder.getPosition());
+
         //debug smartdashboard prints
         //SmartDashboard.putNumber("arm I accum", armRotationMotor.getIntegralAccumulator());
-        // SmartDashboard.putNumber("arm degrees ext", getArmDegreesExternal());
+        SmartDashboard.putNumber("arm degrees ext", getArmDegreesExternal());
         // SmartDashboard.putString("arm control mode", rotationControlMode.name());
         // SmartDashboard.putString("closest score mode", ScoreMode.getClosestMode(getArmDegreesIntegrated()).name());
         // SmartDashboard.putNumber("target arm degrees", getTargetDegrees());

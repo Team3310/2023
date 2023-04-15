@@ -30,6 +30,7 @@ public class SetArmExtender extends CommandBase {
 
     @Override
     public void execute() {
+        System.out.println("extending");
     }
 
     @Override
