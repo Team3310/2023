@@ -6,6 +6,8 @@ package org.frcteam2910.c2020.subsystems;
 
 import com.ctre.phoenix.led.*;
 
+import java.awt.Color;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -28,6 +30,14 @@ public class LED extends SubsystemBase {
 
   public void setLEDs(int r, int g, int b, int start, int end) {
     led.setLEDs(r, g, b, 30, start, end - start);
+  }
+
+  public void setLEDs(int r, int g, int b, int w, int start, int end) {
+    led.setLEDs(r, g, b, w, start, end - start);
+  }
+
+  public void setLEDs(Color color, int start, int end) {
+    led.setLEDs(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha(), start, end - start);
   }
 
   public static LED getInstance() {
@@ -95,7 +105,7 @@ public class LED extends SubsystemBase {
       {
         setLEDs(0, 0, 0, 0, 8);
       }
-      SmartDashboard.putBoolean("DIO CONE", Intake.getInstance().getConeSensor().get());
-      SmartDashboard.putBoolean("DIO CUBE", Intake.getInstance().getCubeSensor().get());
+      // SmartDashboard.putBoolean("DIO CONE", Intake.getInstance().getConeSensor().get());
+      // SmartDashboard.putBoolean("DIO CUBE", Intake.getInstance().getCubeSensor().get());
   }
 }

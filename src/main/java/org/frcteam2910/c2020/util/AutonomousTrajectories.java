@@ -133,7 +133,7 @@ public class AutonomousTrajectories
         threeObjectFarPart1 = new Trajectory(
                 new SimplePathBuilder(new Vector2(0,0), Rotation2.fromDegrees(180))
                         .lineTo(new Vector2(160, 0))
-                        .lineTo(new Vector2(217, -18))
+                        .lineTo(new Vector2(223, -18))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
@@ -147,8 +147,8 @@ public class AutonomousTrajectories
         threeObjectFarPart3 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart2), getEndRotation(threeObjectFarPart2))
                         .lineTo(new Vector2(168, -15), Rotation2.fromDegrees(160))
-                        .lineTo(new Vector2(219, -66))
-                        .lineTo(new Vector2(231, -66))
+                        .lineTo(new Vector2(219, -72))
+                        .lineTo(new Vector2(237, -72))
                         .build(),
                 mediumSlowConstraints, SAMPLE_DISTANCE
         );
@@ -554,6 +554,14 @@ public class AutonomousTrajectories
         return new Trajectory(
                 new SimplePathBuilder(new Vector2(0, 0), Rotation2.fromDegrees(180))
                 .lineTo(new Vector2(-11*12, 0))
+                .build(),
+        mediumSlowConstraints, SAMPLE_DISTANCE, 0.0 ,5.0);
+    }
+
+    public Trajectory getBackwardsXFeet(int x){
+        return new Trajectory(
+                new SimplePathBuilder(new Vector2(0, 0), Rotation2.fromDegrees(180))
+                .lineTo(new Vector2(-x*12, 0))
                 .build(),
         mediumSlowConstraints, SAMPLE_DISTANCE, 0.0 ,5.0);
     }

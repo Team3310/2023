@@ -88,7 +88,7 @@ public class Intake implements Subsystem{
         intakeMotor.config_IntegralZone(kIntakeVelocitySlot, (int)this.ArmRoller_RpmToVelocityTicks(200));
 
         intakeMotor.config_kF(kIntakePositionSlot, 0.0);
-        intakeMotor.config_kP(kIntakePositionSlot, 0.1);
+        intakeMotor.config_kP(kIntakePositionSlot, 0.2);
         intakeMotor.config_kI(kIntakePositionSlot, 0.0);
         intakeMotor.config_kD(kIntakePositionSlot, 0.0);
 

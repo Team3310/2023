@@ -29,11 +29,11 @@ public class FlashLEDs extends CommandBase {
         led.wantingObject = true;
         if(wantCone) {
             // Cone
-            colorToSet = new Color(252, 100, 3);
+            colorToSet = new Color(252, 100, 3, 30);
         }
         else {
             // Cube
-            colorToSet = new Color(25, 0, 25);
+            colorToSet = new Color(25, 0, 25, 100);
         }
     }
 
@@ -53,7 +53,7 @@ public class FlashLEDs extends CommandBase {
             }
             else {
                 // LEDs are off
-                led.setLEDs(colorToSet.getRed(), colorToSet.getGreen(), colorToSet.getBlue(), 0, ledAmount);
+                led.setLEDs(colorToSet, 0, ledAmount);
             }
 
             onLED = !onLED;

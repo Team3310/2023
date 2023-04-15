@@ -211,7 +211,6 @@ public class Robot extends TimedRobot {
                           AutonomousMode.S_CURVE,
                           AutonomousMode.THREE_OBJECT_BRIDGE,
                           AutonomousMode.BUMP_THREE_OBJECT,
-                          AutonomousMode.BUMP_THREE_OBJECT,
                           AutonomousMode.ONE_OBJECT_BALANCE
             ));
 
