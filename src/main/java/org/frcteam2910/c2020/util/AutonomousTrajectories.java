@@ -146,7 +146,7 @@ public class AutonomousTrajectories
         );
         threeObjectFarPart3 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart2), getEndRotation(threeObjectFarPart2))
-                        .lineTo(new Vector2(185, -15), Rotation2.fromDegrees(160))
+                        .lineTo(new Vector2(168, -15), Rotation2.fromDegrees(160))
                         .lineTo(new Vector2(219, -66))
                         .lineTo(new Vector2(231, -66))
                         .build(),

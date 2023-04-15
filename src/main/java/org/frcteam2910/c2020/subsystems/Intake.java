@@ -252,7 +252,7 @@ public class Intake implements Subsystem{
 
         // These are for velocity units
         public double ArmRoller_RpmToVelocityTicks(double rpm) {
-            SmartDashboard.putNumber("intake rpm ticks per 100 ms", ((rpm * Constants.ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) / (10*60)));
+            // SmartDashboard.putNumber("intake rpm ticks per 100 ms", ((rpm * Constants.ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) / (10*60)));
             return (rpm * Constants.ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) / (10*60);
         }
         public double ArmRoller_VelocityTicksToRpm(double ticksPer100ms) {
@@ -299,11 +299,11 @@ public class Intake implements Subsystem{
     public void periodic(){
         SmartDashboard.putBoolean("DIO Cone", coneSensor.get());
         SmartDashboard.putBoolean("DIO Cube", cubeSensor.get());
-        SmartDashboard.putBoolean("DIO Cube Roll", cubeRollerSensor.get());
+        // SmartDashboard.putBoolean("DIO Cube Roll", cubeRollerSensor.get());
+        SmartDashboard.putString("intake stop mode", intakeStopType.name());
         SmartDashboard.putNumber("intake deploy position", getCubeIntakeDeployDegrees());
 
         //debug prints
-        SmartDashboard.putString("intake stop mode", intakeStopType.name());
         // SmartDashboard.putBoolean("set intake zero", hasSetIntakeZero);
         // SmartDashboard.putNumber("intake motor current", intakeMotor.getStatorCurrent());
         // SmartDashboard.putNumber("intake motor position", intakeMotor.getSelectedSensorPosition());
