@@ -77,9 +77,9 @@ class Part2 extends AutonCommandBase{
     }
 
     public Part2(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive){
-        resetRobotPose(container, trajectories.getBackwardsXFeet(3));
+        resetRobotPose(container, trajectories.getBackwardsXFeet(7, drive.getPose().rotation.toDegrees()));
         this.addCommands(
-            new FollowTrajectoryCommand(drive, trajectories.getBackwardsXFeet(3))
+            new FollowTrajectoryCommand(drive, trajectories.getBackwardsXFeet(7, drive.getPose().rotation.toDegrees()))
         );
     }
 }
