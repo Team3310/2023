@@ -60,7 +60,7 @@ public class BumpThreeObject extends AutonCommandBase {
                         new WaitForEndOfTrajectory(
                             trajectories.getThreeObjectFarPart4B(isBlue),
                             2,
-                            new SetArmSafely(ScoreMode.CUBE_MID)
+                            new SetArmSafelyAuton(ScoreMode.CUBE_MID, false, false)
                         )
                     )
                 )

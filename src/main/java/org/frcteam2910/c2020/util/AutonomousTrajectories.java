@@ -174,14 +174,14 @@ public class AutonomousTrajectories
                         .lineTo(new Vector2(160, 0))
                         .lineTo(new Vector2(223, 18))
                         .build(),
-                mediumConstraints, SAMPLE_DISTANCE
+                mediumFastConstraints, SAMPLE_DISTANCE
         );
         threeObjectFarPart2Blue = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart1Blue), getEndRotation(threeObjectFarPart1Blue))
                         .lineTo(new Vector2(188, 15), Rotation2.fromDegrees(5))
                         .lineTo(new Vector2(148, 15))
                         .build(),
-                mediumConstraints, SAMPLE_DISTANCE
+                mediumFastConstraints, SAMPLE_DISTANCE
         );
         threeObjectFarPart3Blue = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart2Blue), getEndRotation(threeObjectFarPart2Blue))
@@ -189,7 +189,7 @@ public class AutonomousTrajectories
                         // .lineTo(new Vector2(219, 82))
                         .lineTo(new Vector2(237, 82))
                         .build(),
-                mediumSlowConstraints, SAMPLE_DISTANCE
+                mediumFastConstraints, SAMPLE_DISTANCE
         );
         threeObjectFarPart4ABlue = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart3Blue), getEndRotation(threeObjectFarPart3Blue))
@@ -202,9 +202,9 @@ public class AutonomousTrajectories
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart3Blue), getEndRotation(threeObjectFarPart3Blue))
                         .lineTo(new Vector2(173, 15), Rotation2.fromDegrees(-180))
                         .lineTo(new Vector2(68, 5))
-                        .lineTo(new Vector2(-3, 40), Rotation2.fromDegrees(-195))
+                        .lineTo(new Vector2(-51, 40), Rotation2.fromDegrees(-180))
                         .build(),
-                mediumConstraints, SAMPLE_DISTANCE
+                mediumFastConstraints, SAMPLE_DISTANCE
         );
         //#endregion
 //#endregion
