@@ -14,12 +14,12 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class BumpThreeObject extends AutonCommandBase {
-    public BumpThreeObject(RobotContainer container, AutonomousTrajectories trajectories){
+public class BumpThreeObjectSpit extends AutonCommandBase {
+    public BumpThreeObjectSpit(RobotContainer container, AutonomousTrajectories trajectories){
         this(container, trajectories, container.getDrivetrainSubsystem(), container.getIntake());
     }
 
-    public BumpThreeObject(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Intake intake) {
+    public BumpThreeObjectSpit(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive, Intake intake) {
         boolean isBlue = getSide(container);
         resetRobotPose(container, trajectories.getThreeObjectFarPart1(isBlue));
         this.addCommands(
@@ -52,21 +52,21 @@ public class BumpThreeObject extends AutonCommandBase {
             ),
             new WaitCommand(0.2),
             new ParallelCommandGroup(
-                new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart4B(isBlue)),
+                new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart4A(isBlue)),
                 new SequentialCommandGroup(
                     new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
                     new SequentialCommandGroup(
-                        new SetArmSafely(ScoreMode.HOME),
-                        new WaitForEndOfTrajectory(
-                            trajectories.getThreeObjectFarPart4B(isBlue),
-                            2,
-                            new SetArmSafelyAuton(ScoreMode.CUBE_MID, false, false)
-                        )
+                        new WaitCommand(0.4),
+                        new InstantCommand(()->intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true))
+                    ),
+                    new WaitForEndOfTrajectory(
+                        trajectories.getThreeObjectFarPart4A(isBlue),
+                        1.5,
+                        new CubeSpit(intake, true)
                     )
                 )
             ),
-            new ScoreCubeAuton(intake),
-            new SetUpForTeleop(intake)
+            new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart5(isBlue))
         );
     }
 }

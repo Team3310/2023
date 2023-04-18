@@ -4,8 +4,8 @@ import org.frcteam2910.c2020.Constants;
 
 public enum ScoreMode{
     HOME(14.0, 0.25, Constants.ARM_DEFAULT_PID_SLOT), 
-    CONE_INTAKE(15, 0.1, Constants.ARM_INTAKE_PID_SLOT), //17, 3.375 practice : 15 , 0.1
-    CUBE_INTAKE(6.0, 3.0, Constants.ARM_INTAKE_PID_SLOT), //33, 9.5 practice : 24.5, 5.25
+    CONE_INTAKE(20, 3.0, Constants.ARM_INTAKE_PID_SLOT), //17, 3.375 practice : 15 , 0.1
+    CUBE_INTAKE(0.0, 3.0, Constants.ARM_INTAKE_PID_SLOT), //33, 9.5 practice : 24.5, 5.25
 
     CONE_HIGH(110, 15.5, Constants.ARM_CONE_HIGH_PID_SLOT), // "money" - paul
     CONE_MID(90, 0.875, Constants.ARM_CONE_MID_PID_SLOT),

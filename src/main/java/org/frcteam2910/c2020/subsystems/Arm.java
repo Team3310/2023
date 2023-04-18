@@ -170,11 +170,11 @@ public class Arm implements Subsystem{
     }
 
     public void setRotationPIDSlot(ScoreMode mode){
-        SmartDashboard.putNumber("pid slot", mode.getPIDSlot());
-        SmartDashboard.putString("pid slot name", mode.name());
+        // SmartDashboard.putNumber("pid slot", mode.getPIDSlot());
+        // SmartDashboard.putString("pid slot name", mode.name());
         SlotConfiguration t = new SlotConfiguration();
         armRotationMotor.getSlotConfigs(t, mode.getPIDSlot(), 0);
-        SmartDashboard.putString("pid gains", t.toString("-"));
+        // SmartDashboard.putString("pid gains", t.toString("-"));
         armRotationMotor.selectProfileSlot(mode.getPIDSlot(), 0);
     }
 

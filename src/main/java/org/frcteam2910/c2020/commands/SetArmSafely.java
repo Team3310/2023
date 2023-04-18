@@ -28,9 +28,6 @@ public class SetArmSafely extends SequentialCommandGroup {
 
         this.arm = Arm.getInstance();
         Intake intake = Intake.getInstance();
-
-        SmartDashboard.putNumber("commanded angle", targetScoreMode.getAngle());
-
         // arm.setScoreMode(!afterIntake?targetScoreMode:ScoreMode.ZERO);
         this.addCommands(
             new InstantCommand(()->{

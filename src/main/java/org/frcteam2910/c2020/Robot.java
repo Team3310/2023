@@ -184,6 +184,8 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().cancelAll();
 
         CommandScheduler.getInstance().schedule(new SetIntakeDeployPosition(robotContainer.getIntake(), Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES));
+        robotContainer.getIntake().setCubeRollerRPM(0, false);
+        robotContainer.getIntake().setArmIntakeRPM(0, false);
         robotContainer.getArm().setMotorNeutralMode(NeutralMode.Brake);
         robotContainer.getArm().setRotationHold();
         
@@ -210,7 +212,6 @@ public class Robot extends TimedRobot {
             Arrays.asList(AutonomousMode.SEVEN_FEET,
                           AutonomousMode.S_CURVE,
                           AutonomousMode.THREE_OBJECT_BRIDGE,
-                          AutonomousMode.BUMP_THREE_OBJECT,
                           AutonomousMode.BUMP_THREE_OBJECT,
                           AutonomousMode.ONE_OBJECT_BALANCE
             ));

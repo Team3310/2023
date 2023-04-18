@@ -39,6 +39,13 @@ public class SetArmSafelyAuton extends SequentialCommandGroup {
                     new SetArmExtender(arm, targetScoreMode.getInches(), true)
                 );
             }
+            else if(targetScoreMode==ScoreMode.CUBE_MID){
+                this.addCommands(
+                    new SetArmExtender(arm, 0.0, true),
+                    new SetArmRotator(arm, targetScoreMode.getAngle()+DEGREES_DOWN, true),
+                    new SetArmExtender(arm, targetScoreMode.getInches(), true)
+                );
+            }
             else{
                 this.addCommands(
                     new SetArmExtender(arm, 0.0, true),

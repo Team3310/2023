@@ -28,13 +28,18 @@ public class EasySideThreeObject extends AutonCommandBase {
             ),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPickup2(isBlue)),
-                new WaitForEndOfTrajectory(trajectories.getEasySideConeToPickup2(isBlue), 2.5,
+                new WaitForEndOfTrajectory(trajectories.getEasySideConeToPickup2(isBlue), 4.0,
                     new CubeIntake(intake, true)
                 )
             ),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPlace2(isBlue)),
-                new SetIntakeDeployPosition(intake, 45.0),
+                new SequentialCommandGroup(
+                    new SetIntakeDeployPosition(intake, 0.0),
+                    new WaitCommand(0.3),
+                    new SetIntakeDeployPosition(intake, 45.0)
+                ),
+                new SetArmRotator(arm, 7.5),
                 new SequentialCommandGroup(
                     new WaitCommand(0.3),
                     new InstantCommand(()->intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true))

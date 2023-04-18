@@ -20,6 +20,7 @@ public class AutonomousChooser {
         this.trajectories = trajectories;
 
         autonomousModeChooser.setDefaultOption("Bump Three Object", AutonomousMode.BUMP_THREE_OBJECT);
+        autonomousModeChooser.addOption("Bump Three Object Spit", AutonomousMode.BUMP_SPIT_THREE_OBJECT);
         autonomousModeChooser.addOption("easy three object", AutonomousMode.THREE_OBJECT_BRIDGE);
         autonomousModeChooser.addOption("easy two object", AutonomousMode.TWO_OBJECT_BRIDGE);
         autonomousModeChooser.addOption("mid two object balance", AutonomousMode.TWO_MID_BALANCE);
@@ -87,7 +88,9 @@ public class AutonomousChooser {
             case BUMP_THREE_OBJECT:
                 return new BumpThreeObject(container, trajectories);
             case TWO_MID_BALANCE:
-                return new MidTwoBalance(container, trajectories);                  
+                return new MidTwoBalance(container, trajectories); 
+            case BUMP_SPIT_THREE_OBJECT:
+                return new BumpThreeObjectSpit(container, trajectories);                     
             default:
                 return new OneObjectMid(container, trajectories);
         }
@@ -117,6 +120,7 @@ public class AutonomousChooser {
         S_CURVE, 
         SCORE_ONE_TEST,
         TWO_MID_BALANCE,
+        BUMP_SPIT_THREE_OBJECT,
         ;
     }
 }
