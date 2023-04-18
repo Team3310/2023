@@ -84,7 +84,7 @@ public class AutonomousTrajectories
     private final Trajectory easySideConeToPickUp2Blue;
     private final Trajectory easySideConeToPlace1Blue;
     private final Trajectory easySideConeToPlace2Blue;
-    private final Trajectory easySideConeToBridge1;
+//     private final Trajectory easySideConeToBridge1;
     private final Trajectory easySideConeToBridge1Blue;
     private final Trajectory easySideConeToBridge2;
     private final Trajectory easySideConeToBridge2Half;
@@ -592,7 +592,7 @@ public class AutonomousTrajectories
 
     @Deprecated
     public Trajectory getEasySideToBridge1(boolean isBlue){
-        return isBlue?easySideConeToBridge1Blue:easySideConeToBridge1;
+        return isBlue?easySideConeToBridge1Blue:null;//easySideConeToBridge1;
     }
 
     public Trajectory getEasySideToBridge2(){

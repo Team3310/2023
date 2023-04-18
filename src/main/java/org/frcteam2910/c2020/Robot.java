@@ -184,6 +184,8 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().cancelAll();
 
         CommandScheduler.getInstance().schedule(new SetIntakeDeployPosition(robotContainer.getIntake(), Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES));
+        robotContainer.getIntake().setCubeRollerRPM(0, false);
+        robotContainer.getIntake().setArmIntakeRPM(0, false);
         robotContainer.getArm().setMotorNeutralMode(NeutralMode.Brake);
         robotContainer.getArm().setRotationHold();
         

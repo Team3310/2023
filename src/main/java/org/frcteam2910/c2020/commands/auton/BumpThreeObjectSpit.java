@@ -66,20 +66,7 @@ public class BumpThreeObjectSpit extends AutonCommandBase {
                     )
                 )
             ),
-            new Part2(container, trajectories)
-        );
-    }
-}
-
-class Part2 extends AutonCommandBase{
-    public Part2(RobotContainer container, AutonomousTrajectories trajectories){
-        this(container, trajectories, container.getDrivetrainSubsystem());
-    }
-
-    public Part2(RobotContainer container, AutonomousTrajectories trajectories, DrivetrainSubsystem drive){
-        resetRobotPose(container, trajectories.getBackwardsXFeet(7, drive.getPose().rotation.toDegrees()));
-        this.addCommands(
-            new FollowTrajectoryCommand(drive, trajectories.getBackwardsXFeet(7, drive.getPose().rotation.toDegrees()))
+            new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart5(isBlue))
         );
     }
 }
