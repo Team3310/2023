@@ -65,6 +65,8 @@ public class AutonomousTrajectories
     private final Trajectory threeObjectFarPart3Blue;
     private final Trajectory threeObjectFarPart4ABlue;
     private final Trajectory threeObjectFarPart4BBlue;
+    private final Trajectory threeObjectFarPart5Blue;
+    private final Trajectory threeObjectFarPart5;
 
     private final Trajectory threeObjectClosePart1Blue;
     private final Trajectory threeObjectClosePart2Blue;
@@ -167,6 +169,13 @@ public class AutonomousTrajectories
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
+        threeObjectFarPart5 = new Trajectory(
+                new SimplePathBuilder(getEndCoords(threeObjectFarPart4A), getEndRotation(threeObjectFarPart4A))
+                        .lineTo(new Vector2(237, -20), Rotation2.fromDegrees(-180))
+                        .lineTo(new Vector2(237, -138), Rotation2.fromDegrees(-180))
+                        .build(),
+                trajectoryConstraints, SAMPLE_DISTANCE
+        );
         //#endregion
         //#region Blue - Three Object Far
         threeObjectFarPart1Blue = new Trajectory(
@@ -185,7 +194,7 @@ public class AutonomousTrajectories
         );
         threeObjectFarPart3Blue = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart2Blue), getEndRotation(threeObjectFarPart2Blue))
-                        .lineTo(new Vector2(168, 15), Rotation2.fromDegrees(-160))
+                        .lineTo(new Vector2(168, 15), Rotation2.fromDegrees(-170))
                         // .lineTo(new Vector2(219, 82))
                         .lineTo(new Vector2(237, 82))
                         .build(),
@@ -205,6 +214,13 @@ public class AutonomousTrajectories
                         .lineTo(new Vector2(-51, 40), Rotation2.fromDegrees(-180))
                         .build(),
                 mediumFastConstraints, SAMPLE_DISTANCE
+        );
+        threeObjectFarPart5Blue = new Trajectory(
+                new SimplePathBuilder(getEndCoords(threeObjectFarPart4ABlue), getEndRotation(threeObjectFarPart4ABlue))
+                        .lineTo(new Vector2(200, 18), Rotation2.fromDegrees(-180))
+                        .lineTo(new Vector2(200, 158), Rotation2.fromDegrees(-180))
+                        .build(),
+                trajectoryConstraints, SAMPLE_DISTANCE
         );
         //#endregion
 //#endregion
@@ -354,13 +370,13 @@ public class AutonomousTrajectories
                         .lineTo(new Vector2(148, 6))
                         .lineTo(new Vector2(217, 24.0))
                         .build(),
-                mediumFastConstraints, SAMPLE_DISTANCE);
+                trajectoryConstraints, SAMPLE_DISTANCE);
 
         easySideConeToPlace1 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPickUp1), getEndRotation(easySideConeToPickUp1))
                         .lineTo(new Vector2(211, 18))
                         .lineTo(new Vector2(48, 18))
-                        .lineTo(new Vector2(0.0, 24.0))
+                        .lineTo(new Vector2(-5.0, 24.0))
                         .build(),
                 mediumFastConstraints, SAMPLE_DISTANCE);
 
@@ -370,33 +386,21 @@ public class AutonomousTrajectories
                         .lineTo(new Vector2(48, 16))
                         .lineTo(new Vector2(108, 16))
                         .lineTo(new Vector2(138, 18))
-                        
-                        .lineTo(new Vector2(217, 79), Rotation2.fromDegrees(220))
+                        .lineTo(new Vector2(217, 96), Rotation2.fromDegrees(240))
                         .build(),
                 mediumFastConstraints, SAMPLE_DISTANCE);        
 
         easySideConeToPlace2 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPickUp2), getEndRotation(easySideConeToPickUp2))
-                        .lineTo(new Vector2(178, 24), Rotation2.fromDegrees(0))//was 138 but we are spitting now
-                        .lineTo(new Vector2(74, 24))
-                        // .lineTo(new Vector2(108, 12))
-                        // .lineTo(new Vector2(48, 12))
-                        // .lineTo(new Vector2(0, 18))
+                        .lineTo(new Vector2(178, 42), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(74, 42))
                         .build(),
-                mediumFastConstraints, SAMPLE_DISTANCE);  
+                trajectoryConstraints, SAMPLE_DISTANCE);  
         easySideToEndSpot = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPlace2), getEndRotation(easySideConeToPlace2))
-                        .lineTo(new Vector2(217, 18))
+                        .lineTo(new Vector2(217, 18), Rotation2.fromDegrees(180))
                         .build(),
-                mediumFastConstraints, SAMPLE_DISTANCE); 
-                        
-        easySideConeToBridge1 = new Trajectory(
-                new SimplePathBuilder(new Vector2(-246, 140.68), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(-240, 140.68))
-                        .lineTo(new Vector2(-240, 197.68))
-                        .build(),
-                mediumConstraints, SAMPLE_DISTANCE
-        );
+                trajectoryConstraints, SAMPLE_DISTANCE); 
         //#endregion
         //#region Blue - Easy Side
         easySideConeToPickUp1Blue =
@@ -404,7 +408,7 @@ public class AutonomousTrajectories
                         .lineTo(new Vector2(148, -6))
                         .lineTo(new Vector2(217, -24.0))
                         .build(),
-                mediumFastConstraints, SAMPLE_DISTANCE);
+                trajectoryConstraints, SAMPLE_DISTANCE);
 
         easySideConeToPlace1Blue = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPickUp1Blue), getEndRotation(easySideConeToPickUp1Blue))
@@ -420,24 +424,24 @@ public class AutonomousTrajectories
                         .lineTo(new Vector2(48, -16))
                         .lineTo(new Vector2(108, -16))
                         .lineTo(new Vector2(138, -18))
-                        .lineTo(new Vector2(217, -85), Rotation2.fromDegrees(-220))
+                        .lineTo(new Vector2(217, -96), Rotation2.fromDegrees(-240))
                         .build(),
                 mediumFastConstraints, SAMPLE_DISTANCE);        
 
         easySideConeToPlace2Blue = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPickUp2Blue), getEndRotation(easySideConeToPickUp2Blue))
-                        .lineTo(new Vector2(178, -24), Rotation2.fromDegrees(0))
-                        .lineTo(new Vector2(74, -24))
+                        .lineTo(new Vector2(178, -42), Rotation2.fromDegrees(0))
+                        .lineTo(new Vector2(74, -42))
                         .build(),
-                mediumFastConstraints, SAMPLE_DISTANCE);  
+                trajectoryConstraints, SAMPLE_DISTANCE);  
         easySideToEndSpotBlue = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPlace2Blue), getEndRotation(easySideConeToPlace2Blue))
-                        .lineTo(new Vector2(217, -18))
+                        .lineTo(new Vector2(217, -18), Rotation2.fromDegrees(180))
                         .build(),
-                mediumFastConstraints, SAMPLE_DISTANCE); 
+                trajectoryConstraints, SAMPLE_DISTANCE); 
                         
         easySideConeToBridge1Blue = new Trajectory(
-                new SimplePathBuilder(new Vector2(-246, 140.68), Rotation2.fromDegrees(180))
+                new SimplePathBuilder(new Vector2(-246, 140.68), Rotation2.fromDegrees(200))
                         .lineTo(new Vector2(-240, 140.68))
                         .lineTo(new Vector2(-240, 197.68))
                         .build(),
@@ -531,6 +535,8 @@ public class AutonomousTrajectories
     public Trajectory getThreeObjectFarPart4A(boolean isBlue){return isBlue?threeObjectFarPart4ABlue:threeObjectFarPart4A;}
 
     public Trajectory getThreeObjectFarPart4B(boolean isBlue){return isBlue?threeObjectFarPart4BBlue:threeObjectFarPart4B;}
+
+    public Trajectory getThreeObjectFarPart5(boolean isBlue){return isBlue?threeObjectFarPart5Blue:threeObjectFarPart5;}
 
     public Trajectory getThreeObjectClosePart1(boolean isBlue){return isBlue?threeObjectClosePart1Blue:threeObjectClosePart1;}
 
