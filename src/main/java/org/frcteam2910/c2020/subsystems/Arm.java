@@ -75,7 +75,7 @@ public class Arm implements Subsystem{
         CANCoderConfiguration config = new CANCoderConfiguration();
         config.sensorDirection =  false;
         config.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
-        config.magnetOffsetDegrees = Constants.ARM_CANCODER_OFFSET;
+        config.magnetOffsetDegrees = Constants.ARM_ENCODER_OFFSET;
         config.sensorCoefficient = Constants.ARM_ROTATOR_EXTERNAL_ENCODER_RATIO;
         armExternalCANCoder.configAllSettings(config);
 
