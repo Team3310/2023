@@ -52,7 +52,7 @@ public class Constants
     public static final int DRIVETRAIN_BACK_LEFT_ENCODER_PORT = 1;
 
     public static final double DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET = -Math.toRadians(210.76); //169.01 Practice robot settings
-    public static final double DRIVETRAIN_BACK_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(346.80);//262.35 Comp settings
+    public static final double DRIVETRAIN_BACK_LEFT_ENCODER_COMP_OFFSET = -Math.toRadians(244.86);//346.80 Comp settings
 
     /********************************************************************************************************************/
 
@@ -62,7 +62,7 @@ public class Constants
     public static final int DRIVETRAIN_BACK_RIGHT_ENCODER_PORT = 0;
 
     public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET = -Math.toRadians(9.31); //117.86 Practice robot settings
-    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(60.98); //204.17 Comp settings
+    public static final double DRIVETRAIN_BACK_RIGHT_ENCODER_COMP_OFFSET = -Math.toRadians(151.1); //60.98 Comp settings
 
     /********************************************************************************************************************/
 
