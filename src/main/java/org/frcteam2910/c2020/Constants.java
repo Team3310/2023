@@ -103,6 +103,7 @@ public class Constants
     public static final double ARM_ROTATOR_HOME_DEGREES = 0.0;
     public static final double ARM_ROTATOR_MIN_ROTATION_DEGREES = -5.0;
     public static final double ARM_ROTATOR_MAX_ROTATION_DEGREES = 115.0;
+    public static final double ARM_CANCODER_OFFSET = 0.0;
     
     public static final double ARM_EXTENDER_MIN_EXTEND_INCHES = 0.0;
     public static final double ARM_EXTENDER_MAX_EXTEND_INCHES = 20.0;

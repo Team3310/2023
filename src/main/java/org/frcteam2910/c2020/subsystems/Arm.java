@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 
@@ -43,6 +44,9 @@ public class Arm implements Subsystem{
     private double manualRotationSpeed;
     public ScoreMode scoreMode = ScoreMode.HOME;
 
+    private int resetIteration = 0;
+    private int resetEncoderIterations = 0;
+
     private ArmControlMode extenderControlMode = ArmControlMode.HOLD;
     private ArmControlMode rotationControlMode = ArmControlMode.HOLD;
 
@@ -70,9 +74,10 @@ public class Arm implements Subsystem{
 
         CANCoderConfiguration config = new CANCoderConfiguration();
         config.sensorDirection =  false;
+        config.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
+        config.magnetOffsetDegrees = Constants.ARM_CANCODER_OFFSET;
+        config.sensorCoefficient = Constants.ARM_ROTATOR_EXTERNAL_ENCODER_RATIO;
         armExternalCANCoder.configAllSettings(config);
-        armRotationMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
-        armRotationMotor.setSensorPhase(false);
 
         final StatorCurrentLimitConfiguration statorCurrentConfigs = new StatorCurrentLimitConfiguration();
         statorCurrentConfigs.currentLimit = 40.0;
@@ -139,6 +144,28 @@ public class Arm implements Subsystem{
     //#endregion
     
     //#region rotation Methods
+    /** 
+     * {@summary sets the motor sensor position to the encoder position to eliminate any errors from the motor sensor on a certain interval}
+     * lines 188-197 of {@link com.swervedrivespecialties.swervelib.ctre.Falcon500SteerControllerFactoryBuilder.ControllerImplementation#setReferenceAngle(double)} 
+     */
+    private void syncMotorToEncoder(){
+        if(resetIteration>0 && Math.abs(armRotationMotor.getSelectedSensorVelocity())<500){
+            if(++resetIteration>=resetEncoderIterations){
+                armRotationMotor.setSelectedSensorPosition(getMotorTicksFromEncoder());
+                resetIteration=0;
+            }
+        }else{
+            resetIteration=0;
+        }
+    }
+
+    /**
+    *@returns the ticks for the motor from the encoder absolute degrees
+    */
+    private double getMotorTicksFromEncoder(){
+        return getArmDegreesEncoderTicks(armExternalCANCoder.getAbsolutePosition());
+    }
+
     public void clearRotatorIWindup(){
         armRotationMotor.setIntegralAccumulator(0);
     }
@@ -166,7 +193,7 @@ public class Arm implements Subsystem{
     }
 
     public double getArmDegreesIntegrated(){
-        return ((armRotationMotor.getSelectedSensorPosition()*360/4096) / Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS) + degreesOffset;
+        return (armRotationMotor.getSelectedSensorPosition() / Constants.ARM_ROTATOR_ONE_DEGREE_TO_INTEGRATED_ENCODER_TICKS) + degreesOffset;
     }
 
     public void setRotationPIDSlot(ScoreMode mode){
@@ -179,11 +206,11 @@ public class Arm implements Subsystem{
     }
 
     public double getArmDegreesExternal(){
-        return ((armExternalCANCoder.getAbsolutePosition()/360*4096) / Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS) + degreesOffset;
+        return (armExternalCANCoder.getPosition() / Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS) + degreesOffset;
     }
 
     public double getArmDegreesEncoderTicks(double degrees){
-        return degrees * Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS / 360 * 4096;
+        return degrees * Constants.ARM_ROTATOR_ONE_DEGREE_TO_INTEGRATED_ENCODER_TICKS;
     }
 
     public void setArmRotatorZeroReference(double offset){
@@ -242,7 +269,7 @@ public class Arm implements Subsystem{
     }
 
     public double getTargetDegrees(){
-        return targetDegreesTicks/Constants.ARM_ROTATOR_ONE_DEGREE_TO_EXTERNAL_ENCODER_TICKS;
+        return targetDegreesTicks/Constants.ARM_ROTATOR_ONE_DEGREE_TO_INTEGRATED_ENCODER_TICKS;
     }   
 
     public void setMotorNeutralMode(NeutralMode nm) {
@@ -370,6 +397,8 @@ public class Arm implements Subsystem{
         // SmartDashboard.putNumber("target arm degrees", getTargetDegrees());
         // SmartDashboard.putNumber("extendo voltage", armTranslationMotor.getMotorOutputVoltage());
         // SmartDashboard.putNumber("extendo current", armTranslationMotor.getStatorCurrent());
+
+        syncMotorToEncoder();
 
         if(rotationControlMode == ArmControlMode.MANUAL){
             targetDegreesTicks = armRotationMotor.getSelectedSensorPosition();
