@@ -135,7 +135,7 @@ public class AutonomousTrajectories
         threeObjectFarPart1 = new Trajectory(
                 new SimplePathBuilder(new Vector2(0,0), Rotation2.fromDegrees(180))
                         .lineTo(new Vector2(160, 0))
-                        .lineTo(new Vector2(223, -18))
+                        .lineTo(new Vector2(223, -24))
                         .build(),
                 mediumConstraints, SAMPLE_DISTANCE
         );
@@ -148,9 +148,9 @@ public class AutonomousTrajectories
         );
         threeObjectFarPart3 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart2), getEndRotation(threeObjectFarPart2))
-                        .lineTo(new Vector2(168, -15), Rotation2.fromDegrees(160))
+                        .lineTo(new Vector2(168, -15), Rotation2.fromDegrees(155))
                         .lineTo(new Vector2(219, -72))
-                        .lineTo(new Vector2(237, -72))
+                        .lineTo(new Vector2(237, -116))
                         .build(),
                 mediumSlowConstraints, SAMPLE_DISTANCE
         );
@@ -171,8 +171,8 @@ public class AutonomousTrajectories
         );
         threeObjectFarPart5 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart4A), getEndRotation(threeObjectFarPart4A))
-                        .lineTo(new Vector2(237, -20), Rotation2.fromDegrees(-180))
-                        .lineTo(new Vector2(237, -138), Rotation2.fromDegrees(-180))
+                        .lineTo(new Vector2(207, -20), Rotation2.fromDegrees(-180))
+                        .lineTo(new Vector2(207, -138), Rotation2.fromDegrees(-180))
                         .build(),
                 trajectoryConstraints, SAMPLE_DISTANCE
         );

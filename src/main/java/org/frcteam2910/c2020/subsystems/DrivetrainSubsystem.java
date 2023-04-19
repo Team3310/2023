@@ -1325,6 +1325,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         SmartDashboard.putNumber("Yaw Curr", getPose().rotation.toDegrees());
         SmartDashboard.putNumber("Pitch", getPitchDegreesOffLevel());
         SmartDashboard.putNumber("Roll", getRollDegreesOffLevel());
+
+        SmartDashboard.putNumber("time left", DriverStation.getMatchTime());
         
         //debug prints
         // SmartDashboard.putNumber("Yaw Target", commandedPoseAngleDeg);

@@ -29,7 +29,7 @@ public class EasySideThreeObject extends AutonCommandBase {
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getEasySideConeToPickup2(isBlue)),
                 new WaitForEndOfTrajectory(trajectories.getEasySideConeToPickup2(isBlue), 4.0,
-                    new CubeIntake(intake, true)
+                    new CubeIntake(intake, true, true)
                 )
             ),
             new ParallelDeadlineGroup(

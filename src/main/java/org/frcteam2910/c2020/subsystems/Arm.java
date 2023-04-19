@@ -186,9 +186,9 @@ public class Arm implements Subsystem{
     }
 
     public void setArmRotatorZeroReference(double offset){
-        targetDegreesTicks = 0;
-        armRotationMotor.setSelectedSensorPosition(getArmDegreesEncoderTicks(offset));
-        // armExternalCANCoder.setPosition(0);
+        targetDegreesTicks = getArmDegreesEncoderTicks(offset);
+        armRotationMotor.setSelectedSensorPosition(targetDegreesTicks);
+        armRotationMotor.set(ControlMode.Position, targetDegreesTicks);
     }
 
     public double limitArmDegrees(double targetDegrees){

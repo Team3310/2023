@@ -8,6 +8,8 @@ import org.frcteam2910.c2020.subsystems.DrivetrainSubsystem.DriveControlMode;
 import org.frcteam2910.c2020.util.AutonomousTrajectories;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
@@ -46,7 +48,13 @@ class MobilityPart2 extends AutonCommandBase{
         resetRobotPose(container, trajectories.getBackwardsSevenFeet());
         this.addCommands(
             new ChangeDriveMode(drive, DriveControlMode.TRAJECTORY),
-            new FollowTrajectoryCommand(drive, trajectories.getBackwardsSevenFeet()),
+            new ParallelRaceGroup(
+                new FollowTrajectoryCommand(drive, trajectories.getBackwardsSevenFeet()),
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(()->drive.getRollDegreesOffLevel()>15),
+                    new WaitCommand(0.2)
+                )
+            ),
             new DriveBalanceCommand(drive, false),
             new DriveBalanceCommand(drive, true)
         );        

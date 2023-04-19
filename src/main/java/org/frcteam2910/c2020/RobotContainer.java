@@ -81,13 +81,13 @@ public class RobotContainer {
             .onTrue(
                 new InstantCommand(()->intake.setServoPosition(1))
             );
-        primaryController.getAButton()
-            .onTrue(
-                new SequentialCommandGroup(
-                    new DriveBalanceCommand(drivetrain, false),
-                    new DriveBalanceCommand(drivetrain, true)
-                )
-            );
+        // primaryController.getAButton()
+        //     .onTrue(
+        //         new SequentialCommandGroup(
+        //             new DriveBalanceCommand(drivetrain, false),
+        //             new DriveBalanceCommand(drivetrain, true)
+        //         )
+        //     );
         primaryController.getYButton()
             .onTrue(
                 new InstantCommand(()->intake.setServoPosition(-1))
@@ -171,9 +171,12 @@ public class RobotContainer {
                 )
             );
 
-        primaryController.getDPadButton(Direction.UP).onTrue(new FlashLEDs(LED.getInstance(), true));
+        primaryController.getDPadButton(Direction.LEFT).onTrue(new InstantCommand(()->intake.setCubeIntakeDeployZeroReference(0)));
 
-        primaryController.getDPadButton(Direction.UP).onTrue(new FlashLEDs(LED.getInstance(), false));
+
+        // primaryController.getDPadButton(Direction.UP).onTrue(new FlashLEDs(LED.getInstance(), true));
+
+        // primaryController.getDPadButton(Direction.UP).onTrue(new FlashLEDs(LED.getInstance(), false));
 
         // primaryController.getDPadButton(Direction.LEFT).onTrue(new InstantCommand(()->intake.setStopType(IntakeStopMode.POSITION)));
 
