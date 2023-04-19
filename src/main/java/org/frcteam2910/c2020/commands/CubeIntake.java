@@ -19,6 +19,11 @@ public class CubeIntake extends SequentialCommandGroup{
         if(handoff){
                 if(auton){
                     this.addCommands(
+                    new InstantCommand(()->{
+                        intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM, true);
+                        intake.stopRollingOnTriggeredCubeIntakeDIO = false;
+                        intake.stopRollingOnTriggeredArmIntakeDIO = true;
+                    }),
                     new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES),
                     new ParallelRaceGroup(
                         new SequentialCommandGroup(
@@ -28,12 +33,7 @@ public class CubeIntake extends SequentialCommandGroup{
                         ),
                         new WaitCommand(1.0)    
                     ),
-                    new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM, true),
-                    new InstantCommand(()->{
-                        intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_COLLECT_RPM, true);
-                        intake.stopRollingOnTriggeredCubeIntakeDIO = false;
-                        intake.stopRollingOnTriggeredArmIntakeDIO = true;
-                    })
+                    new SetArmIntakeRPM(intake, Constants.ARM_CUBE_INTAKE_COLLECT_RPM, true)
                 );
             }
             else{
