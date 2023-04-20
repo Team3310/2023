@@ -398,7 +398,7 @@ public class AutonomousTrajectories
                 trajectoryConstraints, SAMPLE_DISTANCE);  
         easySideToEndSpot = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPlace2), getEndRotation(easySideConeToPlace2))
-                        .lineTo(new Vector2(217, 18), Rotation2.fromDegrees(180))
+                        .lineTo(new Vector2(212, 18), Rotation2.fromDegrees(180))
                         .build(),
                 trajectoryConstraints, SAMPLE_DISTANCE); 
         //#endregion
