@@ -234,6 +234,10 @@ public class Intake implements Subsystem{
             cubeIntakeLiftMotor.setIntegralAccumulator(0);
         }
 
+        public void setCubeLiftSpeed(double speed){
+            cubeIntakeLiftMotor.set(ControlMode.PercentOutput, speed);
+        }
+
         public void setCubeIntakeDeployTargetPosition(double positionDegrees) {
             cubeIntakeLiftMotor.setIntegralAccumulator(0);
             cubeIntakeLiftMotor.selectProfileSlot(kIntakePositionSlot, 0);

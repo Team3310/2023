@@ -137,7 +137,8 @@ public class Constants
     public static final double CUBE_INTAKE_DEPLOY_ONE_DEGREE_IN_ENCODER_TICKS = CUBE_INTAKE_DEPLOY_ONE_REVOLUTION_IN_ENCODER_TICKS/360.0;
     
     public static final double CUBE_INTAKE_DEPLOY_HOME_DEGREES = 0;
-    public static final double CUBE_INTAKE_DEPLOY_MAX_DEGREES = 111;
+    public static final double CUBE_INTAKE_DEPLOY_MAX_DEGREES = 121;
+    public static final double CUBE_INTAKE_LIFT_ZERO_SPEED = 0.1;
 
     // CUBE INTAKE ROLLER
     public static final double CUBE_INTAKE_ROLLER_MOTOR_RATIO = (18.0/12.0);

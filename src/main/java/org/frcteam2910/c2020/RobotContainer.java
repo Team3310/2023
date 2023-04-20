@@ -182,7 +182,10 @@ public class RobotContainer {
             )
         );
 
-        primaryController.getDPadButton(Direction.LEFT).onTrue(new InstantCommand(()->intake.setCubeIntakeDeployZeroReference(0)));
+        primaryController.getDPadButton(Direction.LEFT).onTrue(
+            //new InstantCommand(()->intake.setCubeIntakeDeployZeroReference(0))
+            new CubeIntakeLiftZero(intake)
+        );
 
 
         // primaryController.getDPadButton(Direction.UP).onTrue(new FlashLEDs(LED.getInstance(), true));

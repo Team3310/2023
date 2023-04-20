@@ -367,15 +367,15 @@ public class AutonomousTrajectories
         //#region Red - Easy Side
         easySideConeToPickUp1 =
                 new Trajectory(new SimplePathBuilder(new Vector2(0, 0), Rotation2.fromDegrees(180))
-                        .lineTo(new Vector2(148, 6))
+                        .lineTo(new Vector2(148, 0))
                         .lineTo(new Vector2(217, 24.0))
                         .build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         easySideConeToPlace1 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPickUp1), getEndRotation(easySideConeToPickUp1))
-                        .lineTo(new Vector2(211, 18))
-                        .lineTo(new Vector2(48, 18))
+                        .lineTo(new Vector2(211, 12))
+                        .lineTo(new Vector2(48, 12))
                         .lineTo(new Vector2(-5.0, 24.0))
                         .build(),
                 mediumFastConstraints, SAMPLE_DISTANCE);
@@ -383,9 +383,9 @@ public class AutonomousTrajectories
 
         easySideConeToPickUp2 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPlace1), getEndRotation(easySideConeToPlace1))
-                        .lineTo(new Vector2(48, 16))
-                        .lineTo(new Vector2(108, 16))
-                        .lineTo(new Vector2(138, 18))
+                        .lineTo(new Vector2(48, 12))
+                        .lineTo(new Vector2(108, 14))
+                        .lineTo(new Vector2(138, 14))
                         .lineTo(new Vector2(217, 96), Rotation2.fromDegrees(240))
                         .build(),
                 mediumFastConstraints, SAMPLE_DISTANCE);        
