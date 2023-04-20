@@ -12,7 +12,7 @@ public enum ScoreMode{
     CONE_LOW(40, 0.1, Constants.ARM_LOW_PID_SLOT),
 
     CUBE_HIGH(Constants.ARM_ROTATOR_MAX_ROTATION_DEGREES, Constants.ARM_EXTENDER_MAX_EXTEND_INCHES, Constants.ARM_CUBE_HIGH_PID_SLOT),
-    CUBE_MID(90, 10.375, Constants.ARM_CUBE_MID_PID_SLOT),
+    CUBE_MID(93, 10.375, Constants.ARM_CUBE_MID_PID_SLOT),
     CUBE_LOW(55, 0.1, Constants.ARM_LOW_PID_SLOT),
     ;
 

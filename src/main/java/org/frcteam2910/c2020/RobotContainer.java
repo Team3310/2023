@@ -156,20 +156,31 @@ public class RobotContainer {
                 new InstantCommand(() -> drivetrain.setTurbo(false))
             );
 
-        primaryController.getRightTriggerAxis()
-            .onTrue(
-                new ParallelCommandGroup(
-                    new InstantCommand(() -> drivetrain.setDriveBrake()),
-                    new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.LOCK_180)
-                )
+        //lock to 180 code
+        // primaryController.getRightTriggerAxis()
+        //     .onTrue(
+        //         new ParallelCommandGroup(
+        //             new InstantCommand(() -> drivetrain.setDriveBrake()),
+        //             new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.LOCK_180)
+        //         )
+        //     )
+        //     .onFalse(
+        //         new ParallelCommandGroup(
+        //             new InstantCommand(() -> drivetrain.setDriveCoast()),
+        //             new InstantCommand(() -> drivetrain.setCommandedGyroAngle(drivetrain.getPose().rotation.toDegrees())),
+        //             new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
+        //         )
+        //     );
+
+        primaryController.getRightTriggerAxis().onTrue(
+            new CubeSpitSlow(intake)
+        ).onFalse(
+            new ParallelCommandGroup(
+                new SetArmSafely(true, false),
+                new InstantCommand(()->intake.setCubeRollerRPM(0, true)),
+                new SetArmIntakeRPM(intake, 0, true)
             )
-            .onFalse(
-                new ParallelCommandGroup(
-                    new InstantCommand(() -> drivetrain.setDriveCoast()),
-                    new InstantCommand(() -> drivetrain.setCommandedGyroAngle(drivetrain.getPose().rotation.toDegrees())),
-                    new ChangeDriveMode(drivetrain, DrivetrainSubsystem.DriveControlMode.JOYSTICKS)
-                )
-            );
+        );
 
         primaryController.getDPadButton(Direction.LEFT).onTrue(new InstantCommand(()->intake.setCubeIntakeDeployZeroReference(0)));
 
