@@ -12,7 +12,7 @@ public class CubeSpitSlow extends SequentialCommandGroup{
             new InstantCommand(()->{
                 intake.stopRollingOnTriggeredArmIntakeDIO = false;
                 intake.stopRollingOnTriggeredCubeIntakeDIO = false;
-                intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true);
+                intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM/2, true);
                 intake.setArmIntakeRPM(Constants.ARM_CUBE_INTAKE_SPIT_RPM*2, true);
             })
         );

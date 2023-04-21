@@ -171,8 +171,8 @@ public class AutonomousTrajectories
         );
         threeObjectFarPart5 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(threeObjectFarPart4A), getEndRotation(threeObjectFarPart4A))
-                        .lineTo(new Vector2(207, -20), Rotation2.fromDegrees(-180))
-                        .lineTo(new Vector2(207, -138), Rotation2.fromDegrees(-180))
+                        .lineTo(new Vector2(190, -20), Rotation2.fromDegrees(-180))
+                        .lineTo(new Vector2(190, -138), Rotation2.fromDegrees(-180))
                         .build(),
                 trajectoryConstraints, SAMPLE_DISTANCE
         );
@@ -393,12 +393,13 @@ public class AutonomousTrajectories
         easySideConeToPlace2 = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPickUp2), getEndRotation(easySideConeToPickUp2))
                         .lineTo(new Vector2(178, 42), Rotation2.fromDegrees(0))
-                        .lineTo(new Vector2(74, 42))
+                        .lineTo(new Vector2(50, 42))
                         .build(),
-                trajectoryConstraints, SAMPLE_DISTANCE);  
+                trajectoryConstraints, SAMPLE_DISTANCE); 
+                 
         easySideToEndSpot = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPlace2), getEndRotation(easySideConeToPlace2))
-                        .lineTo(new Vector2(212, 18), Rotation2.fromDegrees(180))
+                        .lineTo(new Vector2(190, 18), Rotation2.fromDegrees(180))
                         .build(),
                 trajectoryConstraints, SAMPLE_DISTANCE); 
         //#endregion
@@ -431,12 +432,13 @@ public class AutonomousTrajectories
         easySideConeToPlace2Blue = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPickUp2Blue), getEndRotation(easySideConeToPickUp2Blue))
                         .lineTo(new Vector2(178, -42), Rotation2.fromDegrees(0))
-                        .lineTo(new Vector2(74, -42))
+                        .lineTo(new Vector2(50, -42))
                         .build(),
-                trajectoryConstraints, SAMPLE_DISTANCE);  
+                trajectoryConstraints, SAMPLE_DISTANCE);
+
         easySideToEndSpotBlue = new Trajectory(
                 new SimplePathBuilder(getEndCoords(easySideConeToPlace2Blue), getEndRotation(easySideConeToPlace2Blue))
-                        .lineTo(new Vector2(217, -18), Rotation2.fromDegrees(180))
+                        .lineTo(new Vector2(192, -18), Rotation2.fromDegrees(180))
                         .build(),
                 trajectoryConstraints, SAMPLE_DISTANCE); 
                         

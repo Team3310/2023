@@ -115,6 +115,7 @@ public class RobotContainer {
             )
         ).onFalse(
             new SequentialCommandGroup(
+                new InstantCommand(()->intake.setCubeRollerRPM(0, true)),
                 new SetArmSafely(true, false)
             )
         );

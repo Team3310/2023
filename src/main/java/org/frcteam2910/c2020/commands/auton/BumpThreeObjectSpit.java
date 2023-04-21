@@ -48,7 +48,7 @@ public class BumpThreeObjectSpit extends AutonCommandBase {
             new WaitCommand(0.2),
             new ParallelDeadlineGroup(
                 new FollowTrajectoryCommand(drive, trajectories.getThreeObjectFarPart3(isBlue)),
-                new CubeIntakeAuton(intake, true, trajectories.getThreeObjectFarPart3(isBlue))//,
+                new CubeIntake(intake, true)//,
                 // new InstantCommand(()->intake.setCubeRollerRPM(0, true))
             ),
             new WaitCommand(0.2),

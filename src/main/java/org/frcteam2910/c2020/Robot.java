@@ -211,7 +211,7 @@ public class Robot extends TimedRobot {
         List<AutonomousMode> vetted = new ArrayList<AutonomousMode>(
             Arrays.asList(AutonomousMode.SEVEN_FEET,
                           AutonomousMode.S_CURVE,
-                          AutonomousMode.THREE_OBJECT_BRIDGE,
+                        //   AutonomousMode.THREE_OBJECT_BRIDGE, //romoved coast mode on this auton so it doesnt cross the center line
                           AutonomousMode.BUMP_THREE_OBJECT,
                           AutonomousMode.ONE_OBJECT_BALANCE
             ));
