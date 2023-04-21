@@ -4,7 +4,7 @@ import org.frcteam2910.c2020.Constants;
 
 public enum ScoreMode{
     HOME(14.0, 0.25, Constants.ARM_DEFAULT_PID_SLOT), 
-    CONE_INTAKE(20, 3.0, Constants.ARM_INTAKE_PID_SLOT),
+    CONE_INTAKE(20, 2.6, Constants.ARM_INTAKE_PID_SLOT),
     CUBE_INTAKE(4.0, 3.0, Constants.ARM_INTAKE_PID_SLOT),
 
     CONE_HIGH(110, 15.5, Constants.ARM_CONE_HIGH_PID_SLOT),
@@ -22,6 +22,7 @@ public enum ScoreMode{
         this.slot = slot;
     }
 
+    @Deprecated
     public static ScoreMode getClosestMode(double angle){
         if(angle>=95){
             return CONE_HIGH;
