@@ -9,7 +9,7 @@ public class SetArmRotator extends CommandBase {
     private boolean waitUntilReachedTarget = false;
     private double targetDegrees = Double.MIN_VALUE;
 
-    private final double ARM_DEGREES_TOLERANCE = 5.0;
+    private final double ARM_DEGREES_TOLERANCE = 10.0;
 
     public SetArmRotator(Arm arm, double targetDegrees) {
         this(arm, targetDegrees, true);

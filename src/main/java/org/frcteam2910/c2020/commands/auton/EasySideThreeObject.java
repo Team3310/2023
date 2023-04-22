@@ -40,9 +40,8 @@ public class EasySideThreeObject extends AutonCommandBase {
                     new SetIntakeDeployPosition(intake, 45.0)
                 ),
                 new SetArmRotator(arm, 7.5),
-                new SequentialCommandGroup(
-                    new WaitCommand(0.3),
-                    new InstantCommand(()->intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true))
+                new WaitForEndOfTrajectory(trajectories.getEasySideConeToPlace2(isBlue), 1.5,
+                new InstantCommand(()->intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true))
                 ),
                 new WaitForEndOfTrajectory(trajectories.getEasySideConeToPlace2(isBlue), 0.5, 
                     new CubeSpit(intake, false)
