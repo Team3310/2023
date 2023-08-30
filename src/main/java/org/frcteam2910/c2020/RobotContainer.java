@@ -178,9 +178,11 @@ public class RobotContainer {
 
         // primaryController.getDPadButton(Direction.UP).onTrue(new FlashLEDs(LED.getInstance(), false));
 
-        // primaryController.getDPadButton(Direction.LEFT).onTrue(new InstantCommand(()->intake.setStopType(IntakeStopMode.POSITION)));
+        primaryController.getDPadButton(Direction.LEFT).onTrue(new InstantCommand(()->intake.setStopType(IntakeStopMode.POSITION)));
 
-        // primaryController.getDPadButton(Direction.DOWN).onTrue(new InstantCommand(()->intake.setStopType(IntakeStopMode.TIME)));
+        primaryController.getDPadButton(Direction.DOWN).onTrue(new InstantCommand(()->intake.setStopType(IntakeStopMode.TIME)));
+
+        primaryController.getDPadButton(Direction.UP).onTrue(new InstantCommand(()->intake.setStopType(IntakeStopMode.RPM)));
         //#endregion
 
         //#region Second/Operator Controller

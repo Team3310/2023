@@ -9,7 +9,7 @@ public class SetArmExtender extends CommandBase {
     private boolean waitUntilReachedTarget = false;
     private double targetInches = Double.MIN_VALUE;
 
-    private final double ARM_INCHES_TOLERANCE = 1.5;
+    private final double ARM_INCHES_TOLERANCE = 2.0;
 
     public SetArmExtender(Arm arm, double targetInches) {
         this(arm, targetInches, true);
