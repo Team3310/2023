@@ -109,6 +109,8 @@ public class Constants
     public static final double ARM_EXTENDER_ZEROING_SPEED = 0.25;
     public static final double ARM_EXTENDER_HOME_INCHES = 0.0;
 
+    public static final double CUBE_LIFT_ZEROING_SPEED = 0.25;
+
     public static final int ARM_DEFAULT_PID_SLOT = 0;
     public static final int ARM_INTAKE_PID_SLOT = 0;
     public static final int ARM_LOW_PID_SLOT = 0;
@@ -137,7 +139,7 @@ public class Constants
     public static final double CUBE_INTAKE_DEPLOY_ONE_DEGREE_IN_ENCODER_TICKS = CUBE_INTAKE_DEPLOY_ONE_REVOLUTION_IN_ENCODER_TICKS/360.0;
     
     public static final double CUBE_INTAKE_DEPLOY_HOME_DEGREES = 0;
-    public static final double CUBE_INTAKE_DEPLOY_MAX_DEGREES = 111;
+    public static final double CUBE_INTAKE_DEPLOY_MAX_DEGREES = 121;
 
     // CUBE INTAKE ROLLER
     public static final double CUBE_INTAKE_ROLLER_MOTOR_RATIO = (18.0/12.0);

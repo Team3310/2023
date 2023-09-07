@@ -250,6 +250,10 @@ public class Intake implements Subsystem{
             cubeIntakeLiftMotor.setSelectedSensorPosition(0);
         }
 
+        public void setCubeLiftSpeed(double speed){
+            cubeIntakeLiftMotor.set(ControlMode.PercentOutput, speed);
+        }
+
         // These are for velocity units
         public double ArmRoller_RpmToVelocityTicks(double rpm) {
             // SmartDashboard.putNumber("intake rpm ticks per 100 ms", ((rpm * Constants.ARM_INTAKE_ROLLER_REVOLUTIONS_TO_ENCODER_TICKS) / (10*60)));

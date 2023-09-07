@@ -171,7 +171,7 @@ public class RobotContainer {
                 )
             );
 
-        primaryController.getDPadButton(Direction.LEFT).onTrue(new InstantCommand(()->intake.setCubeIntakeDeployZeroReference(0)));
+        primaryController.getDPadButton(Direction.LEFT).onTrue(new CubeLiftZero(intake));
 
 
         // primaryController.getDPadButton(Direction.UP).onTrue(new FlashLEDs(LED.getInstance(), true));
@@ -208,7 +208,7 @@ public class RobotContainer {
         secondaryController.getBackButton()
             .onTrue(
                 new InstantCommand(()->arm.setArmRotatorZeroReference(0))
-            );
+            );    
 
         secondaryController.getBButton()
             .onTrue(
@@ -325,7 +325,7 @@ public class RobotContainer {
         // SmartDashboard.putData("roller rpm to 2000", new InstantCommand(() -> intake.setCubeRollerRPM(2000)));
         // SmartDashboard.putData("roller rpm to 100", new InstantCommand(() -> intake.setCubeRollerRPM(100)));
         // SmartDashboard.putData("roller rpm to 0", new InstantCommand(() -> intake.setCubeRollerRPM(0)));
-        SmartDashboard.putData("lift zero", new InstantCommand(() -> intake.setCubeIntakeDeployZeroReference(0)));
+        SmartDashboard.putData("lift zero", new CubeLiftZero(intake));
         // SmartDashboard.putData("lift degrees to 30", new InstantCommand(() -> intake.setCubeIntakeDeployTargetPosition(30)));
         // SmartDashboard.putData("lift degrees to 70", new InstantCommand(() -> intake.setCubeIntakeDeployTargetPosition(70)));
         // SmartDashboard.putData("lift degrees to 111", new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_MAX_DEGREES));
