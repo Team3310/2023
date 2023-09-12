@@ -58,7 +58,7 @@ public class BumpThreeObjectSpit extends AutonCommandBase {
                     new SetIntakeDeployPosition(intake, Constants.CUBE_INTAKE_DEPLOY_HOME_DEGREES),
                     new WaitForEndOfTrajectory(
                         trajectories.getThreeObjectFarPart4A(isBlue),
-                        2.5,
+                        3.5,
                         new InstantCommand(()->intake.setCubeRollerRPM(Constants.CUBE_INTAKE_ROLLER_SPIT_RPM, true))
                     ),
                     new WaitForEndOfTrajectory(

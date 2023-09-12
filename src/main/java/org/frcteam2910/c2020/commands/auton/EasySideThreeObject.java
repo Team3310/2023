@@ -23,7 +23,7 @@ public class EasySideThreeObject extends AutonCommandBase {
         this.addCommands(
             new EasySideTwoObject(container, trajectories),
             new ParallelDeadlineGroup(
-                new WaitCommand(0.1),
+                new WaitCommand(0.25),
                 new SetArmSafely(ScoreMode.CUBE_INTAKE)
             ),
             new ParallelDeadlineGroup(
